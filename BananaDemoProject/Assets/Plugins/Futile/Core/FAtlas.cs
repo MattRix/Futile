@@ -38,7 +38,7 @@ public class FAtlas
 	private Texture _texture;
 	private Vector2 _textureSize;
 	
-	public FAtlas (string atlasPath, int index)
+	public FAtlas (string atlasPath, int index, bool loadAsSingleImage)
 	{
 		_atlasPath = atlasPath;
 		_index = index;
@@ -46,7 +46,7 @@ public class FAtlas
 		_fullPath = _atlasPath+"_Scale"+FEngine.scale;
 		
 		LoadTexture();
-		LoadData();
+		LoadData(loadAsSingleImage);
 	}
 	
 	private void LoadTexture()
@@ -61,9 +61,15 @@ public class FAtlas
 		_textureSize = new Vector2(_texture.width,_texture.height);
 	}
 	
-	private void LoadData()
+	private void LoadData(bool loadAsSingleImage)
 	{
 		_elementsByName = new Dictionary<string, FAtlasElement>();
+		
+		if(loadAsSingleImage == true)
+		{
+			LoadAsSingleImage();
+			return;
+		}
 		
 		TextAsset dataAsset = (TextAsset) Resources.Load (_fullPath, typeof(TextAsset));
 		

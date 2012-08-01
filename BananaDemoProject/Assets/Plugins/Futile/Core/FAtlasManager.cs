@@ -19,9 +19,9 @@ public class FAtlasManager
 		
 	}
 	
-	public void LoadAtlas(string atlasPath)
+	public void LoadAtlas(string atlasPath, bool loadAsSingleImage)
 	{
-		FAtlas atlas = new FAtlas(atlasPath, _atlases.Count);
+		FAtlas atlas = new FAtlas(atlasPath, _atlases.Count, loadAsSingleImage);
 		
 		foreach(FAtlasElement element in atlas.elements)
 		{
@@ -36,9 +36,9 @@ public class FAtlasManager
 		_atlases.Add(atlas); 
 	}
 	
-	public void LoadImage(string imagePath)
+	public void LoadImage(string imagePath, bool loadAsSingleImage)
 	{
-		LoadAtlas(imagePath); //loadAtlas actually handles single images as well	
+		LoadAtlas(imagePath, loadAsSingleImage); //loadAtlas actually handles single images as well	
 	}
 
 	public FAtlasElement GetElementWithName (string elementName)

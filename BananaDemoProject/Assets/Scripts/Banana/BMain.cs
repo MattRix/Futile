@@ -34,8 +34,8 @@ public class BMain : MonoBehaviour
 		
 		FEngine.instance.Init (10,10);
 		
-		FEngine.atlasManager.LoadAtlas("Atlases/BananaLargeAtlas");
-		FEngine.atlasManager.LoadAtlas("Atlases/BananaGameAtlas");
+		FEngine.atlasManager.LoadAtlas("Atlases/BananaLargeAtlas", false);
+		FEngine.atlasManager.LoadAtlas("Atlases/BananaGameAtlas", false);
 		FEngine.atlasManager.LoadFont("Franchise","FranchiseFontAtlas.png", "Atlases/FranchiseLarge", 0.8f,0.8f);
 		
 		_stage = FEngine.stage;

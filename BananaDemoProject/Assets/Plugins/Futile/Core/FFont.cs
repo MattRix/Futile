@@ -169,7 +169,7 @@ public class FFont
 				int charCount = int.Parse(words[1].Split('=')[1]);
 				_charInfos = new FCharInfo[charCount+1]; //gotta add 1 because the charCount seems to be off by 1
 			}
-			else if(words[0] == "char") //char id=32   x=0     y=0     width=0     height=0     xoffset=0     yoffset=120    xadvance=29     page=0  chnl=0 
+			else if(words[0] == "char") //char id=32   x=0     y=0     width=0     height=0     xoffset=0     yoffset=120    xadvance=29     page=0  chnl=0 letter=a 
 			{
 				FCharInfo charInfo = new FCharInfo();
 				
@@ -179,63 +179,68 @@ public class FFont
 				{
 					string[] parts = words[w].Split('=');	
 					string partName = parts[0];
-					int partValue = int.Parse(parts[1]);
+					if(partName != "letter")
+					{
+						int partValue = int.Parse(parts[1]);
 					
-					if(partName == "id")
-					{
-						charInfo.charID = partValue;
-					}
-					else if(partName == "x")
-					{
-						charInfo.x = partValue*_configRatio;
-					}
-					else if(partName == "y")
-					{
-						charInfo.y = partValue*_configRatio;
-					}
-					else if(partName == "width")
-					{
-						charInfo.width = partValue*_configRatio;
-					}
-					else if(partName == "height")
-					{
-						charInfo.height = partValue*_configRatio;
-					}
-					else if(partName == "xoffset")
-					{
-						charInfo.offsetX = partValue*_configRatio;
-					}
-					else if(partName == "yoffset")
-					{
-						charInfo.offsetY = partValue*_configRatio;
-					}
-					else if(partName == "xadvance")
-					{
-						charInfo.xadvance = partValue*_configRatio;
-					}
-					else if(partName == "page")
-					{
-						charInfo.page = partValue;
+						if(partName == "id")
+						{
+							charInfo.charID = partValue;
+						}
+						else if(partName == "x")
+						{
+							charInfo.x = partValue*_configRatio;
+						}
+						else if(partName == "y")
+						{
+							charInfo.y = partValue*_configRatio;
+						}
+						else if(partName == "width")
+						{
+							charInfo.width = partValue*_configRatio;
+						}
+						else if(partName == "height")
+						{
+							charInfo.height = partValue*_configRatio;
+						}
+						else if(partName == "xoffset")
+						{
+							charInfo.offsetX = partValue*_configRatio;
+						}
+						else if(partName == "yoffset")
+						{
+							charInfo.offsetY = partValue*_configRatio;
+						}
+						else if(partName == "xadvance")
+						{
+							charInfo.xadvance = partValue*_configRatio;
+						}
+						else if(partName == "page")
+						{
+							charInfo.page = partValue;
+						}
+						
+						Rect uvRect = new Rect 	
+						(
+							_element.uvRect.x + charInfo.x/textureSize.x*FEngine.scale,
+							(textureSize.y-charInfo.y-charInfo.height)/textureSize.y*FEngine.scale - (1.0f - _element.uvRect.yMax),
+							charInfo.width/textureSize.x*FEngine.scale,
+							charInfo.height/textureSize.y*FEngine.scale
+						);
+					
+						//commented out because we shouldn't need offsets because the original element will already have them!
+						//uvRect.x += uvOffsetX;
+						//uvRect.y += uvOffsetY;
+						
+						charInfo.uvRect = uvRect;
+						
+						charInfo.uvTopLeft.Set(uvRect.xMin,uvRect.yMax);
+						charInfo.uvTopRight.Set(uvRect.xMax,uvRect.yMax);
+						charInfo.uvBottomRight.Set(uvRect.xMax,uvRect.yMin);
+						charInfo.uvBottomLeft.Set(uvRect.xMin,uvRect.yMin);
 					}
 					
-					Rect uvRect = new Rect 	
-					(
-						_element.uvRect.x + charInfo.x/textureSize.x*FEngine.scale,
-						(textureSize.y-charInfo.y-charInfo.height)/textureSize.y*FEngine.scale - (1.0f - _element.uvRect.yMax),
-						charInfo.width/textureSize.x*FEngine.scale,
-						charInfo.height/textureSize.y*FEngine.scale
-					);
-				
-					//commented out because we shouldn't need offsets because the original element will already have them!
-					//uvRect.x += uvOffsetX;
-					//uvRect.y += uvOffsetY;
 					
-					charInfo.uvRect = uvRect;
-					
-					charInfo.uvTopLeft.Set(uvRect.xMin,uvRect.yMax);
-					charInfo.uvTopRight.Set(uvRect.xMax,uvRect.yMax);
-					charInfo.uvBottomRight.Set(uvRect.xMax,uvRect.yMin);
-					charInfo.uvBottomLeft.Set(uvRect.xMin,uvRect.yMin);
 					
 				}
 				
