@@ -55,11 +55,7 @@ public class FEngine : MonoBehaviour
 		FEngine.startingQuadsPerLayer = startingQuadsPerLayer;
 		FEngine.quadsPerLayerExpansion = quadsPerLayerExpansion;
 		
-		//FTouchManager.instance = new FTouchManager();
-		
-		//widths based on landscape
-		
-		
+		//widths based on being in landscape
 		if(Screen.width <= 480.0f)
 		{
 			scale = 1;
