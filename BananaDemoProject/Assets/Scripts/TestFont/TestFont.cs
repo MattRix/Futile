@@ -33,10 +33,6 @@ public class TestFont : MonoBehaviour
 			_label.color = new Color(1.0f,1.0f,1.0f,1.0f); 	
 		}
 	}
-	
-	public void Update()
-	{
-	}
 }
 
 
