@@ -1,12 +1,12 @@
 Library/
 Temp/
-Futile2.sln
-Futile2-csharp.sln
+BananaDemoProject.sln
+BananaDemoProject-csharp.sln
 Assembly-CSharp.csproj
 Assembly-CSharp-vs.csproj
 Assembly-CSharp-firstpass.csproj
 Assembly-CSharp-firstpass-vs.csproj
-Futile2.userprefs
+BananaDemoProject.userprefs
 Assembly-CSharp.pidb
 Assembly-CSharp-firstpass.pidb
 *.DS_Store
