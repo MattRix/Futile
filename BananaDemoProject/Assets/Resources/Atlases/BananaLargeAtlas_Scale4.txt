@@ -1,0 +1,36 @@
+{"frames": {
+
+"JungleBlurryBG.png":
+{
+	"frame": {"x":3,"y":1567,"w":2120,"h":1560},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":2120,"h":1560},
+	"sourceSize": {"w":2120,"h":1560}
+},
+"JungleClearBG.png":
+{
+	"frame": {"x":3,"y":3,"w":2120,"h":1560},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":2120,"h":1560},
+	"sourceSize": {"w":2120,"h":1560}
+},
+"MainLogo.png":
+{
+	"frame": {"x":2127,"y":3,"w":1820,"h":1060},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1820,"h":1060},
+	"sourceSize": {"w":1820,"h":1060}
+}},
+"meta": {
+	"app": "http://www.texturepacker.com",
+	"version": "1.0",
+	"image": "BananaLargeAtlas_Scale4.png",
+	"format": "RGBA8888",
+	"size": {"w":4096,"h":4096},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:f0ff88af8050e664e60694f70d49b362$"
+}
+}

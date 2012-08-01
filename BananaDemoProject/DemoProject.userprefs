@@ -1,0 +1,13 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Banana\Screens\BInGameScreen.cs">
+    <Files>
+      <File FileName="Assets\Plugins\Futile\FEngine.cs" Line="11" Column="2" />
+      <File FileName="Assets\Scripts\Banana\Screens\BInGameScreen.cs" Line="40" Column="22" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
