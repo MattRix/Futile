@@ -21,6 +21,7 @@ public class FButton : FContainer, FSingleTouchable
 
 		_sound = sound;
 	}
+	// Simpler constructors
 	public FButton (string upImage, string downImage) : this(upImage, downImage, null) {}
 	public FButton (string upImage) : this(upImage, upImage, null) {}
 
