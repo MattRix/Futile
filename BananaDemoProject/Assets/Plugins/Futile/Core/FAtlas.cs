@@ -38,7 +38,7 @@ public class FAtlas
 	private Texture _texture;
 	private Vector2 _textureSize;
 	
-	public FAtlas (string atlasPath, int index, bool loadAsSingleImage)
+	public FAtlas (string atlasPath, int index, bool shouldLoadAsSingleImage)
 	{
 		_atlasPath = atlasPath;
 		_index = index;
@@ -46,7 +46,15 @@ public class FAtlas
 		_fullPath = _atlasPath+"_Scale"+FEngine.scale;
 		
 		LoadTexture();
-		LoadData(loadAsSingleImage);
+		
+		if(shouldLoadAsSingleImage)
+		{
+			CreateAtlasFromSingleImage();
+		}
+		else
+		{
+			LoadAtlasData();
+		}
 	}
 	
 	private void LoadTexture()
@@ -61,24 +69,13 @@ public class FAtlas
 		_textureSize = new Vector2(_texture.width,_texture.height);
 	}
 	
-	private void LoadData(bool loadAsSingleImage)
+	private void LoadAtlasData()
 	{
-		_elementsByName = new Dictionary<string, FAtlasElement>();
-		
-		if(loadAsSingleImage == true)
-		{
-			LoadAsSingleImage();
-			return;
-		}
-		
 		TextAsset dataAsset = (TextAsset) Resources.Load (_fullPath, typeof(TextAsset));
 		
 		if(!dataAsset)
 		{
-			Debug.Log ("FEngine: Couldn't load the atlas data from: " + _fullPath + ", so loading it as a single image instead");
-			
-			LoadAsSingleImage();
-			return;
+			Debug.Log ("FEngine: Couldn't load the atlas data from: " + _fullPath);
 		}
 		
 		Hashtable hash = dataAsset.text.hashtableFromJson();
@@ -154,7 +151,7 @@ public class FAtlas
 		Resources.UnloadAsset(dataAsset);
 	}
 	
-	private void LoadAsSingleImage()
+	private void CreateAtlasFromSingleImage()
 	{
 		FAtlasElement element = new FAtlasElement();
 		
