@@ -177,5 +177,15 @@ public class FSprite : FQuadNode
 		get { return _anchorY;}
 		set { _anchorY = value; _areLocalVerticesDirty = true; }
 	}
+	
+	virtual public float contentWidth
+	{
+		get {return _contentWidth;}	
+	}
+	
+	virtual public float contentHeight
+	{
+		get {return _contentHeight;}	
+	}
 }
 
