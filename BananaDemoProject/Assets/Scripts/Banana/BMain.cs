@@ -38,9 +38,10 @@ public class BMain : MonoBehaviour
 		eparams.AddResolutionLevel(960.0f,	2.0f,	1.0f,	2.0f,	"_Scale2");
 		eparams.AddResolutionLevel(1024.0f,	2.0f,	1.0f,	2.0f,	"_Scale2");
 		eparams.AddResolutionLevel(2048.0f,	4.0f,	1.0f,	4.0f,	"_Scale4");
-
 		
-		FEngine.instance.Init (eparams,10,10);
+		eparams.origin = new Vector2(0.5f,0.5f);
+		
+		FEngine.instance.Init (eparams);
 		
 		FEngine.atlasManager.LoadAtlas("Atlases/BananaLargeAtlas");
 		FEngine.atlasManager.LoadAtlas("Atlases/BananaGameAtlas");

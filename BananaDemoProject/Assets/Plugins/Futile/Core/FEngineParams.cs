@@ -14,10 +14,11 @@ public class FEngineResolutionLevel
 public class FEngineParams
 {
 	public List<FEngineResolutionLevel> resLevels = new List<FEngineResolutionLevel>();
-		
-	public FEngineParams ()
-	{
-	}
+	
+	public int startingQuadsPerLayer = 10;
+	public int quadsPerLayerExpansion = 10;
+	
+	public Vector2 origin = new Vector2(0.5f,0.5f);
 
 	public FEngineResolutionLevel AddResolutionLevel (float maxLength, float displayScale, float contentScale, float resourceScale, string resourceSuffix)
 	{

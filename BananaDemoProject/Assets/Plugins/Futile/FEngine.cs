@@ -41,10 +41,9 @@ public class FEngine : MonoBehaviour
 	
 	public int targetFrameRate = 60;
 	
-	//anchor 0,0 sets coord 0,0 at bottom left
-	//anchor 0.5f,0.5f sets coord 0,0 at center
-	private float _cameraAnchorX = 0.5f;
-	private float _cameraAnchorY = 0.5f;
+	//this is populated by the FEngineParams
+	private float _originX;
+	private float _originY;
 	
 	public static int startingQuadsPerLayer;
 	public static int quadsPerLayerExpansion;
@@ -59,14 +58,14 @@ public class FEngine : MonoBehaviour
 		isOpenGL = SystemInfo.graphicsDeviceVersion.Contains("OpenGL");
 	}
 	
-	public void Init(FEngineParams engineParams, int startingQuadsPerLayer, int quadsPerLayerExpansion)
+	public void Init(FEngineParams engineParams)
 	{
 		Application.targetFrameRate = targetFrameRate;
 		
 		_engineParams = engineParams;
 		
-		FEngine.startingQuadsPerLayer = startingQuadsPerLayer;
-		FEngine.quadsPerLayerExpansion = quadsPerLayerExpansion;
+		FEngine.startingQuadsPerLayer = _engineParams.startingQuadsPerLayer;
+		FEngine.quadsPerLayerExpansion = _engineParams.quadsPerLayerExpansion;
 		
 		float length = Math.Max(Screen.height, Screen.width);
 		
@@ -113,6 +112,9 @@ public class FEngine : MonoBehaviour
 		halfWidth = width/2.0f;
 		halfHeight = height/2.0f;
 		
+		_originX = _engineParams.origin.x;
+		_originY = _engineParams.origin.y;
+		
 		Debug.Log ("FEngine: Display scale is " + displayScale);
 		
 		Debug.Log ("FEngine: Content scale is " + contentScale);
@@ -121,9 +123,11 @@ public class FEngine : MonoBehaviour
 		
 		Debug.Log ("FEngine: Resource suffix is is " + _resLevel.resourceSuffix);
 		
-		Debug.Log ("FEngine: Screen size in pixels is (" + Screen.width +"," + Screen.height+")");
+		Debug.Log ("FEngine: Screen size in pixels is (" + Screen.width +"px," + Screen.height+"px)");
 		
 		Debug.Log ("FEngine: Screen size in points is (" + width + "," + height+")");
+		
+		Debug.Log ("FEngine: Origin is at (" + _originX*width + "," + _originY*height+")");
 		
 		//
 		//Camera setup from https://github.com/prime31/UIToolkit/blob/master/Assets/Plugins/UIToolkit/UI.cs
@@ -147,13 +151,8 @@ public class FEngine : MonoBehaviour
 		//we multiply this stuff by scaleInverse to make sure everything is in points, not pixels
 		_camera.orthographic = true;
 		_camera.orthographicSize = Screen.height/2 * displayScaleInverse;
-		//_camera.transform.position = new Vector3(Screen.width/2 * scaleInverse, Screen.height/2 * scaleInverse , -10.0f);
-		//_camera.transform.position = new Vector3(0, 0 , -10.0f); //center the screen
-		
-		float camXOffset = ((_cameraAnchorX - 0.5f) * -Screen.width)*displayScaleInverse;
-		float camYOffset = ((_cameraAnchorY - 0.5f) * -Screen.height)*displayScaleInverse;
-	
-		_camera.transform.position = new Vector3(camXOffset, camYOffset, -10.0f); 
+
+		UpdateCameraPosition();
 		
 		touchManager = new FTouchManager();
 		
@@ -183,18 +182,41 @@ public class FEngine : MonoBehaviour
 	{
 		instance = null;	
 	}
-
-	public float cameraAnchorX
+	
+	protected void UpdateCameraPosition()
 	{
-		get {return _cameraAnchorX;}
-		//set {_cameraAnchorX = value;}
+		float camXOffset = ((_originX - 0.5f) * -Screen.width)*displayScaleInverse;
+		float camYOffset = ((_originY - 0.5f) * -Screen.height)*displayScaleInverse;
+	
+		_camera.transform.position = new Vector3(camXOffset, camYOffset, -10.0f); 	
 	}
 
-	public float cameraAnchorY
+	public float originX
 	{
-		get {return _cameraAnchorY;}
-		//set {_cameraAnchorY = value;}
+		get {return _originX;}
+		set 
+		{
+			if(_originX != value)
+			{
+				_originX = value;
+				UpdateCameraPosition();
+			}
+		}
 	}
+
+	public float originY
+	{
+		get {return _originY;}
+		set 
+		{
+			if(_originY != value)
+			{
+				_originY = value;
+				UpdateCameraPosition();
+			}
+		}
+	}
+
 	
 
 }
