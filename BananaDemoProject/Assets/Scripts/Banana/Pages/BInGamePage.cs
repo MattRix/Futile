@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class BInGameScreen : BScreen, FMultiTouchable
+public class BInGamePage : BPage, FMultiTouchable
 {
 	
 	private FSprite _background;
@@ -25,7 +25,7 @@ public class BInGameScreen : BScreen, FMultiTouchable
 	
 	private FContainer _effectHolder;
 
-	public BInGameScreen()
+	public BInGamePage()
 	{
 		
 	}
@@ -37,6 +37,10 @@ public class BInGameScreen : BScreen, FMultiTouchable
 		_background = new FSprite("JungleBlurryBG.png");
 		AddChild(_background);
 		
+		//this will scale the background up to fit the screen
+		//but it won't let it shrink smaller than 100%
+		_background.scale = Math.Max (Math.Max(1.0f,FEngine.height/_background.height),FEngine.width /_background.width);
+		
 		//the banana container will make it easy to keep the bananas at the right depth
 		_bananaContainer = new FContainer(); 
 		AddChild(_bananaContainer); 
@@ -46,7 +50,7 @@ public class BInGameScreen : BScreen, FMultiTouchable
 		_closeButton.x = -FEngine.halfWidth + 30.0f;
 		_closeButton.y = -FEngine.halfHeight + 30.0f;
 		
-		_closeButton.OnTap += HandleCloseButtonTap;
+		_closeButton.SignalTap += HandleCloseButtonTap;
 		
 		_scoreLabel = new FLabel("Franchise", "0 Bananas");
 		_scoreLabel.anchorX = 0.0f;
@@ -95,7 +99,7 @@ public class BInGameScreen : BScreen, FMultiTouchable
 
 	private void HandleCloseButtonTap (object sender, EventArgs e)
 	{
-		BMain.instance.GoToScreen(BScreenType.TitleScreen);
+		BMain.instance.GoToPage(BPageType.TitlePage);
 	}
 	
 	public void HandleGotBanana(BBanana banana)
@@ -136,7 +140,7 @@ public class BInGameScreen : BScreen, FMultiTouchable
 		if(_secondsLeft <= 0)
 		{
 			BSoundPlayer.PlayVictoryMusic();
-			BMain.instance.GoToScreen(BScreenType.ScoreScreen);
+			BMain.instance.GoToPage(BPageType.ScorePage);
 			return;
 		}
 		

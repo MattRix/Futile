@@ -2,14 +2,14 @@ using UnityEngine;
 using System.Collections;
 using System;
 
-public class BTitleScreen : BScreen
+public class BTitlePage : BPage
 {
 	private FSprite _background;
 	private FSprite _logo;
 	private BLabelButton _startButton;
 	private int _frameCount = 0;
 	
-	public BTitleScreen()
+	public BTitlePage()
 	{
 		
 	}
@@ -19,6 +19,10 @@ public class BTitleScreen : BScreen
 		_background = new FSprite("JungleClearBG.png");
 		AddChild(_background);
 		
+		//this will scale the background up to fit the screen
+		//but it won't let it shrink smaller than 100%
+		_background.scale = Math.Max (Math.Max(1.0f,FEngine.height/_background.height),FEngine.width /_background.width);
+		 
 		_logo = new FSprite("MainLogo.png");
 		AddChild(_logo);
 		_logo.x = 0.0f;
@@ -29,7 +33,7 @@ public class BTitleScreen : BScreen
 		_startButton.x = FEngine.halfWidth-75.0f;
 		_startButton.y = -FEngine.halfHeight+35.0f;
 		
-		_startButton.OnTap += HandleStartButtonTap;
+		_startButton.SignalTap += HandleStartButtonTap;
 		
 		
 		_logo.scale = 0.0f;
@@ -50,7 +54,7 @@ public class BTitleScreen : BScreen
 
 	private void HandleStartButtonTap (object sender, EventArgs e)
 	{
-		BMain.instance.GoToScreen(BScreenType.InGameScreen);
+		BMain.instance.GoToPage(BPageType.InGamePage);
 	}
 	
 	override public void Advance ()

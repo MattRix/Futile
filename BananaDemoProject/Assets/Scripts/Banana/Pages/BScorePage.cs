@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 
-public class BScoreScreen : BScreen
+public class BScorePage : BPage
 {
 	private FSprite _background;
 	private BMonkey _monkey;
@@ -12,7 +12,7 @@ public class BScoreScreen : BScreen
 	private int _frameCount = 0;
 	private bool _isNewBestScore = false;
 	
-	public BScoreScreen()
+	public BScorePage()
 	{
 		
 	}
@@ -21,6 +21,10 @@ public class BScoreScreen : BScreen
 	{
 		_background = new FSprite("JungleBlurryBG.png");
 		AddChild(_background);
+		
+		//this will scale the background up to fit the screen
+		//but it won't let it shrink smaller than 100%
+		_background.scale = Math.Max (Math.Max(1.0f,FEngine.height/_background.height),FEngine.width /_background.width);
 		
 		_monkey = new BMonkey();
 		AddChild(_monkey);
@@ -31,7 +35,7 @@ public class BScoreScreen : BScreen
 		AddChild(_againButton);
 		_againButton.y = -110.0f;
 		
-		_againButton.OnTap += HandleAgainButtonTap;
+		_againButton.SignalTap += HandleAgainButtonTap;
 		
 		_scoreLabel = new FLabel("Franchise", BMain.instance.score+" Bananas");
 		AddChild(_scoreLabel);
@@ -85,7 +89,7 @@ public class BScoreScreen : BScreen
 	private void HandleAgainButtonTap (object sender, EventArgs e)
 	{
 		BSoundPlayer.PlayRegularMusic();
-		BMain.instance.GoToScreen(BScreenType.InGameScreen); 
+		BMain.instance.GoToPage(BPageType.InGamePage); 
 	}
 	
 	override public void Advance ()
