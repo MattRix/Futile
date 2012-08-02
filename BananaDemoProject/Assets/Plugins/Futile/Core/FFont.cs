@@ -135,7 +135,8 @@ public class FFont
 //			uvOffsetX = 0.5f/textureSize.x;
 //			uvOffsetY = -0.5f/textureSize.y; 
 //		}
-	
+		
+		bool wasKerningFound = false;
 	
 		foreach(string line in lines)
 		{
@@ -251,6 +252,7 @@ public class FFont
 			}
 			else if(words[0] == "kernings") //kernings count=169
 			{
+				wasKerningFound = true;
 				int kerningCount = int.Parse(words[1].Split('=')[1]);
 				_kerningInfos = new FKerningInfo[kerningCount+1]; //gotta add 1 because it's off by 1
 			}
@@ -286,6 +288,12 @@ public class FFont
 			}
 			
 		}
+		
+		if(!wasKerningFound) //if there are no kernings at all (like in a pixel font), then make an empty kerning array
+		{
+			_kerningInfos = new FKerningInfo[0];	
+		}
+		
 	}
 	
 	public FLetterQuadLine[] GetQuadInfoForText(string text, float lineHeightDelta, float letterSpacingDelta)
