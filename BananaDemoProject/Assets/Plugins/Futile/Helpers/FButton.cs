@@ -10,7 +10,8 @@ public class FButton : FContainer, FSingleTouchable
 	protected string _sound;
 	protected FLabel _label;
 
-	public event EventHandler onPress, onRelease;
+	public event EventHandler SignalPress;
+	public event EventHandler SignalRelease;
 	
 	public FButton (string upImage, string downImage, string sound)
 	{
@@ -27,10 +28,11 @@ public class FButton : FContainer, FSingleTouchable
 
 	public void AddLabel (string fontName, string text, Color color)
 	{
-		if (_label != null)
+		if(_label != null) 
 		{
 			RemoveChild(_label);
 		}
+
 		_label = new FLabel(fontName, text);
 		AddChild(_label);
 		_label.color = color;
@@ -62,14 +64,11 @@ public class FButton : FContainer, FSingleTouchable
 		if(_bg.localRect.Contains(touchPos))
 		{
 			_bg.element = _pressedElement;
-			if (_sound != null)
-			{
-				FSoundManager.PlaySound(_sound);
-			}
-			if(onPress != null)
-			{
-				onPress(this, EventArgs.Empty);
-			}
+			
+			if(_sound != null) FSoundManager.PlaySound(_sound);
+			
+			if(SignalPress != null) SignalPress(this, EventArgs.Empty);
+			
 			return true;	
 		}
 		
@@ -98,10 +97,7 @@ public class FButton : FContainer, FSingleTouchable
 		
 		if(_bg.localRect.Contains(touchPos))
 		{
-			if(onRelease != null)
-			{
-				onRelease(this, EventArgs.Empty);
-			}
+			if(SignalRelease != null) SignalRelease(this, EventArgs.Empty);
 		}
 	}
 	

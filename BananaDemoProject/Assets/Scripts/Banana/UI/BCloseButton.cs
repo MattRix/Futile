@@ -8,7 +8,7 @@ public class BCloseButton : FContainer, FSingleTouchable
 	protected FAtlasElement _overElement;
 	protected FSprite _bg;
 	
-	public event EventHandler OnTap;
+	public event EventHandler SignalTap;
 	
 	public BCloseButton ()
 	{
@@ -67,7 +67,7 @@ public class BCloseButton : FContainer, FSingleTouchable
 		if(_bg.localRect.Contains(touchPos))
 		{
 			BSoundPlayer.PlayClickSound();
-			if(OnTap != null) OnTap(this, EventArgs.Empty);
+			if(SignalTap != null) SignalTap(this, EventArgs.Empty);
 		}
 	}
 	
