@@ -33,7 +33,9 @@ public class FButton : FContainer, FSingleTouchable
 		}
 		_label = new FLabel(fontName, text);
 		AddChild(_label);
-		_label.color = color; 
+		_label.color = color;
+		_label.anchorY = 0.0f;
+		_label.y = 0;
 	}
 
 	public FLabel label
