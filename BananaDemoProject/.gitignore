@@ -1,5 +1,6 @@
 Library/
 Temp/
+Output/
 BananaDemoProject.sln
 BananaDemoProject-csharp.sln
 Assembly-CSharp.csproj
