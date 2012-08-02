@@ -136,6 +136,8 @@ public class FFont
 //			uvOffsetY = -0.5f/textureSize.y; 
 //		}
 		
+		float resourceScale = FEngine.resourceScale * FEngine.contentScaleInverse;
+		
 		bool wasKerningFound = false;
 	
 		foreach(string line in lines)
@@ -223,10 +225,10 @@ public class FFont
 						
 						Rect uvRect = new Rect 	
 						(
-							_element.uvRect.x + charInfo.x/textureSize.x*FEngine.scale,
-							(textureSize.y-charInfo.y-charInfo.height)/textureSize.y*FEngine.scale - (1.0f - _element.uvRect.yMax),
-							charInfo.width/textureSize.x*FEngine.scale,
-							charInfo.height/textureSize.y*FEngine.scale
+							_element.uvRect.x + charInfo.x/textureSize.x*resourceScale,
+							(textureSize.y-charInfo.y-charInfo.height)/textureSize.y*resourceScale - (1.0f - _element.uvRect.yMax),
+							charInfo.width/textureSize.x*resourceScale,
+							charInfo.height/textureSize.y*resourceScale
 						);
 					
 						//commented out because we shouldn't need offsets because the original element will already have them!

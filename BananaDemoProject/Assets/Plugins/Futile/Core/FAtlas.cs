@@ -43,7 +43,7 @@ public class FAtlas
 		_atlasPath = atlasPath;
 		_index = index;
 		
-		_fullPath = _atlasPath+"_Scale"+FEngine.scale;
+		_fullPath = _atlasPath;
 		
 		LoadTexture();
 		
@@ -82,7 +82,7 @@ public class FAtlas
 		
 		IDictionary frames = (IDictionary)hash["frames"];
 		
-		float scaleInverse = FEngine.scaleInverse;
+		float scaleInverse = FEngine.resourceScaleInverse * FEngine.contentScale;
 		
 		float uvOffsetX;
 		float uvOffsetY;
@@ -159,7 +159,7 @@ public class FAtlas
 		element.indexInAtlas = 0;
 		
 		//TODO: may have to offset the rect slightly
-		float scaleInverse = FEngine.scaleInverse;
+		float scaleInverse = FEngine.resourceScaleInverse;
 		
 		float uvOffsetX;
 		float uvOffsetY;

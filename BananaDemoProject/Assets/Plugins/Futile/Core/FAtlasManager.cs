@@ -14,15 +14,17 @@ public class FAtlasManager
 	private List<FFont> _fonts = new List<FFont>();
 	private Dictionary<string,FFont> _fontsByName = new Dictionary<string, FFont>();
 	
-	public FAtlasManager () //new DAtlasManager() called by FEngine
+	private string _resourceSuffix;
+	
+	public FAtlasManager (string resourceSuffix) //new DAtlasManager() called by FEngine
 	{
-		
+		_resourceSuffix = resourceSuffix;
 	}
 	
 	//images and atlases are both treated as atlases
 	private void LoadAtlasOrImage(string atlasPath, bool shouldLoadAsSingleImage)
 	{
-		FAtlas atlas = new FAtlas(atlasPath, _atlases.Count, shouldLoadAsSingleImage);
+		FAtlas atlas = new FAtlas(atlasPath+_resourceSuffix, _atlases.Count, shouldLoadAsSingleImage);
 		
 		foreach(FAtlasElement element in atlas.elements)
 		{

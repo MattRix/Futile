@@ -3,12 +3,12 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public enum BScreenType
+public enum BPageType
 {
 	None,
-	TitleScreen,
-	InGameScreen,
-	ScoreScreen
+	TitlePage,
+	InGamePage,
+	ScorePage
 }
 
 public class BMain : MonoBehaviour
@@ -18,8 +18,8 @@ public class BMain : MonoBehaviour
 	public int score = 0;
 	public int bestScore = 0;
 	
-	private BScreenType _currentScreenType = BScreenType.None;
-	private BScreen _currentScreen = null;
+	private BPageType _currentPageType = BPageType.None;
+	private BPage _currentPage = null;
 	
 	private FStage _stage;
 	
@@ -32,7 +32,15 @@ public class BMain : MonoBehaviour
 		
 		//Time.timeScale = 0.1f;
 		
-		FEngine.instance.Init (10,10);
+		FEngineParams eparams = new FEngineParams();
+		
+		eparams.AddResolutionLevel(480.0f,	1.0f,	1.0f,	1.0f,	"_Scale1");
+		eparams.AddResolutionLevel(960.0f,	2.0f,	1.0f,	2.0f,	"_Scale2");
+		eparams.AddResolutionLevel(1024.0f,	2.0f,	1.0f,	2.0f,	"_Scale2");
+		eparams.AddResolutionLevel(2048.0f,	4.0f,	1.0f,	4.0f,	"_Scale4");
+
+		
+		FEngine.instance.Init (eparams,10,10);
 		
 		FEngine.atlasManager.LoadAtlas("Atlases/BananaLargeAtlas");
 		FEngine.atlasManager.LoadAtlas("Atlases/BananaGameAtlas");
@@ -42,48 +50,50 @@ public class BMain : MonoBehaviour
 		
 		BSoundPlayer.PlayRegularMusic();
 		
-		GoToScreen(BScreenType.TitleScreen);
+		GoToPage(BPageType.TitlePage);
+		
+		FEngine.instance.SignalSceneAdvance += HandleSceneAdvance;
 	}
 	
-	public void GoToScreen (BScreenType screenType)
+	public void GoToPage (BPageType pageType)
 	{
-		if(_currentScreenType == screenType) return; //we're already on the same screen, so don't bother
+		if(_currentPageType == pageType) return; //we're already on the same page, so don't bother doing anything
 		
-		BScreen screenToCreate = null;
+		BPage pageToCreate = null;
 		
-		if(screenType == BScreenType.TitleScreen)
+		if(pageType == BPageType.TitlePage)
 		{
-			screenToCreate = new BTitleScreen();
+			pageToCreate = new BTitlePage();
 		}
-		else if (screenType == BScreenType.InGameScreen)
+		else if (pageType == BPageType.InGamePage)
 		{
-			screenToCreate = new BInGameScreen();
+			pageToCreate = new BInGamePage();
 		}  
-		else if (screenType == BScreenType.ScoreScreen)
+		else if (pageType == BPageType.ScorePage)
 		{
-			screenToCreate = new BScoreScreen();
+			pageToCreate = new BScorePage();
 		}
 		
-		if(screenToCreate != null) //destroy the old screen and create a new one
+		if(pageToCreate != null) //destroy the old page and create a new one
 		{
-			_currentScreenType = screenType;	
+			_currentPageType = pageType;	
 			
-			if(_currentScreen != null)
+			if(_currentPage != null)
 			{
-				_currentScreen.Destroy();
-				_stage.RemoveChild(_currentScreen);
+				_currentPage.Destroy();
+				_stage.RemoveChild(_currentPage);
 			}
 			 
-			_currentScreen = screenToCreate;
-			_stage.AddChildAtIndex(_currentScreen,0);
-			_currentScreen.Start();
+			_currentPage = pageToCreate;
+			_stage.AddChildAtIndex(_currentPage,0);
+			_currentPage.Start();
 		}
 		
 	}
 	
-	public void Update()
+	public void HandleSceneAdvance(object sender, EventArgs e)
 	{
-		if(_currentScreen != null) _currentScreen.Advance();	
+		if(_currentPage != null) _currentPage.Advance();	
 	}
 }
 
