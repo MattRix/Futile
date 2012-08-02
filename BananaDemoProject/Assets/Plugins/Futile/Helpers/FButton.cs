@@ -12,12 +12,17 @@ public class FButton : FContainer, FSingleTouchable
 
 	public event EventHandler SignalPress;
 	public event EventHandler SignalRelease;
-	
+
+	private float _anchorX = 0.5f;
+	private float _anchorY = 0.5f;
+
 	public FButton (string upImage, string downImage, string sound)
 	{
 		_normalElement = FEngine.atlasManager.GetElementWithName(upImage);
 		_pressedElement = FEngine.atlasManager.GetElementWithName(downImage);
 		_bg = new FSprite(_normalElement.name);
+		_bg.anchorX = _anchorX;
+		_bg.anchorY = _anchorY;
 		AddChild(_bg);
 
 		_sound = sound;
@@ -25,6 +30,30 @@ public class FButton : FContainer, FSingleTouchable
 	// Simpler constructors
 	public FButton (string upImage, string downImage) : this(upImage, downImage, null) {}
 	public FButton (string upImage) : this(upImage, upImage, null) {}
+
+	public float anchorX
+	{
+		set
+		{
+			_anchorX = value;
+			_bg.anchorX = _anchorX;
+			if (_label != null)
+				_label.x = -_anchorX*_bg.width+_bg.width/2;
+		}
+		get {return _anchorX;}
+	}
+
+	public float anchorY
+	{
+		set
+		{
+			_anchorY = value;
+			_bg.anchorY = _anchorY;
+			if (_label != null)
+				_label.y = -_anchorY*_bg.height+_bg.height/2;
+		}
+		get {return _anchorY;}
+	}
 
 	public void AddLabel (string fontName, string text, Color color)
 	{
@@ -36,8 +65,10 @@ public class FButton : FContainer, FSingleTouchable
 		_label = new FLabel(fontName, text);
 		AddChild(_label);
 		_label.color = color;
-		_label.anchorY = 0.0f;
-		_label.y = 0;
+		_label.anchorX = _label.anchorY = 0.5f;
+		_label.x = -_anchorX*_bg.width+_bg.width/2;
+		_label.y = -_anchorY*_bg.height+_bg.height/2;
+		//Debug.Log("Label height:"+_label.
 	}
 
 	public FLabel label
