@@ -21,7 +21,7 @@ public class TestFont : MonoBehaviour
 		
 		FEngine.instance.Init (10,10);
 		
-		FEngine.atlasManager.LoadAtlas("Fonts/Quartermain", true);
+		FEngine.atlasManager.LoadAtlas("Fonts/Quartermain");
 		FEngine.atlasManager.LoadFont("Quartermain", "Fonts/Quartermain", "Fonts/Quartermain_Config", 1.0f, 1.0f);
 		
 		_stage = FEngine.stage;
