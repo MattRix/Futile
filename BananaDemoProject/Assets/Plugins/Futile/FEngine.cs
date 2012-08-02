@@ -95,7 +95,7 @@ public class FEngine : MonoBehaviour
 		
 		_camera = _cameraHolder.camera;
 		_camera.name = "FCamera";
-		_camera.clearFlags = CameraClearFlags.Depth; //TODO: check if this is faster or not?
+		//_camera.clearFlags = CameraClearFlags.Depth; //TODO: check if this is faster or not?
 		_camera.nearClipPlane = -50.3f;
 		_camera.farClipPlane = 50.0f;
 		_camera.depth = drawDepth;
