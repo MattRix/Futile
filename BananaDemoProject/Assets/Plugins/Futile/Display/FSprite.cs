@@ -11,9 +11,6 @@ public class FSprite : FQuadNode
 	protected float _anchorX = 0.5f;
 	protected float _anchorY = 0.5f;
 	
-	protected float _contentWidth;
-	protected float _contentHeight;
-	
 	protected Rect _localRect;
 
 	protected bool _isMeshDirty = false;
@@ -97,9 +94,6 @@ public class FSprite : FQuadNode
 		_localVertices[2].Set(left + sourceWidth,bottom);
 		_localVertices[3].Set(left,bottom);
 		
-		_contentWidth = sourceWidth;
-		_contentHeight = sourceHeight;
-		
 		_isMeshDirty = true;
 		
 		//RXUtils.LogVectors(_localVertices[0],_localVertices[1],_localVertices[2],_localVertices[3]);
@@ -156,14 +150,14 @@ public class FSprite : FQuadNode
 	
 	virtual public float width
 	{
-		get { return _scaleX * _contentWidth; }
-		set { _scaleX = value/_contentWidth; _isMatrixDirty = true; } 
+		get { return _scaleX * _localRect.width; }
+		set { _scaleX = value/_localRect.width; _isMatrixDirty = true; } 
 	}
 	
 	virtual public float height
 	{
-		get { return _scaleY * _contentHeight; }
-		set { _scaleY = value/_contentHeight; _isMatrixDirty = true; } 
+		get { return _scaleY * _localRect.height; }
+		set { _scaleY = value/_localRect.height; _isMatrixDirty = true; } 
 	}
 	
 	virtual public float anchorX 
@@ -176,16 +170,6 @@ public class FSprite : FQuadNode
 	{
 		get { return _anchorY;}
 		set { _anchorY = value; _areLocalVerticesDirty = true; }
-	}
-	
-	virtual public float contentWidth
-	{
-		get {return _contentWidth;}	
-	}
-	
-	virtual public float contentHeight
-	{
-		get {return _contentHeight;}	
 	}
 }
 

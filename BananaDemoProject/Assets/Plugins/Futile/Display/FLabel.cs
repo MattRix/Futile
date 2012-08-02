@@ -14,9 +14,6 @@ public class FLabel : FQuadNode
 	protected Color _color = Color.white;
 	protected Color _alphaColor = Color.white;
 	
-	protected float _contentWidth;
-	protected float _contentHeight;
-	
 	protected FLetterQuadLine[] _letterQuadLines;
 	
 	protected bool _isMeshDirty = false;
@@ -29,6 +26,8 @@ public class FLabel : FQuadNode
 	
 	protected bool _doesTextNeedUpdate = false;
 	protected bool _doesLocalPositionNeedUpdate = false;
+	
+	protected Rect _localRect;
 	
 	public FLabel (string fontName, string text) : base()
 	{
@@ -52,7 +51,7 @@ public class FLabel : FQuadNode
 		_letterQuadLines = _font.GetQuadInfoForText(_text,_lineHeightDelta,_letterSpacingDelta);
 		
 		_numberOfQuadsNeeded = 0;
-
+		
 		foreach(FLetterQuadLine line in _letterQuadLines)
 		{
 			_numberOfQuadsNeeded += line.quads.Length;
@@ -76,7 +75,10 @@ public class FLabel : FQuadNode
 		_doesLocalPositionNeedUpdate = false;
 		
 		float minY = 100000000;
-		float maxY = -10000000;
+		float maxY = -100000000;
+		
+		float minX = 100000000;
+		float maxX = -100000000;
 		
 		foreach(FLetterQuadLine line in _letterQuadLines)
 		{
@@ -90,11 +92,19 @@ public class FLabel : FQuadNode
 		{
 			float offsetX = -line.bounds.width*_anchorX;
 			
+			minX = Math.Min (offsetX,minX);
+			maxX = Math.Max (offsetX+line.bounds.width,maxX);
+			
 			foreach(FLetterQuad quad in line.quads)
 			{
 				quad.CalculateVectors(offsetX, offsetY);
 			}
 		}
+		
+		_localRect.x = minX;
+		_localRect.y = minY;
+		_localRect.width = maxX-minX;
+		_localRect.height = maxY-minY;
 		
 		_isMeshDirty = true; 
 	}
@@ -257,6 +267,11 @@ public class FLabel : FQuadNode
 				_isAlphaDirty = true;
 			}
 		}
+	}
+	
+	virtual public Rect localRect
+	{
+		get {return _localRect;}	
 	}
 	
 	
