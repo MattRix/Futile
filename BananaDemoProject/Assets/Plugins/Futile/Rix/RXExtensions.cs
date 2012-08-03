@@ -28,6 +28,15 @@ public static class RectExtensions
 	{
 		return new Rect(rect.x - expansionAmount, rect.y - expansionAmount, rect.width + expansionAmount*2, rect.height + expansionAmount*2);
 	}
+	
+	public static Rect Multiply(Rect rect, float multiplier)
+	{
+		rect.x *= multiplier;
+		rect.y *= multiplier;
+		rect.width *= multiplier;
+		rect.height *= multiplier;
+		return rect;
+	}
 }
 
 public static class GoKitExtensions

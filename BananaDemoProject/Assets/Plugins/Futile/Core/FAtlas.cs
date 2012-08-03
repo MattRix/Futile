@@ -21,8 +21,8 @@ public class FAtlasElement
 	
 	public Rect sourceRect;
 	public Vector2 sourceSize;
-	public bool trimmed;
-	public bool rotated;
+	public bool isTrimmed;
+	public bool isRotated;
 }
 
 public class FAtlas
@@ -110,45 +110,75 @@ public class FAtlas
 			
 			IDictionary itemDict = (IDictionary)item.Value;
 			
+			element.isTrimmed = (bool)itemDict["trimmed"];
+			element.isRotated = (bool)itemDict["rotated"];			
+			
 			IDictionary frame = (IDictionary)itemDict["frame"];
+			
 			float rectX = float.Parse(frame["x"].ToString());
 			float rectY = float.Parse(frame["y"].ToString());
 			float rectW = float.Parse(frame["w"].ToString());
 			float rectH = float.Parse(frame["h"].ToString()); 
 			
+			Rect uvRect; 
+				
+			if(element.isRotated)
+			{
+				uvRect = new Rect
+				(
+					rectX/_textureSize.x + uvOffsetX,
+					((_textureSize.y - rectY - rectW)/_textureSize.y)+uvOffsetY,
+					rectH/_textureSize.x,
+					rectW/_textureSize.y
+				);
+				
+				element.uvRect = uvRect;
 			
-			Rect uvRect = new Rect
-			(
-				rectX/_textureSize.x + uvOffsetX,
-				((_textureSize.y - rectY - rectH)/_textureSize.y)+uvOffsetY,
-				rectW/_textureSize.x,
-				rectH/_textureSize.y
-			);
+				element.uvBottomLeft.Set(uvRect.xMin,uvRect.yMax);
+				element.uvTopLeft.Set(uvRect.xMax,uvRect.yMax);
+				element.uvTopRight.Set(uvRect.xMax,uvRect.yMin);
+				element.uvBottomRight.Set(uvRect.xMin,uvRect.yMin);
+			}
+			else 
+			{
+				uvRect = new Rect
+				(
+					rectX/_textureSize.x + uvOffsetX,
+					((_textureSize.y - rectY - rectH)/_textureSize.y)+uvOffsetY,
+					rectW/_textureSize.x,
+					rectH/_textureSize.y
+				);
+				
+				element.uvRect = uvRect;
 			
-			element.uvRect = uvRect;
+				element.uvTopLeft.Set(uvRect.xMin,uvRect.yMax);
+				element.uvTopRight.Set(uvRect.xMax,uvRect.yMax);
+				element.uvBottomRight.Set(uvRect.xMax,uvRect.yMin);
+				element.uvBottomLeft.Set(uvRect.xMin,uvRect.yMin);
+			}
 			
-			element.uvTopLeft.Set(uvRect.xMin,uvRect.yMax);
-			element.uvTopRight.Set(uvRect.xMax,uvRect.yMax);
-			element.uvBottomRight.Set(uvRect.xMax,uvRect.yMin);
-			element.uvBottomLeft.Set(uvRect.xMin,uvRect.yMin);
+			
+
 			
 			//Debug.Log (element.name + " UVRECT ymax " + element.uvRect.yMax + " uvrect ymin " + element.uvRect.yMin);
 					
+
+			
 			IDictionary sourceRect = (IDictionary)itemDict["spriteSourceSize"];
+
 			rectX = float.Parse(sourceRect["x"].ToString()) * scaleInverse;
 			rectY = float.Parse(sourceRect["y"].ToString()) * scaleInverse;
 			rectW = float.Parse(sourceRect["w"].ToString()) * scaleInverse;
 			rectH = float.Parse(sourceRect["h"].ToString()) * scaleInverse;
 			
 			element.sourceRect = new Rect(rectX,rectY,rectW,rectH);
+
 			
 			IDictionary sourceSize = (IDictionary)itemDict["sourceSize"];
 			element.sourceSize.x = float.Parse(sourceSize["w"].ToString()) * scaleInverse;	
 			element.sourceSize.y = float.Parse(sourceSize["h"].ToString()) * scaleInverse;	
 			
-			 
-			element.trimmed = (bool)itemDict["trimmed"];
-			element.rotated = (bool)itemDict["rotated"];
+			
 			
 			_elements.Add (element);
 			_elementsByName.Add(element.name, element);
@@ -193,8 +223,8 @@ public class FAtlas
 		element.sourceRect = new Rect(0,0,_textureSize.x*scaleInverse,_textureSize.y*scaleInverse);
 		
 		element.sourceSize = new Vector2(_textureSize.x*scaleInverse,_textureSize.y*scaleInverse);
-		element.trimmed = false;
-		element.rotated = false;
+		element.isTrimmed = false;
+		element.isRotated = false;
 		
 		_elements.Add (element);
 		_elementsByName.Add (element.name, element);
