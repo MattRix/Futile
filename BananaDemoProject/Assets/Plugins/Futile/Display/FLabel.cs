@@ -91,7 +91,8 @@ public class FLabel : FQuadNode
 			maxY = Math.Max (line.bounds.yMax,maxY);
 		}
 		
-		float offsetY = (maxY - minY)*(1.0f-_anchorY);
+		//float offsetY = (maxY - minY)*(1.0f-_anchorY);
+		float offsetY = -(minY + ((maxY-minY)*_anchorY));
 		
 		foreach(FLetterQuadLine line in _letterQuadLines)
 		{
@@ -107,7 +108,7 @@ public class FLabel : FQuadNode
 		}
 		
 		_boundsRect.x = minX;
-		_boundsRect.y = minY;
+		_boundsRect.y = minY+offsetY;
 		_boundsRect.width = maxX-minX;
 		_boundsRect.height = maxY-minY;
 		
