@@ -12,6 +12,7 @@ public class FSprite : FQuadNode
 	protected float _anchorY = 0.5f;
 	
 	protected Rect _localRect;
+	protected Rect _boundsRect;
 
 	protected bool _isMeshDirty = false;
 	protected bool _areLocalVerticesDirty = false;
@@ -77,12 +78,15 @@ public class FSprite : FQuadNode
 	{
 		_areLocalVerticesDirty = false;
 		
+		_boundsRect.width = _element.sourceSize.x;
+		_boundsRect.height = _element.sourceSize.y;
+		_boundsRect.x = -_anchorX*_boundsRect.width;
+		_boundsRect.y = -_anchorY*_boundsRect.height;
+		
 		float sourceWidth = _element.sourceRect.width;
 		float sourceHeight = _element.sourceRect.height;
-		float left = -_anchorX*sourceWidth;
-		float bottom = -_anchorY*sourceHeight;
-		
-		//Debug.Log ("sourceSize: " + sourceWidth + "," + sourceHeight + "   left: " + left + "   bottom: " + bottom);
+		float left = _boundsRect.x + _element.sourceRect.x;
+		float bottom = _boundsRect.y + (_boundsRect.height - _element.sourceRect.y - _element.sourceRect.height);
 		
 		_localRect.x = left;
 		_localRect.y = bottom;
@@ -94,10 +98,12 @@ public class FSprite : FQuadNode
 		_localVertices[2].Set(left + sourceWidth,bottom);
 		_localVertices[3].Set(left,bottom);
 		
+		//Debug.Log ("sourceSize: " + sourceWidth + "," + sourceHeight + "   left: " + left + "   bottom: " + bottom);
+		
 		_isMeshDirty = true;
 		
 		//RXUtils.LogVectors(_localVertices[0],_localVertices[1],_localVertices[2],_localVertices[3]);
-	}
+	} 
 	
 	override public void PopulateRenderLayer()
 	{
@@ -130,9 +136,9 @@ public class FSprite : FQuadNode
 		}
 	}
 	
-	virtual public Rect localRect
+	virtual public Rect boundsRect
 	{
-		get {return _localRect;}	
+		get {return _boundsRect;}	
 	}
 
 	virtual public Color color 
@@ -150,14 +156,14 @@ public class FSprite : FQuadNode
 	
 	virtual public float width
 	{
-		get { return _scaleX * _localRect.width; }
-		set { _scaleX = value/_localRect.width; _isMatrixDirty = true; } 
+		get { return _scaleX * _boundsRect.width; }
+		set { _scaleX = value/_boundsRect.width; _isMatrixDirty = true; } 
 	}
 	
 	virtual public float height
 	{
-		get { return _scaleY * _localRect.height; }
-		set { _scaleY = value/_localRect.height; _isMatrixDirty = true; } 
+		get { return _scaleY * _boundsRect.height; }
+		set { _scaleY = value/_boundsRect.height; _isMatrixDirty = true; } 
 	}
 	
 	virtual public float anchorX 

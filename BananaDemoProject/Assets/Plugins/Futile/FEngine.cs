@@ -121,7 +121,7 @@ public class FEngine : MonoBehaviour
 		
 		Debug.Log ("FEngine: Resource scale is " + resourceScale);
 		
-		Debug.Log ("FEngine: Resource suffix is is " + _resLevel.resourceSuffix);
+		Debug.Log ("FEngine: Resource suffix is " + _resLevel.resourceSuffix);
 		
 		Debug.Log ("FEngine: Screen size in pixels is (" + Screen.width +"px," + Screen.height+"px)");
 		

@@ -70,11 +70,11 @@ public class FQuadNode : FNode
 		{
 			if(_element != value)
 			{
-				bool isAtlasSame = (_element.atlasIndex == value.atlasIndex);
+				bool isAtlasDifferent = (_element.atlasIndex != value.atlasIndex);
 	
 				_element = value;	
 				
-				if(!isAtlasSame)
+				if(isAtlasDifferent)
 				{
 					if(_isOnStage) _stage.HandleQuadsChanged();	
 				}

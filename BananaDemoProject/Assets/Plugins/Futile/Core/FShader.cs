@@ -16,7 +16,7 @@ public class FShader
 	{
 		this.index = _staticIndex++;
 		this.name = name;
-		this.shader = shader;
+		this.shader = shader; 
 	}
 	
 	public static void Init() //called by the DRenderer

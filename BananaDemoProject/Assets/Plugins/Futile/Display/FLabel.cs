@@ -27,15 +27,20 @@ public class FLabel : FQuadNode
 	protected bool _doesTextNeedUpdate = false;
 	protected bool _doesLocalPositionNeedUpdate = false;
 	
-	protected Rect _localRect;
+	protected Rect _boundsRect;
 	
-	public FLabel (string fontName, string text) : base()
+	protected FTextParams _textParams;
+	
+	public FLabel (string fontName, string text) : this(fontName, text, new FTextParams())
+	{
+	}
+	
+	public FLabel (string fontName, string text, FTextParams textParams) : base()
 	{
 		_fontName = fontName;
 		_text = text;
 		_font = FEngine.atlasManager.GetFontWithName(_fontName);
-		_lineHeightDelta = _font.defaultLineHeight;
-		_letterSpacingDelta = _font.defaultLetterSpacing;
+		_textParams = textParams;
 		 
 		_doesTextNeedUpdate = true;	
 		
@@ -48,7 +53,7 @@ public class FLabel : FQuadNode
 		
 		int oldQuadsNeeded = _numberOfQuadsNeeded;
 		
-		_letterQuadLines = _font.GetQuadInfoForText(_text,_lineHeightDelta,_letterSpacingDelta);
+		_letterQuadLines = _font.GetQuadInfoForText(_text,_textParams);
 		
 		_numberOfQuadsNeeded = 0;
 		
@@ -101,10 +106,10 @@ public class FLabel : FQuadNode
 			}
 		}
 		
-		_localRect.x = minX;
-		_localRect.y = minY;
-		_localRect.width = maxX-minX;
-		_localRect.height = maxY-minY;
+		_boundsRect.x = minX;
+		_boundsRect.y = minY;
+		_boundsRect.width = maxX-minX;
+		_boundsRect.height = maxY-minY;
 		
 		_isMeshDirty = true; 
 	}
@@ -269,9 +274,9 @@ public class FLabel : FQuadNode
 		}
 	}
 	
-	virtual public Rect localRect
+	virtual public Rect boundsRect
 	{
-		get {return _localRect;}	
+		get {return _boundsRect;}	
 	}
 	
 	

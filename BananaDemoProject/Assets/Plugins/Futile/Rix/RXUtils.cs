@@ -14,6 +14,11 @@ public class RXUtils
 		return new Rect(rect.x - paddingX, rect.y - paddingY, rect.width + paddingX*2, rect.height+paddingY*2);	
 	}
 	
+	public static void LogRect(string name, Rect rect)
+	{
+		Debug.Log (name+": ("+rect.x+","+rect.y+","+rect.width+","+rect.height+")");	
+	}
+	
 	public static void LogVectors(string name, params Vector2[] args)
 	{
 		string result = name + ": " + args.Length + " Vector2 "+ args[0].ToString()+"";

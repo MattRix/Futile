@@ -23,7 +23,7 @@ public class FMatrix
 	//x = x*a + y*c + tx
 	//y = x*b + y*d + ty
 	
-	public FMatrix ()
+	public FMatrix () 
 	{
 
 	}

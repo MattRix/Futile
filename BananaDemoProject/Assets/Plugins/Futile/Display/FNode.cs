@@ -26,7 +26,7 @@ public class FNode
 	
 	protected bool _isOnStage = false;
 	
-	protected int _depth;	
+	protected int _depth;
 	
 	protected FStage _stage;
 	

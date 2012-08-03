@@ -56,6 +56,12 @@ public class FLetterQuad
 	}
 }
 
+public class FTextParams
+{
+	public float lineHeightOffset = 0;
+	public float kerningOffset = 0;
+}
+
 public class FLetterQuadLine
 {
 	public Rect bounds;
@@ -87,16 +93,14 @@ public class FFont
 	//private int _configHeight;
 	private float _configRatio;
 	
-	private float _defaultLineHeight;
-	private float _defaultLetterSpacing;
+	private FTextParams _fontTextParams;
 	
-	public FFont (string name, FAtlasElement element, string configPath, float defaultLineHeight, float defaultLetterSpacing)
+	public FFont (string name, FAtlasElement element, string configPath, FTextParams fontTextParams)
 	{
 		_name = name;
 		_element = element;
 		_configPath = configPath;
-		_defaultLineHeight = defaultLineHeight;
-		_defaultLetterSpacing = defaultLetterSpacing;
+		_fontTextParams = fontTextParams;
 					
 		LoadAndParseConfigFile();
 	}
@@ -110,8 +114,28 @@ public class FFont
 			throw new Exception("Couldn't find font config file " + _configPath);	
 		}
 		
-		string[] separators = {"\r\n"};
+		string[] separators = new string[1]; 
+		
+		separators[0] = "\n"; //osx
 		string[] lines = asset.text.Split(separators,StringSplitOptions.RemoveEmptyEntries);
+		
+		if(lines.Length <= 1) //osx line endings didn't work, try windows
+		{
+			separators[0] = "\r\n";
+			lines = asset.text.Split(separators,StringSplitOptions.RemoveEmptyEntries);
+		}
+		
+		if(lines.Length <= 1) //those line endings didn't work, so we're on a magical OS
+		{
+			separators[0] = "\r";
+			lines = asset.text.Split(separators,StringSplitOptions.RemoveEmptyEntries);
+		}
+		
+		if(lines.Length <= 1) //WHAT
+		{
+			throw new Exception("Your font file is messed up");
+		}
+		
 		int wordCount = 0;
 		int c = 0;
 		int k = 0;
@@ -139,7 +163,7 @@ public class FFont
 		float resourceScale = FEngine.resourceScale * FEngine.contentScaleInverse;
 		
 		bool wasKerningFound = false;
-	
+		
 		foreach(string line in lines)
 		{
 			//Debug.Log ("LINE! " + line);
@@ -156,14 +180,14 @@ public class FFont
 			}
 			*/
 			
-			 if(words[0] == "common") //common lineHeight=168 base=26 scaleW=1024 scaleH=1024 pages=1 packed=0
+			if(words[0] == "common") //common lineHeight=168 base=26 scaleW=1024 scaleH=1024 pages=1 packed=0
 			{
 				//these are the height and width of the original atlas built by Hiero
 				_configWidth = int.Parse(words[3].Split('=')[1]);
 				//_configHeight = int.Parse(words[4].Split('=')[1]);
 				
 				//this is the ratio of the config vs what we're actually working with
-				_configRatio = _element.sourceRect.width/_configWidth;
+				_configRatio = _element.sourceSize.x/_configWidth;
 				
 				_lineHeight = int.Parse(words[1].Split('=')[1]) * _configRatio;		
 			}
@@ -182,70 +206,67 @@ public class FFont
 				{
 					string[] parts = words[w].Split('=');	
 					string partName = parts[0];
-					if(partName != "letter")
+					
+					if(partName == "letter") continue; //we don't care about the letter
+						
+					int partValue = int.Parse(parts[1]);
+						
+					if(partName == "id")
 					{
-						int partValue = int.Parse(parts[1]);
-					
-						if(partName == "id")
-						{
-							charInfo.charID = partValue;
-						}
-						else if(partName == "x")
-						{
-							charInfo.x = partValue*_configRatio;
-						}
-						else if(partName == "y")
-						{
-							charInfo.y = partValue*_configRatio;
-						}
-						else if(partName == "width")
-						{
-							charInfo.width = partValue*_configRatio;
-						}
-						else if(partName == "height")
-						{
-							charInfo.height = partValue*_configRatio;
-						}
-						else if(partName == "xoffset")
-						{
-							charInfo.offsetX = partValue*_configRatio;
-						}
-						else if(partName == "yoffset")
-						{
-							charInfo.offsetY = partValue*_configRatio;
-						}
-						else if(partName == "xadvance")
-						{
-							charInfo.xadvance = partValue*_configRatio;
-						}
-						else if(partName == "page")
-						{
-							charInfo.page = partValue;
-						}
-						
-						Rect uvRect = new Rect 	
-						(
-							_element.uvRect.x + charInfo.x/textureSize.x*resourceScale,
-							(textureSize.y-charInfo.y-charInfo.height)/textureSize.y*resourceScale - (1.0f - _element.uvRect.yMax),
-							charInfo.width/textureSize.x*resourceScale,
-							charInfo.height/textureSize.y*resourceScale
-						);
-					
-						//commented out because we shouldn't need offsets because the original element will already have them!
-						//uvRect.x += uvOffsetX;
-						//uvRect.y += uvOffsetY;
-						
-						charInfo.uvRect = uvRect;
-						
-						charInfo.uvTopLeft.Set(uvRect.xMin,uvRect.yMax);
-						charInfo.uvTopRight.Set(uvRect.xMax,uvRect.yMax);
-						charInfo.uvBottomRight.Set(uvRect.xMax,uvRect.yMin);
-						charInfo.uvBottomLeft.Set(uvRect.xMin,uvRect.yMin);
+						charInfo.charID = partValue;
 					}
-					
-					
-					
+					else if(partName == "x")
+					{
+						charInfo.x = partValue*_configRatio - _element.sourceRect.x; //offset to account for the trimmed atlas
+					}
+					else if(partName == "y")
+					{
+						charInfo.y = partValue*_configRatio - _element.sourceRect.y; //offset to account for the trimmed atlas
+					}
+					else if(partName == "width")
+					{
+						charInfo.width = partValue*_configRatio;
+					}
+					else if(partName == "height")
+					{
+						charInfo.height = partValue*_configRatio;
+					}
+					else if(partName == "xoffset")
+					{
+						charInfo.offsetX = partValue*_configRatio;
+					}
+					else if(partName == "yoffset")
+					{
+						charInfo.offsetY = partValue*_configRatio;
+					}
+					else if(partName == "xadvance")
+					{
+						charInfo.xadvance = partValue*_configRatio;
+					}
+					else if(partName == "page")
+					{
+						charInfo.page = partValue;
+					}
 				}
+				
+				Rect uvRect = new Rect 	
+				(
+					_element.uvRect.x + charInfo.x/textureSize.x*resourceScale,
+					(textureSize.y-charInfo.y-charInfo.height)/textureSize.y*resourceScale - (1.0f - _element.uvRect.yMax),
+					charInfo.width/textureSize.x*resourceScale,
+					charInfo.height/textureSize.y*resourceScale
+				);
+			
+				//commented out because we shouldn't need offsets because the original element will already have them!
+				//uvRect.x += uvOffsetX;
+				//uvRect.y += uvOffsetY;
+				
+				charInfo.uvRect = uvRect;
+				
+				charInfo.uvTopLeft.Set(uvRect.xMin,uvRect.yMax);
+				charInfo.uvTopRight.Set(uvRect.xMax,uvRect.yMax);
+				charInfo.uvBottomRight.Set(uvRect.xMax,uvRect.yMin);
+				charInfo.uvBottomLeft.Set(uvRect.xMin,uvRect.yMin);
 				
 				_charInfosByID[charInfo.charID] = charInfo;
 				_charInfos[c] = charInfo;
@@ -296,9 +317,13 @@ public class FFont
 			_kerningInfos = new FKerningInfo[0];	
 		}
 		
+		//make sure the space character doesn't have offsetY and offsetX
+		_charInfosByID[32].offsetX = 0;
+		_charInfosByID[32].offsetY = 0;
+		
 	}
 	
-	public FLetterQuadLine[] GetQuadInfoForText(string text, float lineHeightDelta, float letterSpacingDelta)
+	public FLetterQuadLine[] GetQuadInfoForText(string text, FTextParams textParams)
 	{
 		int lineCount = 0;
 		int letterCount = 0;
@@ -367,7 +392,7 @@ public class FFont
 				maxY = -100000;
 				
 				nextX = 0;
-				nextY -= _lineHeight * lineHeightDelta;
+				nextY -= _lineHeight + textParams.lineHeightOffset + _fontTextParams.lineHeightOffset;
 				
 				lineCount++;
 				letterCount = 0;
@@ -384,25 +409,28 @@ public class FFont
 					}
 				}
 				
-				nextX += foundKerning.amount * letterSpacingDelta; 
+				nextX += foundKerning.amount + textParams.kerningOffset + _fontTextParams.kerningOffset; 
 				
 				//Debug.Log ("found kerning " + foundKerning.amount + " between " + (char)foundKerning.first + " and " + (char) foundKerning.second);	
 				//Debug.Log ("found kerning " + foundKerning.amount + " between " + foundKerning.first + " and " + foundKerning.second);	
-
+				
+				//TODO: Reuse letterquads with pooling!
 				FLetterQuad letterQuad = new FLetterQuad();
 				
 				charInfo = _charInfosByID[letter];
 				letterQuad.charInfo = charInfo;
-				letterQuad.rect = new Rect(nextX + charInfo.offsetX, nextY - charInfo.offsetY - charInfo.height, charInfo.width, charInfo.height);
+				
+				Rect quadRect = new Rect(nextX + charInfo.offsetX, nextY - charInfo.offsetY - charInfo.height, charInfo.width, charInfo.height);
+				letterQuad.rect = quadRect;
 				
 				lines[lineCount].quads[letterCount] = letterQuad;	
 				
-				minX = Math.Min (minX, letterQuad.rect.xMin);
-				maxX = Math.Max (maxX, letterQuad.rect.xMax);
-				minY = Math.Min (minY, letterQuad.rect.yMin);
-				maxY = Math.Max (maxY, letterQuad.rect.yMax);
+				minX = Math.Min (minX, quadRect.xMin);
+				maxX = Math.Max (maxX, quadRect.xMax);
+				minY = Math.Min (minY, quadRect.yMin);
+				maxY = Math.Max (maxY, quadRect.yMax);
 				
-				nextX += charInfo.xadvance * letterSpacingDelta;
+				nextX += charInfo.xadvance;
 				
 				letterCount++;
 			}
@@ -411,7 +439,7 @@ public class FFont
 		}
 		
 		lines[lineCount].bounds = new Rect(minX,minY,maxX-minX,maxY-minY);
-	
+		
 		return lines;
 	}
 	
@@ -424,18 +452,9 @@ public class FFont
 	{
 		get { return _element;}	
 	}
-	
-	public float defaultLineHeight
-	{
-		get {return _defaultLineHeight;}	
-	}
-	
-	public float defaultLetterSpacing
-	{
-		get {return _defaultLetterSpacing;}	
-	}
 
 //  Not gonna deal with this stuff unless it's actually needed
+//  In theory it handles nice quotes or something
 //
 //	private int forceLowAsciiChar(int charID)
 //	{

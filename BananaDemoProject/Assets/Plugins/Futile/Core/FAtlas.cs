@@ -20,6 +20,7 @@ public class FAtlasElement
 	public Vector2 uvBottomLeft;
 	
 	public Rect sourceRect;
+	public Vector2 sourceSize;
 	public bool trimmed;
 	public bool rotated;
 }
@@ -140,6 +141,11 @@ public class FAtlas
 			rectH = float.Parse(sourceRect["h"].ToString()) * scaleInverse;
 			
 			element.sourceRect = new Rect(rectX,rectY,rectW,rectH);
+			
+			IDictionary sourceSize = (IDictionary)itemDict["sourceSize"];
+			element.sourceSize.x = float.Parse(sourceSize["w"].ToString()) * scaleInverse;	
+			element.sourceSize.y = float.Parse(sourceSize["h"].ToString()) * scaleInverse;	
+			
 			 
 			element.trimmed = (bool)itemDict["trimmed"];
 			element.rotated = (bool)itemDict["rotated"];
@@ -186,6 +192,7 @@ public class FAtlas
 		
 		element.sourceRect = new Rect(0,0,_textureSize.x*scaleInverse,_textureSize.y*scaleInverse);
 		
+		element.sourceSize = new Vector2(_textureSize.x*scaleInverse,_textureSize.y*scaleInverse);
 		element.trimmed = false;
 		element.rotated = false;
 		
