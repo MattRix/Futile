@@ -160,9 +160,6 @@ public class FLabel : FQuadNode
 		{
 			_isMeshDirty = false;
 			
-			//Debug.Log ("Updating render mesh!");
-			//float drawZ = _depth * -0.1f; //just a little offset so its drawn further forward
-			
 			Vector3[] vertices = _renderLayer.vertices;
 			Vector2[] uvs = _renderLayer.uvs;
 			Color[] colors = _renderLayer.colors;

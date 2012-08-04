@@ -157,13 +157,6 @@ public class FAtlas
 				element.uvBottomLeft.Set(uvRect.xMin,uvRect.yMin);
 			}
 			
-			
-
-			
-			//Debug.Log (element.name + " UVRECT ymax " + element.uvRect.yMax + " uvrect ymin " + element.uvRect.yMin);
-					
-
-			
 			IDictionary sourceRect = (IDictionary)itemDict["spriteSourceSize"];
 
 			rectX = float.Parse(sourceRect["x"].ToString()) * scaleInverse;

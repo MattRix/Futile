@@ -98,11 +98,7 @@ public class FSprite : FQuadNode
 		_localVertices[2].Set(left + sourceWidth,bottom);
 		_localVertices[3].Set(left,bottom);
 		
-		//Debug.Log ("sourceSize: " + sourceWidth + "," + sourceHeight + "   left: " + left + "   bottom: " + bottom);
-		
 		_isMeshDirty = true;
-		
-		//RXUtils.LogVectors(_localVertices[0],_localVertices[1],_localVertices[2],_localVertices[3]);
 	} 
 	
 	override public void PopulateRenderLayer()

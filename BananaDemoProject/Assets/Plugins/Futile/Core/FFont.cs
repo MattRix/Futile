@@ -142,31 +142,14 @@ public class FFont
 		
 		_charInfosByID = new FCharInfo[127];
 		
-		Vector2 textureSize = _element.atlas.textureSize;
-
-// 		commented out because we shouldn't need offsets because the source element will already have them
-//
-//		float uvOffsetX;
-//		float uvOffsetY;
-//		
-//		if(FEngine.isOpenGL)
-//		{
-//			uvOffsetX = 0.0f/textureSize.x;
-//			uvOffsetY = 0.0f/textureSize.y;
-//		}
-//		else
-//		{
-//			uvOffsetX = 0.5f/textureSize.x;
-//			uvOffsetY = -0.5f/textureSize.y; 
-//		}
-		
 		float resourceScale = FEngine.resourceScale * FEngine.contentScaleInverse;
+		
+		Vector2 textureSize = _element.atlas.textureSize;
 		
 		bool wasKerningFound = false;
 		
 		foreach(string line in lines)
 		{
-			//Debug.Log ("LINE! " + line);
 			string [] words = line.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 			
 			/* we don't care about these, or else they could be in the elseif
@@ -248,25 +231,41 @@ public class FFont
 						charInfo.page = partValue;
 					}
 				}
+
+				if(element.isRotated)
+				{
+					Rect uvRect = new Rect 	
+					(
+						_element.uvRect.x + _element.uvRect.width - ((charInfo.y+charInfo.height)/textureSize.x*resourceScale),
+						_element.uvRect.y + _element.uvRect.height - ((charInfo.x+charInfo.width)/textureSize.y*resourceScale),
+						charInfo.height/textureSize.x*resourceScale,
+						charInfo.width/textureSize.y*resourceScale
+					);
+					
+					charInfo.uvRect = uvRect;
+					
+					charInfo.uvBottomLeft.Set(uvRect.xMin,uvRect.yMax);
+					charInfo.uvTopLeft.Set(uvRect.xMax,uvRect.yMax);
+					charInfo.uvTopRight.Set(uvRect.xMax,uvRect.yMin);
+					charInfo.uvBottomRight.Set(uvRect.xMin,uvRect.yMin);
+				}
+				else
+				{
+					Rect uvRect = new Rect 	
+					(
+						_element.uvRect.x + charInfo.x/textureSize.x*resourceScale,
+						(textureSize.y-charInfo.y-charInfo.height)/textureSize.y*resourceScale - (1.0f - _element.uvRect.yMax),
+						charInfo.width/textureSize.x*resourceScale,
+						charInfo.height/textureSize.y*resourceScale
+					);
 				
-				Rect uvRect = new Rect 	
-				(
-					_element.uvRect.x + charInfo.x/textureSize.x*resourceScale,
-					(textureSize.y-charInfo.y-charInfo.height)/textureSize.y*resourceScale - (1.0f - _element.uvRect.yMax),
-					charInfo.width/textureSize.x*resourceScale,
-					charInfo.height/textureSize.y*resourceScale
-				);
-			
-				//commented out because we shouldn't need offsets because the original element will already have them!
-				//uvRect.x += uvOffsetX;
-				//uvRect.y += uvOffsetY;
-				
-				charInfo.uvRect = uvRect;
-				
-				charInfo.uvTopLeft.Set(uvRect.xMin,uvRect.yMax);
-				charInfo.uvTopRight.Set(uvRect.xMax,uvRect.yMax);
-				charInfo.uvBottomRight.Set(uvRect.xMax,uvRect.yMin);
-				charInfo.uvBottomLeft.Set(uvRect.xMin,uvRect.yMin);
+					charInfo.uvRect = uvRect;
+					
+					charInfo.uvTopLeft.Set(uvRect.xMin,uvRect.yMax);
+					charInfo.uvTopRight.Set(uvRect.xMax,uvRect.yMax);
+					charInfo.uvBottomRight.Set(uvRect.xMax,uvRect.yMin);
+					charInfo.uvBottomLeft.Set(uvRect.xMin,uvRect.yMin);
+				}
 				
 				_charInfosByID[charInfo.charID] = charInfo;
 				_charInfos[c] = charInfo;
@@ -378,6 +377,8 @@ public class FFont
 		float minY = 100000;
 		float maxY = -100000;
 		
+		float contentScale = FEngine.contentScale;
+		
 		for(int c = 0; c<letters.Length; c++)
 		{
 			char letter = letters[c];
@@ -409,10 +410,7 @@ public class FFont
 					}
 				}
 				
-				nextX += foundKerning.amount + textParams.kerningOffset + _fontTextParams.kerningOffset; 
-				
-				//Debug.Log ("found kerning " + foundKerning.amount + " between " + (char)foundKerning.first + " and " + (char) foundKerning.second);	
-				//Debug.Log ("found kerning " + foundKerning.amount + " between " + foundKerning.first + " and " + foundKerning.second);	
+				nextX += (foundKerning.amount + textParams.kerningOffset + _fontTextParams.kerningOffset) * contentScale; 
 				
 				//TODO: Reuse letterquads with pooling!
 				FLetterQuad letterQuad = new FLetterQuad();
