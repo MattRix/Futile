@@ -32,6 +32,8 @@ public class FEngine : MonoBehaviour
 	static public float halfWidth; //in points
 	static public float halfHeight; //in points
 	
+	static public string resourceSuffix; //set based on the resLevel
+	
 	public event EventHandler SignalSceneAdvance;
 	
 	public int drawDepth = 100;
@@ -88,9 +90,11 @@ public class FEngine : MonoBehaviour
 			_resLevel = _engineParams.resLevels.GetLastObject();	
 			if(_resLevel == null)
 			{
-				throw new Exception("You must specify at least one FResolutionLevel!");	
+				throw new Exception("You must add at least one FResolutionLevel!");	
 			}
 		}
+		
+		FEngine.resourceSuffix = _resLevel.resourceSuffix;
 		
 		//this is what helps us figure out the display scale if we're not at a specific resolution level
 		//it's relative to the next highest resolution level
@@ -156,7 +160,7 @@ public class FEngine : MonoBehaviour
 		
 		touchManager = new FTouchManager();
 		
-		atlasManager = new FAtlasManager(_resLevel.resourceSuffix);
+		atlasManager = new FAtlasManager();
 		
 		stage = new FStage();
 	}
