@@ -42,9 +42,9 @@ public class FLabel : FQuadNode
 		_font = FEngine.atlasManager.GetFontWithName(_fontName);
 		_textParams = textParams;
 		 
-		_doesTextNeedUpdate = true;	
-		
 		Init(_font.element, 0);
+		
+		CreateTextQuads();
 	}
 	
 	protected void CreateTextQuads()
