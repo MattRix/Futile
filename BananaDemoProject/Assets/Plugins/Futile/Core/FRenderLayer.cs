@@ -105,7 +105,7 @@ public class FRenderLayer
 	{
 		_lowestZeroIndex = Math.Max (_nextAvailableQuadIndex, _lowestZeroIndex);
 		
-		for(int z = _nextAvailableQuadIndex; z<_lowestZeroIndex; z++)
+		for(int z = _nextAvailableQuadIndex; z<_lowestZeroIndex; ++z)
 		{
 			int vertexIndex = z*4;	
 			//the high 100000 Z should make them get culled and not rendered... 
@@ -225,7 +225,7 @@ public class FRenderLayer
 		_triIndices = new int[_maxQuadCount * 6];
 		tempTris.CopyTo(_triIndices, 0);
 		
-		for(int i = firstNewQuadIndex; i<_maxQuadCount; i++)
+		for(int i = firstNewQuadIndex; i<_maxQuadCount; ++i)
 		{
 			_triIndices[i*6 + 0] = i * 4 + 0;	
 			_triIndices[i*6 + 1] = i * 4 + 1;

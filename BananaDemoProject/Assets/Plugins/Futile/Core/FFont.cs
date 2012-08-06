@@ -148,8 +148,10 @@ public class FFont
 		
 		bool wasKerningFound = false;
 		
+		int lint = -1;
 		foreach(string line in lines)
 		{
+			lint++;
 			string [] words = line.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 			
 			/* we don't care about these, or else they could be in the elseif
@@ -185,13 +187,15 @@ public class FFont
 				
 				wordCount = words.Length;
 				
-				for(int w = 1; w<wordCount; w++)
+				for(int w = 1; w<wordCount; ++w)
 				{
 					string[] parts = words[w].Split('=');	
 					string partName = parts[0];
 					
 					if(partName == "letter") continue; //we don't care about the letter
-						
+					
+					if(partName == "\r") continue; //something weird happened with linebreaks, meh!
+					
 					int partValue = int.Parse(parts[1]);
 						
 					if(partName == "id")
@@ -331,7 +335,7 @@ public class FFont
 		
 		FLetterQuadLine[] lines = new FLetterQuadLine[10];
 		
-		for(int c = 0; c<letters.Length; c++)
+		for(int c = 0; c<letters.Length; ++c)
 		{
 			char letter = letters[c];
 			
@@ -357,7 +361,7 @@ public class FFont
 		FLetterQuadLine[] oldLines = lines;
 		lines = new FLetterQuadLine[lineCount+1];
 		 
-		for(int c = 0; c<lineCount+1; c++)
+		for(int c = 0; c<lineCount+1; ++c)
 		{
 			lines[c] = oldLines[c];	
 		}
@@ -379,7 +383,7 @@ public class FFont
 		
 		float contentScale = FEngine.contentScale;
 		
-		for(int c = 0; c<letters.Length; c++)
+		for(int c = 0; c<letters.Length; ++c)
 		{
 			char letter = letters[c];
 			

@@ -373,18 +373,18 @@ s += Char.ConvertFromUtf32((int)codePoint);
 	protected static int getLastIndexOfNumber( char[] json, int index )
 	{
 		int lastIndex;
-		for( lastIndex = index; lastIndex < json.Length; lastIndex++ )
-			if( "0123456789+-.eE".IndexOf( json[lastIndex] ) == -1 )
-			{
-				break;
-			}
+		for( lastIndex = index; lastIndex < json.Length; ++lastIndex )
+		if( "0123456789+-.eE".IndexOf( json[lastIndex] ) == -1 )
+		{
+			break;
+		}
 		return lastIndex - 1;
 	}
 	
 	
 	protected static void eatWhitespace( char[] json, ref int index )
 	{
-		for( ; index < json.Length; index++ )
+		for( ; index < json.Length; ++index )
 			if( " \t\n\r".IndexOf( json[index] ) == -1 )
 			{
 				break;
@@ -566,7 +566,7 @@ s += Char.ConvertFromUtf32((int)codePoint);
 		builder.Append( "[" );
 
 		bool first = true;
-		for( int i = 0; i < anArray.Count; i++ )
+		for( int i = 0; i < anArray.Count; ++i )
 		{
 			object value = anArray[i];
 
@@ -647,7 +647,7 @@ s += Char.ConvertFromUtf32((int)codePoint);
 		builder.Append( "\"" );
 
 		char[] charArray = aString.ToCharArray();
-		for( int i = 0; i < charArray.Length; i++ )
+		for( int i = 0; i < charArray.Length; ++i )
 		{
 			char c = charArray[i];
 			if( c == '"' )

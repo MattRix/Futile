@@ -23,7 +23,7 @@ public class RXUtils
 	{
 		string result = name + ": " + args.Length + " Vector2 "+ args[0].ToString()+"";
 
-		for(int a = 1; a<args.Length; a++)
+		for(int a = 1; a<args.Length; ++a)
 		{
 			Vector2 arg = args[a];
 			result = result + ", "+ arg.ToString()+"";	
@@ -36,7 +36,7 @@ public class RXUtils
 	{
 		string result = name + ": " + args.Length + " Vector3 "+args[0].ToString()+"";
 
-		for(int a = 1; a<args.Length; a++)
+		for(int a = 1; a<args.Length; ++a)
 		{
 			Vector3 arg = args[a];
 			result = result + ", "+ arg.ToString()+"";	
@@ -49,7 +49,7 @@ public class RXUtils
 	{
 		string result = name + ": " + args.Length + " Vector2 "+ VectorDetailedToString(args[0])+"";
 		
-		for(int a = 1; a<args.Length; a++)
+		for(int a = 1; a<args.Length; ++a)
 		{
 			Vector2 arg = args[a];
 			result = result + ", "+ VectorDetailedToString(arg)+"";	

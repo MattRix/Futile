@@ -47,7 +47,7 @@ public class FRenderer
 	protected FRenderLayer CreateRenderLayer(int batchIndex, FAtlas atlas, FShader shader)
 	{
 		//first, check and see if we already have a layer that matches the batchIndex
-		for(int p = 0; p < _previousLiveLayers.Count; p++)
+		for(int p = 0; p < _previousLiveLayers.Count; ++p)
 		{
 			FRenderLayer previousLiveLayer = _previousLiveLayers[p];
 			if(previousLiveLayer.batchIndex == batchIndex)
@@ -60,7 +60,7 @@ public class FRenderer
 		}
 		
 		//now see if we have a cached (old, now unused layer) that matches the batchIndex
-		for(int c = 0; c< _cachedLayers.Count; c++)
+		for(int c = 0; c< _cachedLayers.Count; ++c)
 		{
 			FRenderLayer cachedLayer = _cachedLayers[c];
 			if(cachedLayer.batchIndex == batchIndex)

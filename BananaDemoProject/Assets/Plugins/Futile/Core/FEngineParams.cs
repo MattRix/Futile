@@ -33,7 +33,7 @@ public class FEngineParams
 		bool wasAdded = false;
 		
 		//we've gotta have the resLevels sorted low to high by maxLength
-		for(int r = 0; r<resLevels.Count; r++)
+		for(int r = 0; r<resLevels.Count; ++r)
 		{
 			if(resLevel.maxLength < resLevels[r].maxLength)
 			{

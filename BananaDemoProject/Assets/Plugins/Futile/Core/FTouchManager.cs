@@ -131,7 +131,7 @@ public class FTouchManager
 			offset = 1;
 		}
 		
-		for (int i = 0; i < Input.touchCount; i++)
+		for (int i = 0; i < Input.touchCount; ++i)
 		{
 			Touch sourceTouch = Input.GetTouch (i);
 			FTouch resultTouch = new FTouch();
