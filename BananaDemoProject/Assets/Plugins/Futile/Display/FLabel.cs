@@ -47,7 +47,7 @@ public class FLabel : FQuadNode
 		CreateTextQuads();
 	}
 	
-	protected void CreateTextQuads()
+	public void CreateTextQuads()
 	{
 		_doesTextNeedUpdate = false;
 		
