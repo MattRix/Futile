@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class BInGamePage : BPage, FMultiTouchable
+public class BInGamePage : BPage, FMultiTouchableInterface
 {
 	
 	private FSprite _background;

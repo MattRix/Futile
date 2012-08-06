@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 
-public class BCloseButton : FContainer, FSingleTouchable
+public class BCloseButton : FContainer, FSingleTouchableInterface
 {
 	protected FAtlasElement _normalElement;
 	protected FAtlasElement _overElement;

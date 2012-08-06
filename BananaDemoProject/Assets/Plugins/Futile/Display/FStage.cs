@@ -41,7 +41,7 @@ public class FStage : FContainer
 		if(didNeedDepthUpdate)
 		{
 			_renderer.EndRender();
-			FEngine.touchManager.UpdateDepthSorting();
+			FEngine.touchManager.UpdatePrioritySorting();
 		}
 	}
 	

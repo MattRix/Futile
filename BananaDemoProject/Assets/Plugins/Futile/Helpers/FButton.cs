@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 
-public class FButton : FContainer, FSingleTouchable
+public class FButton : FContainer, FSingleTouchableInterface
 {
 	protected FAtlasElement _normalElement;
 	protected FAtlasElement _pressedElement;

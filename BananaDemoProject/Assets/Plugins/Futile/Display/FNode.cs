@@ -210,6 +210,11 @@ public class FNode
 		get { return _depth;}	
 	}
 	
+	public int touchPriority
+	{
+		get { return _depth;}	
+	}
+	
 	public FMatrix matrix 
 	{
 		get { return _matrix; }

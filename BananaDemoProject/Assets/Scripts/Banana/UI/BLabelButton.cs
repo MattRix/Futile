@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 
-public class BLabelButton : FContainer, FSingleTouchable
+public class BLabelButton : FContainer, FSingleTouchableInterface
 {
 	protected FAtlasElement _normalElement;
 	protected FAtlasElement _overElement;
