@@ -198,7 +198,7 @@ public class BInGamePage : BPage, FMultiTouchable
 					
 					Vector2 touchPos = banana.GlobalToLocal(touch.position);
 					
-					if(banana.localRect.Contains(touchPos))
+					if(banana.boundsRect.Contains(touchPos))
 					{
 						HandleGotBanana(banana);	
 						break; //break so that a touch can only hit one banana at a time

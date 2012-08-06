@@ -43,7 +43,7 @@ public class BLabelButton : FContainer, FSingleTouchable
 	{
 		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
 		
-		if(_bg.localRect.Contains(touchPos))
+		if(_bg.boundsRect.Contains(touchPos))
 		{
 			_bg.element = _overElement;
 			return true;	
@@ -56,7 +56,7 @@ public class BLabelButton : FContainer, FSingleTouchable
 	{
 		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
 		
-		if(_bg.localRect.Contains(touchPos))
+		if(_bg.boundsRect.Contains(touchPos))
 		{
 			_bg.element = _overElement;	
 		}
@@ -72,7 +72,7 @@ public class BLabelButton : FContainer, FSingleTouchable
 		
 		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
 		
-		if(_bg.localRect.Contains(touchPos))
+		if(_bg.boundsRect.Contains(touchPos))
 		{
 			BSoundPlayer.PlayClickSound();
 			if(SignalTap != null) SignalTap(this, EventArgs.Empty);
