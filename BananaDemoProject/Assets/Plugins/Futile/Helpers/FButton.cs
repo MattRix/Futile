@@ -31,6 +31,11 @@ public class FButton : FContainer, FSingleTouchable
 	public FButton (string upImage, string downImage) : this(upImage, downImage, null) {}
 	public FButton (string upImage) : this(upImage, upImage, null) {}
 
+	public FSprite sprite
+	{
+		get { return _bg;}
+	}
+
 	public float anchorX
 	{
 		set
