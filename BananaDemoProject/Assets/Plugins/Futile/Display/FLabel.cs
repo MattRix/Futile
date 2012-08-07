@@ -39,7 +39,7 @@ public class FLabel : FQuadNode
 	{
 		_fontName = fontName;
 		_text = text;
-		_font = FEngine.atlasManager.GetFontWithName(_fontName);
+		_font = Futile.atlasManager.GetFontWithName(_fontName);
 		_textParams = textParams;
 		 
 		Init(_font.element, 0);

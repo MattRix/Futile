@@ -64,7 +64,7 @@ public class FAtlas
 		 
 		if(!_texture)
 		{
-			Debug.Log ("FEngine: Couldn't load the atlas texture from: " + _fullPath);	
+			Debug.Log ("Futile: Couldn't load the atlas texture from: " + _fullPath);	
 		}
 		
 		_textureSize = new Vector2(_texture.width,_texture.height);
@@ -76,14 +76,14 @@ public class FAtlas
 		
 		if(!dataAsset)
 		{
-			Debug.Log ("FEngine: Couldn't load the atlas data from: " + _fullPath);
+			Debug.Log ("Futile: Couldn't load the atlas data from: " + _fullPath);
 		}
 		
 		Hashtable hash = dataAsset.text.hashtableFromJson();
 		
 		IDictionary frames = (IDictionary)hash["frames"];
 		
-		float scaleInverse = FEngine.resourceScaleInverse * FEngine.contentScale;
+		float scaleInverse = Futile.resourceScaleInverse * Futile.contentScale;
 		
 		
 		//these offset values make sure everything is crisp on DirectX
@@ -91,7 +91,7 @@ public class FAtlas
 		float uvOffsetX;
 		float uvOffsetY;
 		
-		if(FEngine.isOpenGL)
+		if(Futile.isOpenGL)
 		{
 			uvOffsetX = 0.0f/_textureSize.x;;
 			uvOffsetY = 0.0f/_textureSize.y;
@@ -191,12 +191,12 @@ public class FAtlas
 		element.indexInAtlas = 0;
 		
 		//TODO: may have to offset the rect slightly
-		float scaleInverse = FEngine.resourceScaleInverse;
+		float scaleInverse = Futile.resourceScaleInverse;
 		
 		float uvOffsetX;
 		float uvOffsetY;
 		
-		if(FEngine.isOpenGL)
+		if(Futile.isOpenGL)
 		{
 			uvOffsetX = 0.0f/_textureSize.x;;
 			uvOffsetY = 0.0f/_textureSize.y;

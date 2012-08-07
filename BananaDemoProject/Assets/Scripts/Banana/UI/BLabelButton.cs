@@ -16,8 +16,8 @@ public class BLabelButton : FContainer, FSingleTouchableInterface
 	{
 		_text = text;
 		
-		_normalElement = FEngine.atlasManager.GetElementWithName("YellowButton_normal.png");
-		_overElement = FEngine.atlasManager.GetElementWithName("YellowButton_over.png");
+		_normalElement = Futile.atlasManager.GetElementWithName("YellowButton_normal.png");
+		_overElement = Futile.atlasManager.GetElementWithName("YellowButton_over.png");
 		
 		_bg = new FSprite(_normalElement.name);
 		AddChild(_bg);
@@ -30,13 +30,13 @@ public class BLabelButton : FContainer, FSingleTouchableInterface
 	override public void HandleAddedToStage()
 	{
 		base.HandleAddedToStage();	
-		FEngine.touchManager.AddSingleTouchTarget(this);
+		Futile.touchManager.AddSingleTouchTarget(this);
 	}
 	
 	override public void HandleRemovedFromStage()
 	{
 		base.HandleRemovedFromStage();	
-		FEngine.touchManager.RemoveSingleTouchTarget(this);
+		Futile.touchManager.RemoveSingleTouchTarget(this);
 	}
 	
 	public bool HandleSingleTouchBegan(FTouch touch)

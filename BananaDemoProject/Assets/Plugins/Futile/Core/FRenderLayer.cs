@@ -43,12 +43,12 @@ public class FRenderLayer
 		_atlas = atlas;
 		_shader = shader;
 		
-		_expansionAmount = FEngine.quadsPerLayerExpansion;
+		_expansionAmount = Futile.quadsPerLayerExpansion;
 		
 		batchIndex = atlas.index*10000 + shader.index;
 		
 		_gameObject = new GameObject("FRenderLayer");
-		_gameObject.transform.parent = FEngine.instance.gameObject.transform;
+		_gameObject.transform.parent = Futile.instance.gameObject.transform;
 		
 		_meshFilter = _gameObject.AddComponent<MeshFilter>();
 		_meshRenderer = _gameObject.AddComponent<MeshRenderer>();
@@ -64,7 +64,7 @@ public class FRenderLayer
 		
 		_gameObject.active = false;
 		
-		ExpandMaxQuadLimit(FEngine.startingQuadsPerLayer);
+		ExpandMaxQuadLimit(Futile.startingQuadsPerLayer);
 	}
 	
 	public void AddToWorld () //add to the transform etc

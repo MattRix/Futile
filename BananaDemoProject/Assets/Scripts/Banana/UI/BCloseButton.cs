@@ -12,8 +12,8 @@ public class BCloseButton : FContainer, FSingleTouchableInterface
 	
 	public BCloseButton ()
 	{
-		_normalElement = FEngine.atlasManager.GetElementWithName("CloseButton_normal.png");
-		_overElement = FEngine.atlasManager.GetElementWithName("CloseButton_over.png");
+		_normalElement = Futile.atlasManager.GetElementWithName("CloseButton_normal.png");
+		_overElement = Futile.atlasManager.GetElementWithName("CloseButton_over.png");
 		
 		_bg = new FSprite(_normalElement.name);
 		AddChild(_bg);
@@ -22,13 +22,13 @@ public class BCloseButton : FContainer, FSingleTouchableInterface
 	override public void HandleAddedToStage()
 	{
 		base.HandleAddedToStage();	
-		FEngine.touchManager.AddSingleTouchTarget(this);
+		Futile.touchManager.AddSingleTouchTarget(this);
 	}
 	
 	override public void HandleRemovedFromStage()
 	{
 		base.HandleRemovedFromStage();	
-		FEngine.touchManager.RemoveSingleTouchTarget(this);
+		Futile.touchManager.RemoveSingleTouchTarget(this);
 	}
 	
 	public bool HandleSingleTouchBegan(FTouch touch)

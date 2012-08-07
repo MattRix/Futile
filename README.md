@@ -1,7 +1,7 @@
 #Futile 0.2
-###_A Unity 2D engine for the rest of us_
+###_A Unity 2D framework for the rest of us_
 
-Futile is a super simple 2D engine for Unity. 
+Futile is a super simple 2D framework for Unity. 
 
 This is for those of you who want to do everything in code and want as little editor integration as possible. 
 It'll be especially familiar if you come from a background using Cocos2D or Flash.

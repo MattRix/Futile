@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 //FacileEngine by Matt Rix - 
 
-public class FEngine : MonoBehaviour 
+public class Futile : MonoBehaviour 
 {
-	static public FEngine instance = null;
+	static public Futile instance = null;
 	
 	static public FAtlasManager atlasManager;
 	
@@ -43,15 +43,15 @@ public class FEngine : MonoBehaviour
 	
 	public int targetFrameRate = 60;
 	
-	//this is populated by the FEngineParams
+	//this is populated by the FutileParams
 	private float _originX;
 	private float _originY;
 	
 	public static int startingQuadsPerLayer;
 	public static int quadsPerLayerExpansion;
 	
-	private FEngineParams _engineParams;
-	private FEngineResolutionLevel _resLevel;
+	private FFrameworkParams _engineParams;
+	private FResolutionLevel _resLevel;
 
 	// Use this for initialization
 	private void Awake () 
@@ -60,14 +60,14 @@ public class FEngine : MonoBehaviour
 		isOpenGL = SystemInfo.graphicsDeviceVersion.Contains("OpenGL");
 	}
 	
-	public void Init(FEngineParams engineParams)
+	public void Init(FFrameworkParams engineParams)
 	{
 		Application.targetFrameRate = targetFrameRate;
 		
 		_engineParams = engineParams;
 		
-		FEngine.startingQuadsPerLayer = _engineParams.startingQuadsPerLayer;
-		FEngine.quadsPerLayerExpansion = _engineParams.quadsPerLayerExpansion;
+		Futile.startingQuadsPerLayer = _engineParams.startingQuadsPerLayer;
+		Futile.quadsPerLayerExpansion = _engineParams.quadsPerLayerExpansion;
 		
 		float length = Math.Max(Screen.height, Screen.width);
 		
@@ -75,7 +75,7 @@ public class FEngine : MonoBehaviour
 		//get the resolution level - the one we're closest to WITHOUT going over, price is right rules :)
 		_resLevel = null;
 		
-		foreach(FEngineResolutionLevel resLevel in _engineParams.resLevels)
+		foreach(FResolutionLevel resLevel in _engineParams.resLevels)
 		{
 			if(length <= resLevel.maxLength) //we've found our resLevel
 			{
@@ -94,7 +94,7 @@ public class FEngine : MonoBehaviour
 			}
 		}
 		
-		FEngine.resourceSuffix = _resLevel.resourceSuffix;
+		Futile.resourceSuffix = _resLevel.resourceSuffix;
 		
 		//this is what helps us figure out the display scale if we're not at a specific resolution level
 		//it's relative to the next highest resolution level
@@ -119,25 +119,25 @@ public class FEngine : MonoBehaviour
 		_originX = _engineParams.origin.x;
 		_originY = _engineParams.origin.y;
 		
-		Debug.Log ("FEngine: Display scale is " + displayScale);
+		Debug.Log ("Futile: Display scale is " + displayScale);
 		
-		Debug.Log ("FEngine: Content scale is " + contentScale);
+		Debug.Log ("Futile: Content scale is " + contentScale);
 		
-		Debug.Log ("FEngine: Resource scale is " + resourceScale);
+		Debug.Log ("Futile: Resource scale is " + resourceScale);
 		
-		Debug.Log ("FEngine: Resource suffix is " + _resLevel.resourceSuffix);
+		Debug.Log ("Futile: Resource suffix is " + _resLevel.resourceSuffix);
 		
-		Debug.Log ("FEngine: Screen size in pixels is (" + Screen.width +"px," + Screen.height+"px)");
+		Debug.Log ("Futile: Screen size in pixels is (" + Screen.width +"px," + Screen.height+"px)");
 		
-		Debug.Log ("FEngine: Screen size in points is (" + width + "," + height+")");
+		Debug.Log ("Futile: Screen size in points is (" + width + "," + height+")");
 		
-		Debug.Log ("FEngine: Origin is at (" + _originX*width + "," + _originY*height+")");
+		Debug.Log ("Futile: Origin is at (" + _originX*width + "," + _originY*height+")");
 		
 		//
 		//Camera setup from https://github.com/prime31/UIToolkit/blob/master/Assets/Plugins/UIToolkit/UI.cs
 		//
 				
-		name = "FEngine"; 
+		name = "Futile"; 
 		
 		_cameraHolder = new GameObject();
 		_cameraHolder.transform.parent = gameObject.transform;

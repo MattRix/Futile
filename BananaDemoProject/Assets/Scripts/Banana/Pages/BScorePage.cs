@@ -24,7 +24,7 @@ public class BScorePage : BPage
 		
 		//this will scale the background up to fit the screen
 		//but it won't let it shrink smaller than 100%
-		_background.scale = Math.Max (Math.Max(1.0f,FEngine.height/_background.height),FEngine.width /_background.width);
+		_background.scale = Math.Max (Math.Max(1.0f,Futile.height/_background.height),Futile.width /_background.width);
 		
 		_monkey = new BMonkey();
 		AddChild(_monkey);
@@ -59,8 +59,8 @@ public class BScorePage : BPage
 		_bestScoreLabel.anchorX = 1.0f;
 		_bestScoreLabel.anchorY = 0.0f;
 		_bestScoreLabel.color = new Color(1.0f,0.9f,0.2f);
-		_bestScoreLabel.x = FEngine.halfWidth - 5;
-		_bestScoreLabel.y = -FEngine.halfHeight + 5;
+		_bestScoreLabel.x = Futile.halfWidth - 5;
+		_bestScoreLabel.y = -Futile.halfHeight + 5;
 		
 		
 		_scoreLabel.scale = 0.0f;

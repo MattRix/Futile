@@ -142,7 +142,7 @@ public class FFont
 		
 		_charInfosByID = new FCharInfo[127];
 		
-		float resourceScale = FEngine.resourceScale * FEngine.contentScaleInverse;
+		float resourceScale = Futile.resourceScale * Futile.contentScaleInverse;
 		
 		Vector2 textureSize = _element.atlas.textureSize;
 		
@@ -381,7 +381,7 @@ public class FFont
 		float minY = 100000;
 		float maxY = -100000;
 		
-		float contentScale = FEngine.contentScale;
+		float contentScale = Futile.contentScale;
 		
 		for(int c = 0; c<letters.Length; ++c)
 		{

@@ -18,8 +18,8 @@ public class FButton : FContainer, FSingleTouchableInterface
 
 	public FButton (string upImage, string downImage, string sound)
 	{
-		_normalElement = FEngine.atlasManager.GetElementWithName(upImage);
-		_pressedElement = FEngine.atlasManager.GetElementWithName(downImage);
+		_normalElement = Futile.atlasManager.GetElementWithName(upImage);
+		_pressedElement = Futile.atlasManager.GetElementWithName(downImage);
 		_bg = new FSprite(_normalElement.name);
 		_bg.anchorX = _anchorX;
 		_bg.anchorY = _anchorY;
@@ -84,13 +84,13 @@ public class FButton : FContainer, FSingleTouchableInterface
 	override public void HandleAddedToStage()
 	{
 		base.HandleAddedToStage();	
-		FEngine.touchManager.AddSingleTouchTarget(this);
+		Futile.touchManager.AddSingleTouchTarget(this);
 	}
 	
 	override public void HandleRemovedFromStage()
 	{
 		base.HandleRemovedFromStage();	
-		FEngine.touchManager.RemoveSingleTouchTarget(this);
+		Futile.touchManager.RemoveSingleTouchTarget(this);
 	}
 	
 	public bool HandleSingleTouchBegan(FTouch touch)

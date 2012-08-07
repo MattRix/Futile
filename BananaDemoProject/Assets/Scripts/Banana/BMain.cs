@@ -32,28 +32,28 @@ public class BMain : MonoBehaviour
 		
 		//Time.timeScale = 0.1f;
 		
-		FEngineParams eparams = new FEngineParams();
+		FFrameworkParams fparams = new FFrameworkParams();
 		
-		eparams.AddResolutionLevel(480.0f,	1.0f,	1.0f,	1.0f,	"_Scale1");
-		eparams.AddResolutionLevel(960.0f,	2.0f,	1.0f,	2.0f,	"_Scale2");
-		eparams.AddResolutionLevel(1024.0f,	2.0f,	1.0f,	2.0f,	"_Scale2");
-		eparams.AddResolutionLevel(2048.0f,	4.0f,	1.0f,	4.0f,	"_Scale4");
+		fparams.AddResolutionLevel(480.0f,	1.0f,	1.0f,	1.0f,	"_Scale1");
+		fparams.AddResolutionLevel(960.0f,	2.0f,	1.0f,	2.0f,	"_Scale2");
+		fparams.AddResolutionLevel(1024.0f,	2.0f,	1.0f,	2.0f,	"_Scale2");
+		fparams.AddResolutionLevel(2048.0f,	4.0f,	1.0f,	4.0f,	"_Scale4");
 		
-		eparams.origin = new Vector2(0.5f,0.5f);
+		fparams.origin = new Vector2(0.5f,0.5f);
 		
-		FEngine.instance.Init (eparams);
+		Futile.instance.Init (fparams);
 		
-		FEngine.atlasManager.LoadAtlas("Atlases/BananaLargeAtlas");
-		FEngine.atlasManager.LoadAtlas("Atlases/BananaGameAtlas");
-		FEngine.atlasManager.LoadFont("Franchise","FranchiseFontAtlas.png", "Atlases/FranchiseLarge");
+		Futile.atlasManager.LoadAtlas("Atlases/BananaLargeAtlas");
+		Futile.atlasManager.LoadAtlas("Atlases/BananaGameAtlas");
+		Futile.atlasManager.LoadFont("Franchise","FranchiseFontAtlas.png", "Atlases/FranchiseLarge");
 		
-		_stage = FEngine.stage;
+		_stage = Futile.stage;
 		
 		BSoundPlayer.PlayRegularMusic();
 		
 		GoToPage(BPageType.TitlePage);
 		
-		FEngine.instance.SignalSceneAdvance += HandleSceneAdvance;
+		Futile.instance.SignalSceneAdvance += HandleSceneAdvance;
 	}
 	
 	public void GoToPage (BPageType pageType)

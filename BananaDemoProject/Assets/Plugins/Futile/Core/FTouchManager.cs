@@ -82,11 +82,11 @@ public class FTouchManager
 	{
 		_isUpdating = true;
 		
-		float touchScale = 1.0f/FEngine.displayScale;
+		float touchScale = 1.0f/Futile.displayScale;
 		
 		//the offsets account for the camera's 0,0 point (eg, center, bottom left, etc.)
-		float offsetX = -FEngine.instance.originX * Screen.width;
-		float offsetY = -FEngine.instance.originY * Screen.height;
+		float offsetX = -Futile.instance.originX * Screen.width;
+		float offsetY = -Futile.instance.originY * Screen.height;
 		
 		//Debug.Log ("Touch offset " + offsetX + " , " + offsetY);
 		

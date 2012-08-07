@@ -22,7 +22,7 @@ public class BTitlePage : BPage
 		
 		//this will scale the background up to fit the screen
 		//but it won't let it shrink smaller than 100%
-		_background.scale = Math.Max (Math.Max(1.0f,FEngine.height/_background.height),FEngine.width /_background.width);
+		_background.scale = Math.Max (Math.Max(1.0f,Futile.height/_background.height),Futile.width /_background.width);
 		 
 		_logo = new FSprite("MainLogo.png");
 		AddChild(_logo);
@@ -31,8 +31,8 @@ public class BTitlePage : BPage
 		
 		_startButton = new BLabelButton("START!");
 		AddChild(_startButton);
-		_startButton.x = FEngine.halfWidth-75.0f;
-		_startButton.y = -FEngine.halfHeight+35.0f;
+		_startButton.x = Futile.halfWidth-75.0f;
+		_startButton.y = -Futile.halfHeight+35.0f;
 		
 		_startButton.SignalTap += HandleStartButtonTap;
 		
