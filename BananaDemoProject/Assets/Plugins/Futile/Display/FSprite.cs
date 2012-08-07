@@ -38,7 +38,7 @@ public class FSprite : FQuadNode
 		_areLocalVerticesDirty = true;
 	}
 	
-	override public void Update(bool shouldForceDirty, bool shouldUpdateDepth)
+	override public void Redraw(bool shouldForceDirty, bool shouldUpdateDepth)
 	{
 		bool wasMatrixDirty = _isMatrixDirty;
 		bool wasAlphaDirty = _isAlphaDirty;
@@ -66,8 +66,6 @@ public class FSprite : FQuadNode
 			UpdateLocalVertices();
 		}
 		
-		//only populate the render layer if it's NOT a depth update
-		//because if it IS a depth update, populate will be called LATER
 		if(_isMeshDirty) 
 		{
 			PopulateRenderLayer();

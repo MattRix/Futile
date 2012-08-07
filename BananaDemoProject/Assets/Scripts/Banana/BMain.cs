@@ -52,8 +52,6 @@ public class BMain : MonoBehaviour
 		BSoundPlayer.PlayRegularMusic();
 		
 		GoToPage(BPageType.TitlePage);
-		
-		Futile.instance.SignalSceneAdvance += HandleSceneAdvance;
 	}
 	
 	public void GoToPage (BPageType pageType)
@@ -91,10 +89,6 @@ public class BMain : MonoBehaviour
 		
 	}
 	
-	public void HandleSceneAdvance(object sender, EventArgs e)
-	{
-		if(_currentPage != null) _currentPage.Advance();	
-	}
 }
 
 

@@ -15,6 +15,18 @@ public class BTitlePage : BPage
 		
 	}
 	
+	override public void HandleAddedToStage()
+	{
+		Futile.instance.SignalUpdate += HandleUpdate;
+		base.HandleAddedToStage();	
+	}
+	
+	override public void HandleRemovedFromStage()
+	{
+		Futile.instance.SignalUpdate -= HandleUpdate;
+		base.HandleRemovedFromStage();	
+	}
+	
 	override public void Start()
 	{
 		_background = new FSprite("JungleClearBG.png");
@@ -59,7 +71,7 @@ public class BTitlePage : BPage
 		BMain.instance.GoToPage(BPageType.InGamePage);
 	}
 	
-	override public void Advance ()
+	 public void HandleUpdate (object sender, EventArgs e)
 	{
 		_logo.rotation = -5.0f +  RXMath.PingPong(_frameCount, 300) * 10.0f;
 		
