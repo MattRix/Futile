@@ -19,7 +19,7 @@ public class FShader
 		this.shader = shader; 
 	}
 	
-	public static void Init() //called by the DRenderer
+	public static void Init() //called by the FRenderer
 	{
 		Normal = new FShader("Normal", Shader.Find("Unlit Transparent Vertex Colored"));	
 		Additive = new FShader("Additive", Shader.Find("Unlit Transparent Vertex Colored Additive"));	
