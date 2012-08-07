@@ -16,7 +16,6 @@ public class BScorePage : BPage
 	{
 		
 	}
-	
 	override public void HandleAddedToStage()
 	{
 		Futile.instance.SignalUpdate += HandleUpdate;
@@ -28,6 +27,7 @@ public class BScorePage : BPage
 		Futile.instance.SignalUpdate -= HandleUpdate;
 		base.HandleRemovedFromStage();	
 	}
+	
 	
 	override public void Start()
 	{
@@ -96,15 +96,16 @@ public class BScorePage : BPage
 			setDelay(0.3f).
 			floatProp("scale",1.0f).
 			setEaseType(EaseType.BackOut));
+
 	}
 
-	private void HandleAgainButtonTap (object sender, EventArgs e)
+	private void HandleAgainButtonTap (BLabelButton button)
 	{
 		BSoundPlayer.PlayRegularMusic();
 		BMain.instance.GoToPage(BPageType.InGamePage); 
 	}
 	
-	protected void HandleUpdate (object sender, EventArgs e)
+	protected void HandleUpdate ()
 	{
 		if(_frameCount % 24 < 12) //make the score blink every 12 frames
 		{

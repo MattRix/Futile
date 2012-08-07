@@ -34,8 +34,8 @@ public class Futile : MonoBehaviour
 	
 	static public string resourceSuffix; //set based on the resLevel
 	
-	public event EventHandler SignalUpdate;
-	public event EventHandler SignalLateUpdate;
+	public event Action SignalUpdate;
+	public event Action SignalLateUpdate;
 	
 	public int drawDepth = 100;
 	
@@ -169,14 +169,14 @@ public class Futile : MonoBehaviour
 	protected void Update()
 	{
 		touchManager.Update();
-		if(SignalUpdate != null) SignalUpdate(this, EventArgs.Empty);
+		if(SignalUpdate != null) SignalUpdate();
 		stage.Redraw (false,false);
 	}
 	
 	protected void LateUpdate()
 	{
 		stage.LateUpdate();
-		if(SignalLateUpdate != null) SignalLateUpdate(this, EventArgs.Empty);
+		if(SignalLateUpdate != null) SignalLateUpdate();
 	}	
 	
 	protected void OnApplicationQuit()

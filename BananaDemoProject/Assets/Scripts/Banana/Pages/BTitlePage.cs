@@ -14,7 +14,6 @@ public class BTitlePage : BPage
 	{
 		
 	}
-	
 	override public void HandleAddedToStage()
 	{
 		Futile.instance.SignalUpdate += HandleUpdate;
@@ -26,6 +25,7 @@ public class BTitlePage : BPage
 		Futile.instance.SignalUpdate -= HandleUpdate;
 		base.HandleRemovedFromStage();	
 	}
+	
 	
 	override public void Start()
 	{
@@ -63,15 +63,15 @@ public class BTitlePage : BPage
 			setDelay(0.3f).
 			floatProp("scale",1.0f).
 			setEaseType(EaseType.BackOut));
-		
+
 	}
 
-	private void HandleStartButtonTap (object sender, EventArgs e)
+	private void HandleStartButtonTap (BLabelButton button)
 	{
 		BMain.instance.GoToPage(BPageType.InGamePage);
 	}
 	
-	 public void HandleUpdate (object sender, EventArgs e)
+	protected void HandleUpdate ()
 	{
 		_logo.rotation = -5.0f +  RXMath.PingPong(_frameCount, 300) * 10.0f;
 		

@@ -123,7 +123,7 @@ public class FNode
 	{
 		_isOnStage = true;
 	}
-	
+
 	virtual public void HandleRemovedFromStage()
 	{
 		_isOnStage = false;
@@ -275,7 +275,6 @@ public class FNode
 	{
 		get { return _concatenatedAlpha; }
 	}
-
 	
 }
 
