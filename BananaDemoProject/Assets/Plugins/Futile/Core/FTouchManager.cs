@@ -13,7 +13,7 @@ public struct FTouch //had to make a copy of Unity's Touch so I could make prope
 	public TouchPhase phase;
 }
 
-public interface FISingleTouchable
+public interface FSingleTouchableInterface
 {
 	bool HandleSingleTouchBegan(FTouch touch);
 	
@@ -29,7 +29,7 @@ public interface FISingleTouchable
 	}
 }
 
-public interface FIMultiTouchable
+public interface FMultiTouchableInterface
 {
 	void HandleMultiTouch(FTouch[] touches);
 }
@@ -38,15 +38,15 @@ public class FTouchManager
 {
 	public static bool shouldMouseEmulateTouch = true;
 	
-	private List<FISingleTouchable> _singleTouchables = new List<FISingleTouchable>();
-	private List<FIMultiTouchable> _multiTouchables = new List<FIMultiTouchable>();
+	private List<FSingleTouchableInterface> _singleTouchables = new List<FSingleTouchableInterface>();
+	private List<FMultiTouchableInterface> _multiTouchables = new List<FMultiTouchableInterface>();
 	
-	private List<FISingleTouchable> _singleTouchablesToAdd = new List<FISingleTouchable>();
-	private List<FISingleTouchable> _singleTouchablesToRemove = new List<FISingleTouchable>();
-	private List<FIMultiTouchable> _multiTouchablesToAdd = new List<FIMultiTouchable>();
-	private List<FIMultiTouchable> _multiTouchablesToRemove = new List<FIMultiTouchable>();
+	private List<FSingleTouchableInterface> _singleTouchablesToAdd = new List<FSingleTouchableInterface>();
+	private List<FSingleTouchableInterface> _singleTouchablesToRemove = new List<FSingleTouchableInterface>();
+	private List<FMultiTouchableInterface> _multiTouchablesToAdd = new List<FMultiTouchableInterface>();
+	private List<FMultiTouchableInterface> _multiTouchablesToRemove = new List<FMultiTouchableInterface>();
 	
-	private FISingleTouchable _theSingleTouchable = null;
+	private FSingleTouchableInterface _theSingleTouchable = null;
 	
 	private bool _isMouseDown;
 	
@@ -155,7 +155,7 @@ public class FTouchManager
 					if(touch.phase == TouchPhase.Began)
 					{
 						
-						foreach(FISingleTouchable singleTouchable in _singleTouchables)
+						foreach(FSingleTouchableInterface singleTouchable in _singleTouchables)
 						{
 							if(singleTouchable.HandleSingleTouchBegan(touch)) //the first touchable to return true becomes theSingleTouchable
 							{
@@ -192,7 +192,7 @@ public class FTouchManager
 				}
 			}
 			
-			foreach(FIMultiTouchable multiTouchable in _multiTouchables)
+			foreach(FMultiTouchableInterface multiTouchable in _multiTouchables)
 			{
 				multiTouchable.HandleMultiTouch(touches);
 			}
@@ -200,22 +200,22 @@ public class FTouchManager
 		
 		//now add or remove anything that was changed while we were looping through
 		
-		foreach(FISingleTouchable singleTouchableToRemove in _singleTouchablesToRemove)
+		foreach(FSingleTouchableInterface singleTouchableToRemove in _singleTouchablesToRemove)
 		{
 			_singleTouchables.Remove(singleTouchableToRemove);	
 		}
 		
-		foreach(FISingleTouchable singleTouchableToAdd in _singleTouchablesToAdd)
+		foreach(FSingleTouchableInterface singleTouchableToAdd in _singleTouchablesToAdd)
 		{
 			_singleTouchables.Add(singleTouchableToAdd);	
 		}
 		
-		foreach(FIMultiTouchable multiTouchableToRemove in _multiTouchablesToRemove)
+		foreach(FMultiTouchableInterface multiTouchableToRemove in _multiTouchablesToRemove)
 		{
 			_multiTouchables.Remove(multiTouchableToRemove);	
 		}
 		
-		foreach(FIMultiTouchable multiTouchableToAdd in _multiTouchablesToAdd)
+		foreach(FMultiTouchableInterface multiTouchableToAdd in _multiTouchablesToAdd)
 		{
 			_multiTouchables.Add(multiTouchableToAdd);	
 		}
@@ -230,10 +230,10 @@ public class FTouchManager
 	
 	public void UpdatePrioritySorting()
 	{
-		_singleTouchables.Sort(delegate(FISingleTouchable touchableA, FISingleTouchable touchableB) {return touchableB.touchPriority - touchableA.touchPriority;});
+		_singleTouchables.Sort(delegate(FSingleTouchableInterface touchableA, FSingleTouchableInterface touchableB) {return touchableB.touchPriority - touchableA.touchPriority;});
 	}
 	
-	public void AddSingleTouchTarget(FISingleTouchable touchable)
+	public void AddSingleTouchTarget(FSingleTouchableInterface touchable)
 	{
 		if(_isUpdating)
 		{
@@ -254,7 +254,7 @@ public class FTouchManager
 		
 	}
 	
-	public void AddMultiTouchTarget(FIMultiTouchable touchable)
+	public void AddMultiTouchTarget(FMultiTouchableInterface touchable)
 	{
 		if(_isUpdating)
 		{
@@ -274,7 +274,7 @@ public class FTouchManager
 		}
 	}
 	
-	public void RemoveSingleTouchTarget(FISingleTouchable touchable)
+	public void RemoveSingleTouchTarget(FSingleTouchableInterface touchable)
 	{
 		if(_isUpdating)
 		{
@@ -291,7 +291,7 @@ public class FTouchManager
 		}
 	}
 	
-	public void RemoveMultiTouchTarget(FIMultiTouchable touchable)
+	public void RemoveMultiTouchTarget(FMultiTouchableInterface touchable)
 	{
 		if(_isUpdating)
 		{
