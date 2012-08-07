@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class FEngineResolutionLevel
+public class FResolutionLevel
 {
 	public float maxLength;
 	public float displayScale;
@@ -11,18 +11,18 @@ public class FEngineResolutionLevel
 	public string resourceSuffix;
 }
 
-public class FEngineParams
+public class FFrameworkParams
 {
-	public List<FEngineResolutionLevel> resLevels = new List<FEngineResolutionLevel>();
+	public List<FResolutionLevel> resLevels = new List<FResolutionLevel>();
 	
 	public int startingQuadsPerLayer = 10;
 	public int quadsPerLayerExpansion = 10;
 	
 	public Vector2 origin = new Vector2(0.5f,0.5f);
 
-	public FEngineResolutionLevel AddResolutionLevel (float maxLength, float displayScale, float contentScale, float resourceScale, string resourceSuffix)
+	public FResolutionLevel AddResolutionLevel (float maxLength, float displayScale, float contentScale, float resourceScale, string resourceSuffix)
 	{
-		FEngineResolutionLevel resLevel = new FEngineResolutionLevel();
+		FResolutionLevel resLevel = new FResolutionLevel();
 		
 		resLevel.maxLength = maxLength;
 		resLevel.displayScale = displayScale;

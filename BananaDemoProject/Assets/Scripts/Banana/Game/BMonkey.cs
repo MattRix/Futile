@@ -13,7 +13,7 @@ public class BMonkey : FSprite
 	{
 		_frameElements = new FAtlasElement[numFrames];
 		
-		FAtlasManager am = FEngine.atlasManager;
+		FAtlasManager am = Futile.atlasManager;
 		//of course there are way smarter ways to do this, but this is fast
 		//it's a ping ponging animation, which is why I did it this way, it's not a straight loop
 		_frameElements[0] = am.GetElementWithName("Monkey_0.png");

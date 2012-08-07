@@ -14,7 +14,7 @@ public class FAtlasManager
 	private List<FFont> _fonts = new List<FFont>();
 	private Dictionary<string,FFont> _fontsByName = new Dictionary<string, FFont>();
 	
-	public FAtlasManager () //new DAtlasManager() called by FEngine
+	public FAtlasManager () //new DAtlasManager() called by Futile
 	{
 		
 	}
@@ -22,7 +22,7 @@ public class FAtlasManager
 	//images and atlases are both treated as atlases
 	private void LoadAtlasOrImage(string atlasPath, bool shouldLoadAsSingleImage)
 	{
-		FAtlas atlas = new FAtlas(atlasPath+FEngine.resourceSuffix, _atlases.Count, shouldLoadAsSingleImage);
+		FAtlas atlas = new FAtlas(atlasPath+Futile.resourceSuffix, _atlases.Count, shouldLoadAsSingleImage);
 		
 		foreach(FAtlasElement element in atlas.elements)
 		{

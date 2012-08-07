@@ -39,7 +39,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		
 		//this will scale the background up to fit the screen
 		//but it won't let it shrink smaller than 100%
-		_background.scale = Math.Max (Math.Max(1.0f,FEngine.height/_background.height),FEngine.width /_background.width);
+		_background.scale = Math.Max (Math.Max(1.0f,Futile.height/_background.height),Futile.width /_background.width);
 		
 		//the banana container will make it easy to keep the bananas at the right depth
 		_bananaContainer = new FContainer(); 
@@ -47,8 +47,8 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		
 		_closeButton = new BCloseButton();
 		AddChild(_closeButton);
-		_closeButton.x = -FEngine.halfWidth + 30.0f;
-		_closeButton.y = -FEngine.halfHeight + 30.0f;
+		_closeButton.x = -Futile.halfWidth + 30.0f;
+		_closeButton.y = -Futile.halfHeight + 30.0f;
 		
 		_closeButton.SignalTap += HandleCloseButtonTap;
 		
@@ -57,8 +57,8 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		_scoreLabel.anchorY = 1.0f;
 		
 		
-		_scoreLabel.x = -FEngine.halfWidth + 10.0f;
-		_scoreLabel.y = FEngine.halfHeight - 10.0f;
+		_scoreLabel.x = -Futile.halfWidth + 10.0f;
+		_scoreLabel.y = Futile.halfHeight - 10.0f;
 		_scoreLabel.scale = 0.75f;
 		_scoreLabel.color = new Color(1.0f,0.90f,0.0f);
 		
@@ -66,8 +66,8 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		_timeLabel.anchorX = 1.0f;
 		_timeLabel.anchorY = 1.0f;
 		
-		_timeLabel.x = FEngine.halfWidth - 10.0f;
-		_timeLabel.y = FEngine.halfHeight - 10.0f;
+		_timeLabel.x = Futile.halfWidth - 10.0f;
+		_timeLabel.y = Futile.halfHeight - 10.0f;
 		_timeLabel.scale = 0.75f;
 		_timeLabel.color = new Color(1.0f,1.0f,1.0f);
 		
@@ -100,13 +100,13 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 	override public void HandleAddedToStage()
 	{
 		base.HandleAddedToStage();
-		FEngine.touchManager.AddMultiTouchTarget(this); 	
+		Futile.touchManager.AddMultiTouchTarget(this); 	
 	}
 	
 	override public void HandleRemovedFromStage()
 	{
 		base.HandleRemovedFromStage();
-		FEngine.touchManager.RemoveMultiTouchTarget(this); 	
+		Futile.touchManager.RemoveMultiTouchTarget(this); 	
 	}
 
 	private void HandleCloseButtonTap (object sender, EventArgs e)
@@ -139,8 +139,8 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 	{
 		BBanana banana = new BBanana();
 		_bananaContainer.AddChild(banana);
-		banana.x = RXRandom.Range(-FEngine.width/2 + 50, FEngine.width/2 - 50); //padded inside the screen width
-		banana.y = FEngine.height/2 + 60; //above the screen
+		banana.x = RXRandom.Range(-Futile.width/2 + 50, Futile.width/2 - 50); //padded inside the screen width
+		banana.y = Futile.height/2 + 60; //above the screen
 		_bananas.Add(banana);
 		_totalBananasCreated++;
 	}
@@ -184,7 +184,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 			BBanana banana = _bananas[b];
 			
 			//remove a banana if it falls off screen
-			if(banana.y < -FEngine.halfHeight - 50)
+			if(banana.y < -Futile.halfHeight - 50)
 			{
 				_bananas.Remove(banana);
 				_bananaContainer.RemoveChild(banana);

@@ -21,7 +21,7 @@ public class FSprite : FQuadNode
 	{
 		//_element = _layer.renderer.GetElementWithName(elementName);
 		
-		Init (FEngine.atlasManager.GetElementWithName(elementName),1);
+		Init (Futile.atlasManager.GetElementWithName(elementName),1);
 		
 		_isAlphaDirty = true;
 		
@@ -30,7 +30,7 @@ public class FSprite : FQuadNode
 	
 	public void SetElementByName(string elementName)
 	{
-		this.element = FEngine.atlasManager.GetElementWithName(elementName);
+		this.element = Futile.atlasManager.GetElementWithName(elementName);
 	}
 	
 	override public void HandleElementChanged()
