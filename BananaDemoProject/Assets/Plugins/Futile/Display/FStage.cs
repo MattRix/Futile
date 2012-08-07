@@ -22,7 +22,7 @@ public class FStage : FContainer
 		_needsDepthUpdate = true;
 	}
 	
-	override public void Update(bool shouldForceDirty, bool shouldUpdateDepth)
+	override public void Redraw(bool shouldForceDirty, bool shouldUpdateDepth)
 	{
 		bool didNeedDepthUpdate = _needsDepthUpdate;
 		
@@ -36,7 +36,7 @@ public class FStage : FContainer
 			_renderer.StartRender();
 		}
 		
-		base.Update(shouldForceDirty, shouldUpdateDepth);
+		base.Redraw(shouldForceDirty, shouldUpdateDepth);
 		
 		if(didNeedDepthUpdate)
 		{

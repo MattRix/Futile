@@ -17,6 +17,18 @@ public class BScorePage : BPage
 		
 	}
 	
+	override public void HandleAddedToStage()
+	{
+		Futile.instance.SignalUpdate += HandleUpdate;
+		base.HandleAddedToStage();	
+	}
+	
+	override public void HandleRemovedFromStage()
+	{
+		Futile.instance.SignalUpdate -= HandleUpdate;
+		base.HandleRemovedFromStage();	
+	}
+	
 	override public void Start()
 	{
 		_background = new FSprite("JungleBlurryBG.png");
@@ -92,7 +104,7 @@ public class BScorePage : BPage
 		BMain.instance.GoToPage(BPageType.InGamePage); 
 	}
 	
-	override public void Advance ()
+	protected void HandleUpdate (object sender, EventArgs e)
 	{
 		if(_frameCount % 24 < 12) //make the score blink every 12 frames
 		{

@@ -30,6 +30,20 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		
 	}
 	
+	override public void HandleAddedToStage()
+	{
+		Futile.instance.SignalUpdate += HandleUpdate;
+		Futile.touchManager.AddMultiTouchTarget(this);
+		base.HandleAddedToStage();	
+	}
+	
+	override public void HandleRemovedFromStage()
+	{
+		Futile.instance.SignalUpdate -= HandleUpdate;
+		Futile.touchManager.RemoveMultiTouchTarget(this);
+		base.HandleRemovedFromStage();	
+	}
+	
 	override public void Start()
 	{
 		BMain.instance.score = 0;
@@ -96,18 +110,6 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		
 		
 	}
-	
-	override public void HandleAddedToStage()
-	{
-		base.HandleAddedToStage();
-		Futile.touchManager.AddMultiTouchTarget(this); 	
-	}
-	
-	override public void HandleRemovedFromStage()
-	{
-		base.HandleRemovedFromStage();
-		Futile.touchManager.RemoveMultiTouchTarget(this); 	
-	}
 
 	private void HandleCloseButtonTap (object sender, EventArgs e)
 	{
@@ -145,7 +147,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		_totalBananasCreated++;
 	}
 	
-	override public void Advance ()
+	protected void HandleUpdate (object sender, EventArgs e)
 	{
 		_secondsLeft -= Time.deltaTime;
 		

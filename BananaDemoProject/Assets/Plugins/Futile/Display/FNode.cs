@@ -30,9 +30,12 @@ public class FNode
 	
 	protected FStage _stage;
 	
+	protected bool _isVisible = true;
+	protected float _visibleAlpha = 1.0f;
+	
 	public FNode () 
 	{
-		_stage = FEngine.stage;
+		_stage = Futile.stage;
 		
 		_depth = 0;
 		
@@ -102,16 +105,16 @@ public class FNode
 			
 			if(_container != null)
 			{
-				_concatenatedAlpha = _container.concatenatedAlpha*alpha;
+				_concatenatedAlpha = _container.concatenatedAlpha*_alpha*_visibleAlpha;
 			}
 			else 
 			{
-				_concatenatedAlpha = _alpha;
+				_concatenatedAlpha = _alpha*_visibleAlpha;
 			}
 		}	
 	}
 	
-	virtual public void Update(bool shouldForceDirty, bool shouldUpdateDepth)
+	virtual public void Redraw(bool shouldForceDirty, bool shouldUpdateDepth)
 	{	
 		UpdateDepthMatrixAlpha(shouldForceDirty, shouldUpdateDepth);
 	}
@@ -157,6 +160,20 @@ public class FNode
 	public void MoveToBottom()
 	{
 		if(_container != null) _container.AddChildAtIndex(this,0);	
+	}
+	
+	public bool isVisible
+	{
+		get { return _isVisible;}
+		set 
+		{ 
+			if(_isVisible != value)
+			{
+				_isVisible = value;
+				_visibleAlpha = _isVisible ? 1.0f : 0.0f;
+				_isAlphaDirty = true;
+			}
+		}
 	}
 	
 	public float x

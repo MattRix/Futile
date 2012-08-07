@@ -38,7 +38,7 @@ public class FSprite : FQuadNode
 		_areLocalVerticesDirty = true;
 	}
 	
-	override public void Update(bool shouldForceDirty, bool shouldUpdateDepth)
+	override public void Redraw(bool shouldForceDirty, bool shouldUpdateDepth)
 	{
 		bool wasMatrixDirty = _isMatrixDirty;
 		bool wasAlphaDirty = _isAlphaDirty;

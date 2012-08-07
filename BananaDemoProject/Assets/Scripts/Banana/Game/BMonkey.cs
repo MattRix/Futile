@@ -37,7 +37,7 @@ public class BMonkey : FSprite
 		_frameElements[18] = am.GetElementWithName("Monkey_0.png");	
 	}
 	
-	override public void Update(bool shouldForceDirty, bool shouldUpdateDepth)
+	override public void Redraw(bool shouldForceDirty, bool shouldUpdateDepth)
 	{
 		if(_frameCount % 2 == 0) //update every other frame, aka 30 fps
 		{
@@ -46,7 +46,7 @@ public class BMonkey : FSprite
 		}
 		
 		_frameCount++;
-		base.Update(shouldForceDirty, shouldUpdateDepth);
+		base.Redraw(shouldForceDirty, shouldUpdateDepth);
 	}
 
 }

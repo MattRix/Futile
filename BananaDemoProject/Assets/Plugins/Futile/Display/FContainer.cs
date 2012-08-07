@@ -12,16 +12,16 @@ public class FContainer : FNode
 		
 	}
 	
-	override public void Update(bool shouldForceDirty, bool shouldUpdateDepth)
+	override public void Redraw(bool shouldForceDirty, bool shouldUpdateDepth)
 	{
 		bool wasMatrixDirty = _isMatrixDirty;
 		bool wasAlphaDirty = _isAlphaDirty;
 		
-		base.Update(shouldForceDirty, shouldUpdateDepth);
+		base.Redraw(shouldForceDirty, shouldUpdateDepth);
 		
 		foreach(FNode node in _childNodes)
 		{
-			node.Update(shouldForceDirty || wasMatrixDirty || wasAlphaDirty, shouldUpdateDepth); //if the matrix was dirty or we're supposed to force it, do it!
+			node.Redraw(shouldForceDirty || wasMatrixDirty || wasAlphaDirty, shouldUpdateDepth); //if the matrix was dirty or we're supposed to force it, do it!
 		}
 	}
 	

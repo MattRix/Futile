@@ -13,8 +13,4 @@ public class BPage : FContainer
 		
 	}
 
-	virtual public void Advance ()
-	{
-		
-	}
 }
