@@ -85,6 +85,9 @@ public class FAtlas
 		
 		float scaleInverse = FEngine.resourceScaleInverse * FEngine.contentScale;
 		
+		
+		//these offset values make sure everything is crisp on DirectX
+		
 		float uvOffsetX;
 		float uvOffsetY;
 		
@@ -126,8 +129,8 @@ public class FAtlas
 			{
 				uvRect = new Rect
 				(
-					rectX/_textureSize.x + uvOffsetX,
-					((_textureSize.y - rectY - rectW)/_textureSize.y)+uvOffsetY,
+					rectX/_textureSize.x + uvOffsetY,
+					((_textureSize.y - rectY - rectW)/_textureSize.y)-uvOffsetX,
 					rectH/_textureSize.x,
 					rectW/_textureSize.y
 				);
