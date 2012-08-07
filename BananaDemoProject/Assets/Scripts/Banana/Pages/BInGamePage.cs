@@ -20,7 +20,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 	private FContainer _bananaContainer;
 	private List<BBanana> _bananas = new List<BBanana>();
 	
-	private int _maxFramesTillNextBanana = 20;
+	private int _maxFramesTillNextBanana = 22;
 	private int _framesTillNextBanana = 0;	
 	
 	private FContainer _effectHolder;
