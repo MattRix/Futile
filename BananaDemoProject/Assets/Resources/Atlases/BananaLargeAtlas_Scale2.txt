@@ -2,8 +2,8 @@
 
 "JungleBlurryBG.png":
 {
-	"frame": {"x":3,"y":787,"w":1060,"h":780},
-	"rotated": false,
+	"frame": {"x":1067,"y":501,"w":1060,"h":780},
+	"rotated": true,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":1060,"h":780},
 	"sourceSize": {"w":1060,"h":780}
@@ -18,10 +18,10 @@
 },
 "MainLogo.png":
 {
-	"frame": {"x":1067,"y":3,"w":910,"h":530},
+	"frame": {"x":1067,"y":3,"w":876,"h":494},
 	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":910,"h":530},
+	"trimmed": true,
+	"spriteSourceSize": {"x":28,"y":19,"w":876,"h":494},
 	"sourceSize": {"w":910,"h":530}
 }},
 "meta": {
@@ -31,6 +31,6 @@
 	"format": "RGBA8888",
 	"size": {"w":2048,"h":2048},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:f9f0d37bf7dad01ee1cff3bbec4311f0$"
+	"smartupdate": "$TexturePacker:SmartUpdate:479016fbf1b402b355eb78f9193dead7$"
 }
 }
