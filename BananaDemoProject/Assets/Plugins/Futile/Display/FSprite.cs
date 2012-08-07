@@ -66,8 +66,6 @@ public class FSprite : FQuadNode
 			UpdateLocalVertices();
 		}
 		
-		//only populate the render layer if it's NOT a depth update
-		//because if it IS a depth update, populate will be called LATER
 		if(_isMeshDirty) 
 		{
 			PopulateRenderLayer();
