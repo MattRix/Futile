@@ -14,13 +14,13 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 	private FLabel _timeLabel;
 	
 	private int _frameCount = 0;
-	private float _secondsLeft = 30.9f;
+	private float _secondsLeft = 15.9f;
 	
 	private int _totalBananasCreated = 0;
 	private FContainer _bananaContainer;
 	private List<BBanana> _bananas = new List<BBanana>();
 	
-	private int _maxFramesTillNextBanana = 31;
+	private int _maxFramesTillNextBanana = 20;
 	private int _framesTillNextBanana = 0;	
 	
 	private FContainer _effectHolder;
@@ -94,7 +94,19 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 			floatProp("scale",1.0f).
 			setEaseType(EaseType.BackOut));
 		
-		FEngine.touchManager.AddMultiTouchTarget(this); 
+		
+	}
+	
+	override public void HandleAddedToStage()
+	{
+		base.HandleAddedToStage();
+		FEngine.touchManager.AddMultiTouchTarget(this); 	
+	}
+	
+	override public void HandleRemovedFromStage()
+	{
+		base.HandleRemovedFromStage();
+		FEngine.touchManager.RemoveMultiTouchTarget(this); 	
 	}
 
 	private void HandleCloseButtonTap (object sender, EventArgs e)
@@ -227,17 +239,6 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 	{
 		FSprite explodeSprite = (tween as Tween).target as FSprite;
 		explodeSprite.RemoveFromContainer();
-	}
-	
-	override public void Destroy()
-	{
-		_background.RemoveFromContainer();
-		_closeButton.RemoveFromContainer();
-		_scoreLabel.RemoveFromContainer();
-		_timeLabel.RemoveFromContainer(); 
-		_bananaContainer.RemoveFromContainer();
-		
-		FEngine.touchManager.RemoveMultiTouchTarget(this); 
 	}
 }
 

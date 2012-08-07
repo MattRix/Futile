@@ -81,7 +81,6 @@ public class BMain : MonoBehaviour
 			
 			if(_currentPage != null)
 			{
-				_currentPage.Destroy();
 				_stage.RemoveChild(_currentPage);
 			}
 			 

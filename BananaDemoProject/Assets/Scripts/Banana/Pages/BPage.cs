@@ -12,11 +12,6 @@ public class BPage : FContainer
 	{
 		
 	}
-	
-	virtual public void Destroy()
-	{
-		
-	}
 
 	virtual public void Advance ()
 	{

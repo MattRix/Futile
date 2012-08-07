@@ -113,14 +113,6 @@ public class BScorePage : BPage
 		
 		_frameCount++;
 	}
-	
-	override public void Destroy()
-	{
-		_background.RemoveFromContainer();
-		_monkey.RemoveFromContainer();
-		_againButton.RemoveFromContainer();
-		_scoreLabel.RemoveFromContainer();
-		_bestScoreLabel.RemoveFromContainer();
-	}
+
 }
 

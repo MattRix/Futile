@@ -9,6 +9,7 @@ public class BTitlePage : BPage
 	private BLabelButton _startButton;
 	private int _frameCount = 0;
 	
+	
 	public BTitlePage()
 	{
 		
@@ -50,6 +51,7 @@ public class BTitlePage : BPage
 			setDelay(0.3f).
 			floatProp("scale",1.0f).
 			setEaseType(EaseType.BackOut));
+		
 	}
 
 	private void HandleStartButtonTap (object sender, EventArgs e)
@@ -69,12 +71,6 @@ public class BTitlePage : BPage
 			
 		_frameCount++;
 	}
-	
-	override public void Destroy()
-	{
-		_background.RemoveFromContainer();
-		_logo.RemoveFromContainer();
-		_startButton.RemoveFromContainer();
-	}
+
 }
 
