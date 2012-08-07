@@ -1,5 +1,4 @@
 #Futile 0.2
-###_A Unity 2D engine for the rest of us_
 
 Futile is a super simple 2D engine for Unity. 
 
