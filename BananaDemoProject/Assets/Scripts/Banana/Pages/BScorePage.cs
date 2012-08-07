@@ -99,7 +99,7 @@ public class BScorePage : BPage
 
 	}
 
-	private void HandleAgainButtonTap (BLabelButton button)
+	private void HandleAgainButtonTap ()
 	{
 		BSoundPlayer.PlayRegularMusic();
 		BMain.instance.GoToPage(BPageType.InGamePage); 

@@ -66,7 +66,7 @@ public class BTitlePage : BPage
 
 	}
 
-	private void HandleStartButtonTap (BLabelButton button)
+	private void HandleStartButtonTap ()
 	{
 		BMain.instance.GoToPage(BPageType.InGamePage);
 	}

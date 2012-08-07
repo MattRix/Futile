@@ -10,7 +10,7 @@ public class BLabelButton : FContainer, FSingleTouchableInterface
 	protected FLabel _label;
 	protected string _text;
 	
-	public event Action<BLabelButton> SignalTap;
+	public event Action SignalTap;
 	
 	public BLabelButton (string text) : base()
 	{
@@ -75,7 +75,7 @@ public class BLabelButton : FContainer, FSingleTouchableInterface
 		if(_bg.boundsRect.Contains(touchPos))
 		{
 			BSoundPlayer.PlayClickSound();
-			if(SignalTap != null) SignalTap(this);
+			if(SignalTap != null) SignalTap();
 		}
 	}
 	

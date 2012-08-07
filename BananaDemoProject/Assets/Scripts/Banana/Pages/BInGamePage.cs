@@ -109,7 +109,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 			setEaseType(EaseType.BackOut));
 	}
 
-	private void HandleCloseButtonTap (object sender)
+	private void HandleCloseButtonTap ()
 	{
 		BMain.instance.GoToPage(BPageType.TitlePage);
 	}

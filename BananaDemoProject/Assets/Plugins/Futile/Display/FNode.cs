@@ -33,6 +33,8 @@ public class FNode
 	protected bool _isVisible = true;
 	protected float _visibleAlpha = 1.0f;
 	
+	public object data = null; //the user can put whatever data they want here
+	
 	public FNode () 
 	{
 		_stage = Futile.stage;
