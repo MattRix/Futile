@@ -28,7 +28,6 @@ public class FAtlasElement
 public class FAtlas
 {
 	private string _atlasPath;
-	private string _fullPath;
 	
 	private int _index;
 	
@@ -44,8 +43,6 @@ public class FAtlas
 		_atlasPath = atlasPath;
 		_index = index;
 		
-		_fullPath = _atlasPath;
-		
 		LoadTexture();
 		
 		if(shouldLoadAsSingleImage)
@@ -60,11 +57,11 @@ public class FAtlas
 	
 	private void LoadTexture()
 	{
-		_texture = (Texture) Resources.Load (_fullPath, typeof(Texture));
+		_texture = (Texture) Resources.Load (_atlasPath, typeof(Texture));
 		 
 		if(!_texture)
 		{
-			Debug.Log ("Futile: Couldn't load the atlas texture from: " + _fullPath);	
+			Debug.Log ("Futile: Couldn't load the atlas texture from: " + _atlasPath);	
 		}
 		
 		_textureSize = new Vector2(_texture.width,_texture.height);
@@ -72,11 +69,11 @@ public class FAtlas
 	
 	private void LoadAtlasData()
 	{
-		TextAsset dataAsset = (TextAsset) Resources.Load (_fullPath, typeof(TextAsset));
+		TextAsset dataAsset = (TextAsset) Resources.Load (_atlasPath, typeof(TextAsset));
 		
 		if(!dataAsset)
 		{
-			Debug.Log ("Futile: Couldn't load the atlas data from: " + _fullPath);
+			Debug.Log ("Futile: Couldn't load the atlas data from: " + _atlasPath);
 		}
 		
 		Hashtable hash = dataAsset.text.hashtableFromJson();
@@ -224,6 +221,11 @@ public class FAtlas
 		
 		_elements.Add (element);
 		_elementsByName.Add (element.name, element);
+	}
+
+	public void Unload ()
+	{
+		Resources.UnloadAsset(_texture);
 	}
 	
 	public List<FAtlasElement> elements

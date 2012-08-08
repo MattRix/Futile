@@ -46,6 +46,43 @@ public class FAtlasManager
 	{
 		LoadAtlasOrImage(imagePath,true);
 	}
+	
+	private void UnloadAtlasOrImage(string atlasPath)
+	{
+		string fullPath = atlasPath+Futile.resourceSuffix;
+		
+		for(int a = 0; a<_atlases.Count; a++)
+		{
+			FAtlas atlas = _atlases[a];
+			
+			if(atlas.atlasPath == fullPath)
+			{
+				for(int e = _allElements.Count-1; e>=0; e--)
+				{
+					FAtlasElement element = _allElements[e];
+					
+					if(element.atlas == atlas)
+					{
+						_allElements.RemoveAt(e);	
+						_allElementsByName.Remove(element.name);
+					}
+				}
+				
+				atlas.Unload();
+				_atlases.RemoveAt(a);
+			}
+		}
+	}
+	
+	public void UnloadAtlas(string atlasPath)
+	{
+		UnloadAtlasOrImage(atlasPath);
+	}
+	
+	public void UnloadImage(string imagePath)
+	{
+		UnloadAtlasOrImage(imagePath);	
+	}
 
 	public FAtlasElement GetElementWithName (string elementName)
 	{
