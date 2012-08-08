@@ -21,13 +21,14 @@ public struct FCharInfo
 	public float offsetY;
 	public float xadvance;
 	public int page;
+	public string letter;
 }
 
 public struct FKerningInfo
 {
 	public int first;
 	public int second;
-	public int amount;
+	public float amount;
 }
 
 public class FLetterQuad
@@ -53,13 +54,56 @@ public class FLetterQuad
 		topRight.Set(rect.xMax+offsetX,rect.yMax+offsetY);
 		bottomRight.Set(rect.xMax+offsetX,rect.yMin+offsetY);
 		bottomLeft.Set(rect.xMin+offsetX,rect.yMin+offsetY);
+		
+		topLeft = topLeft.Round();
+		topRight = topRight.Round();
+		bottomRight = bottomRight.Round();
+		bottomLeft = bottomLeft.Round();
+		
+	}
+	
+	
+}
+
+//TODO: make this stuff better and less hacky
+//right now it's just there to give us slightly more pixel perfect text
+//but it doesn't work perfectly
+public static class FVectorExtensions
+{
+	static public Vector2 Round(this Vector2 vector)
+	{
+		float scale = Futile.displayScale;
+		return new Vector2(Mathf.Floor (0.5f + vector.x*scale)/scale,Mathf.Floor (0.5f + vector.y*scale)/scale);
 	}
 }
 
 public class FTextParams
 {
-	public float lineHeightOffset = 0;
-	public float kerningOffset = 0;
+	public float scaledLineHeightOffset = 0;
+	public float scaledKerningOffset = 0;
+	
+	private float _lineHeightOffset = 0;
+	private float _kerningOffset = 0;
+	
+	public float kerningOffset
+	{
+		get {return _kerningOffset;}
+		set 
+		{
+			_kerningOffset = value; 
+			scaledKerningOffset = value * Futile.contentScale;
+		}
+	}
+	
+	public float lineHeightOffset
+	{
+		get {return _lineHeightOffset;}
+		set 
+		{
+			_lineHeightOffset = value; 
+			scaledLineHeightOffset = value * Futile.contentScale;
+		}
+	}
 }
 
 public class FLetterQuadLine
@@ -192,7 +236,14 @@ public class FFont
 					string[] parts = words[w].Split('=');	
 					string partName = parts[0];
 					
-					if(partName == "letter") continue; //we don't care about the letter
+					if(partName == "letter") 
+					{
+						if(parts[1].Length >= 3)
+						{
+							charInfo.letter = parts[1].Substring(1,1);
+						} 
+						continue; //we don't care about the letter	
+					}
 					
 					if(partName == "\r") continue; //something weird happened with linebreaks, meh!
 					
@@ -240,8 +291,8 @@ public class FFont
 				{
 					Rect uvRect = new Rect 	
 					(
-						_element.uvRect.x + _element.uvRect.width - ((charInfo.y+charInfo.height)/textureSize.x*resourceScale),
-						_element.uvRect.y + _element.uvRect.height - ((charInfo.x+charInfo.width)/textureSize.y*resourceScale),
+						_element.uvRect.x + _element.uvRect.width - ((charInfo.y+charInfo.height+0.5f)/textureSize.x*resourceScale),
+						_element.uvRect.y + _element.uvRect.height - ((charInfo.x+charInfo.width+0.5f)/textureSize.y*resourceScale),
 						charInfo.height/textureSize.x*resourceScale,
 						charInfo.width/textureSize.y*resourceScale
 					);
@@ -304,7 +355,7 @@ public class FFont
 					}
 					else if(partName == "amount")
 					{
-						kerningInfo.amount = partValue;
+						kerningInfo.amount = partValue * _configRatio;
 					}
 				}
 				
@@ -381,8 +432,6 @@ public class FFont
 		float minY = 100000;
 		float maxY = -100000;
 		
-		float contentScale = Futile.contentScale;
-		
 		for(int c = 0; c<letters.Length; ++c)
 		{
 			char letter = letters[c];
@@ -397,7 +446,7 @@ public class FFont
 				maxY = -100000;
 				
 				nextX = 0;
-				nextY -= _lineHeight + textParams.lineHeightOffset + _fontTextParams.lineHeightOffset;
+				nextY -= _lineHeight + textParams.scaledLineHeightOffset + _fontTextParams.scaledLineHeightOffset;
 				
 				lineCount++;
 				letterCount = 0;
@@ -414,15 +463,21 @@ public class FFont
 					}
 				}
 				
-				nextX += (foundKerning.amount + textParams.kerningOffset + _fontTextParams.kerningOffset) * contentScale; 
+				
 				
 				//TODO: Reuse letterquads with pooling!
 				FLetterQuad letterQuad = new FLetterQuad();
 				
 				charInfo = _charInfosByID[letter];
-				letterQuad.charInfo = charInfo;
 				
+				float totalKern = foundKerning.amount + textParams.scaledKerningOffset + _fontTextParams.scaledKerningOffset;
+
+				nextX += totalKern; 
+				
+				letterQuad.charInfo = charInfo;
+				//
 				Rect quadRect = new Rect(nextX + charInfo.offsetX, nextY - charInfo.offsetY - charInfo.height, charInfo.width, charInfo.height);
+			
 				letterQuad.rect = quadRect;
 				
 				lines[lineCount].quads[letterCount] = letterQuad;	
@@ -433,7 +488,7 @@ public class FFont
 				maxY = Math.Max (maxY, quadRect.yMax);
 				
 				nextX += charInfo.xadvance;
-				
+
 				letterCount++;
 			}
 						

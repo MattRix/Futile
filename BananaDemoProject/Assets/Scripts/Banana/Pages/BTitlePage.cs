@@ -63,7 +63,6 @@ public class BTitlePage : BPage
 			setDelay(0.3f).
 			floatProp("scale",1.0f).
 			setEaseType(EaseType.BackOut));
-
 	}
 
 	private void HandleStartButtonTap ()
@@ -75,12 +74,6 @@ public class BTitlePage : BPage
 	{
 		_logo.rotation = -5.0f +  RXMath.PingPong(_frameCount, 300) * 10.0f;
 		
-		if(_frameCount > 45) //wait until after the buildin
-		{
-			//make the banana rock back and forth
-			_startButton.scale = 0.94f+ RXMath.PingPong(_frameCount, 90) * 0.06f;
-		}
-			
 		_frameCount++;
 	}
 

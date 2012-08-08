@@ -118,12 +118,6 @@ public class BScorePage : BPage
 			if(_isNewBestScore) _bestScoreLabel.color = new Color(1.0f,0.9f,0.2f);	
 		}
 		
-		if(_frameCount > 45) //wait until after the buildin
-		{
-			_againButton.scale = 0.94f+ RXMath.PingPong(_frameCount, 90) * 0.06f;
-		}
-		
-		
 		_frameCount++;
 	}
 
