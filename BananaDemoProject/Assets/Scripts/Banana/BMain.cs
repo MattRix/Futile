@@ -32,7 +32,7 @@ public class BMain : MonoBehaviour
 		
 		//Time.timeScale = 0.1f;
 		
-		FFrameworkParams fparams = new FFrameworkParams();
+		FutileParams fparams = new FutileParams();
 		
 		fparams.AddResolutionLevel(480.0f,	1.0f,	1.0f,	1.0f,	"_Scale1");
 		fparams.AddResolutionLevel(960.0f,	2.0f,	1.0f,	2.0f,	"_Scale2");

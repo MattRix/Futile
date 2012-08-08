@@ -11,7 +11,7 @@ public class FResolutionLevel
 	public string resourceSuffix;
 }
 
-public class FFrameworkParams
+public class FutileParams
 {
 	public List<FResolutionLevel> resLevels = new List<FResolutionLevel>();
 	

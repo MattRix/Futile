@@ -51,7 +51,7 @@ public class Futile : MonoBehaviour
 	public static int startingQuadsPerLayer;
 	public static int quadsPerLayerExpansion;
 	
-	private FFrameworkParams _engineParams;
+	private FutileParams _futileParams;
 	private FResolutionLevel _resLevel;
 
 	// Use this for initialization
@@ -61,14 +61,14 @@ public class Futile : MonoBehaviour
 		isOpenGL = SystemInfo.graphicsDeviceVersion.Contains("OpenGL");
 	}
 	
-	public void Init(FFrameworkParams engineParams)
+	public void Init(FutileParams futileParams)
 	{
 		Application.targetFrameRate = targetFrameRate;
 		
-		_engineParams = engineParams;
+		_futileParams = futileParams;
 		
-		Futile.startingQuadsPerLayer = _engineParams.startingQuadsPerLayer;
-		Futile.quadsPerLayerExpansion = _engineParams.quadsPerLayerExpansion;
+		Futile.startingQuadsPerLayer = _futileParams.startingQuadsPerLayer;
+		Futile.quadsPerLayerExpansion = _futileParams.quadsPerLayerExpansion;
 		
 		float length = Math.Max(Screen.height, Screen.width);
 		
@@ -76,7 +76,7 @@ public class Futile : MonoBehaviour
 		//get the resolution level - the one we're closest to WITHOUT going over, price is right rules :)
 		_resLevel = null;
 		
-		foreach(FResolutionLevel resLevel in _engineParams.resLevels)
+		foreach(FResolutionLevel resLevel in _futileParams.resLevels)
 		{
 			if(length <= resLevel.maxLength) //we've found our resLevel
 			{
@@ -88,7 +88,7 @@ public class Futile : MonoBehaviour
 		//if we couldn't find a res level, it means the screen is bigger than the biggest one, so just choose that one
 		if(_resLevel == null)
 		{
-			_resLevel = _engineParams.resLevels.GetLastObject();	
+			_resLevel = _futileParams.resLevels.GetLastObject();	
 			if(_resLevel == null)
 			{
 				throw new Exception("You must add at least one FResolutionLevel!");	
@@ -117,8 +117,8 @@ public class Futile : MonoBehaviour
 		halfWidth = width/2.0f;
 		halfHeight = height/2.0f;
 		
-		_originX = _engineParams.origin.x;
-		_originY = _engineParams.origin.y;
+		_originX = _futileParams.origin.x;
+		_originY = _futileParams.origin.y;
 		
 		Debug.Log ("Futile: Display scale is " + displayScale);
 		
