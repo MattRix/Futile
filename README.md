@@ -2,7 +2,7 @@
 
 Futile is a super simple 2D framework for Unity. 
 
-This is for those of you who want to do everything in code and want as little editor integration as possible. 
+This is for those of you who want to do everything in code with as little editor integration as possible. 
 It'll be especially familiar if you come from a background using Cocos2D or Flash.
 
 It's still super rough, under development, and completely undocumented... but it works. 
