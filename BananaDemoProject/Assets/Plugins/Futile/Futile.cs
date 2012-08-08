@@ -357,6 +357,11 @@ public class Futile : MonoBehaviour
 		}
 	}
 	
+	public bool IsLandscape()
+	{
+		return _currentOrientation == ScreenOrientation.LandscapeLeft || _currentOrientation == ScreenOrientation.LandscapeRight;
+	}
+	
 
 }
 
