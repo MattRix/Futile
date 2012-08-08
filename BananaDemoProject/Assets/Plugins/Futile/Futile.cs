@@ -34,15 +34,19 @@ public class Futile : MonoBehaviour
 	
 	static public string resourceSuffix; //set based on the resLevel
 	
+	static public float screenWidth;
+	static public float screenHeight;
+	
 	public event Action SignalUpdate;
 	public event Action SignalLateUpdate;
+	
+	public event Action SignalOrientationChange;
+	public event Action<bool> SignalResize; //the bool represents wasOrientationChange
 	
 	public int drawDepth = 100;
 	
 	private GameObject _cameraHolder;
 	private Camera _camera;
-	
-	public int targetFrameRate = 60;
 	
 	//this is populated by the FutileParams
 	private float _originX;
@@ -53,7 +57,12 @@ public class Futile : MonoBehaviour
 	
 	private FutileParams _futileParams;
 	private FResolutionLevel _resLevel;
-
+	
+	private ScreenOrientation _currentOrientation;
+	
+	private float _screenLongLength;
+	private float _screenShortLength;
+	
 	// Use this for initialization
 	private void Awake () 
 	{
@@ -62,15 +71,68 @@ public class Futile : MonoBehaviour
 	}
 	
 	public void Init(FutileParams futileParams)
-	{
-		Application.targetFrameRate = targetFrameRate;
-		
+	{	
 		_futileParams = futileParams;
 		
+		Application.targetFrameRate = _futileParams.targetFrameRate;
+		
+		
+		TouchScreenKeyboard.autorotateToLandscapeLeft = false;
+		TouchScreenKeyboard.autorotateToLandscapeRight = false;
+		TouchScreenKeyboard.autorotateToPortrait = false;
+		TouchScreenKeyboard.autorotateToPortraitUpsideDown = false;
+		
+		//Non-mobile unity always defaults to portrait for some reason, so fix this manually
+		if(Screen.height > Screen.width)
+		{
+			_currentOrientation = ScreenOrientation.Portrait;	
+		}
+		else
+		{
+			_currentOrientation = ScreenOrientation.LandscapeLeft;
+		}
+		
+		//get the correct orientation if we're on a mobile platform
+		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID)
+			_currentOrientation = Screen.orientation;
+		#endif
+		
+		//check if we support the current orientation
+		//if we don't, go to the other orientation
+		if((_currentOrientation == ScreenOrientation.LandscapeLeft || _currentOrientation == ScreenOrientation.LandscapeRight) && !_futileParams.DoesSupportLandscape())
+		{
+			Screen.orientation = ScreenOrientation.Portrait;
+			_currentOrientation = ScreenOrientation.Portrait;
+		}
+		else if((_currentOrientation == ScreenOrientation.Portrait || _currentOrientation == ScreenOrientation.PortraitUpsideDown) && !_futileParams.DoesSupportPortrait())
+		{
+			Screen.orientation = ScreenOrientation.LandscapeLeft;
+			_currentOrientation = ScreenOrientation.LandscapeLeft;
+		}
+		
+		//special "single orientation" mode
+		if(_futileParams.singleOrientation != ScreenOrientation.Unknown)
+		{
+			Screen.orientation = _futileParams.singleOrientation;
+			_currentOrientation = _futileParams.singleOrientation;
+		}
+
 		Futile.startingQuadsPerLayer = _futileParams.startingQuadsPerLayer;
 		Futile.quadsPerLayerExpansion = _futileParams.quadsPerLayerExpansion;
 		
-		float length = Math.Max(Screen.height, Screen.width);
+		_screenLongLength = Math.Max(Screen.height, Screen.width);
+		_screenShortLength = Math.Min(Screen.height, Screen.width);
+		
+		if(_currentOrientation == ScreenOrientation.Portrait || _currentOrientation == ScreenOrientation.PortraitUpsideDown)
+		{
+			screenWidth = _screenShortLength;
+			screenHeight = _screenLongLength;
+		}
+		else //landscape
+		{
+			screenWidth = _screenLongLength;
+			screenHeight = _screenShortLength;
+		}
 		
 		
 		//get the resolution level - the one we're closest to WITHOUT going over, price is right rules :)
@@ -78,7 +140,7 @@ public class Futile : MonoBehaviour
 		
 		foreach(FResolutionLevel resLevel in _futileParams.resLevels)
 		{
-			if(length <= resLevel.maxLength) //we've found our resLevel
+			if(_screenLongLength <= resLevel.maxLength) //we've found our resLevel
 			{
 				_resLevel = resLevel;
 				break;
@@ -99,7 +161,7 @@ public class Futile : MonoBehaviour
 		
 		//this is what helps us figure out the display scale if we're not at a specific resolution level
 		//it's relative to the next highest resolution level
-		float displayScaleModifier = length/_resLevel.maxLength;
+		float displayScaleModifier = _screenLongLength/_resLevel.maxLength;
 			
 		
 		displayScale = _resLevel.displayScale * displayScaleModifier;
@@ -111,8 +173,8 @@ public class Futile : MonoBehaviour
 		contentScale = _resLevel.contentScale;
 		contentScaleInverse = 1.0f/contentScale;
 
-		width = Screen.width*displayScaleInverse;
-		height = Screen.height*displayScaleInverse;
+		width = screenWidth*displayScaleInverse;
+		height = screenHeight*displayScaleInverse;
 		
 		halfWidth = width/2.0f;
 		halfHeight = height/2.0f;
@@ -128,11 +190,13 @@ public class Futile : MonoBehaviour
 		
 		Debug.Log ("Futile: Resource suffix is " + _resLevel.resourceSuffix);
 		
-		Debug.Log ("Futile: Screen size in pixels is (" + Screen.width +"px," + Screen.height+"px)");
+		Debug.Log ("Futile: Screen size in pixels is (" + screenWidth +"px," + screenHeight+"px)");
 		
 		Debug.Log ("Futile: Screen size in points is (" + width + "," + height+")");
 		
 		Debug.Log ("Futile: Origin is at (" + _originX*width + "," + _originY*height+")");
+		
+		Debug.Log ("Futile: Initial orientation is " + _currentOrientation);
 		
 		//
 		//Camera setup from https://github.com/prime31/UIToolkit/blob/master/Assets/Plugins/UIToolkit/UI.cs
@@ -146,7 +210,7 @@ public class Futile : MonoBehaviour
 		
 		_camera = _cameraHolder.camera;
 		_camera.name = "FCamera";
-		//_camera.clearFlags = CameraClearFlags.Depth; //TODO: check if this is faster or not?
+		_camera.clearFlags = CameraClearFlags.Depth; //TODO: check if this is faster or not?
 		_camera.nearClipPlane = -50.3f;
 		_camera.farClipPlane = 50.0f;
 		_camera.depth = drawDepth;
@@ -155,7 +219,7 @@ public class Futile : MonoBehaviour
 		
 		//we multiply this stuff by scaleInverse to make sure everything is in points, not pixels
 		_camera.orthographic = true;
-		_camera.orthographicSize = Screen.height/2 * displayScaleInverse;
+		_camera.orthographicSize = screenHeight/2 * displayScaleInverse;
 
 		UpdateCameraPosition();
 		
@@ -165,9 +229,67 @@ public class Futile : MonoBehaviour
 		
 		stage = new FStage();
 	}
+
+	protected void SwitchOrientation (ScreenOrientation newOrientation)
+	{
+		Debug.Log("Futile: Orientation changed to " + newOrientation);
+				
+		if(_futileParams.singleOrientation != ScreenOrientation.Unknown) //if we're in single orientation mode, just broadcast the change, don't actually change anything
+		{
+			_currentOrientation = newOrientation;
+			if(SignalOrientationChange != null) SignalOrientationChange();
+		}
+		else
+		{
+			Screen.orientation = newOrientation;
+			_currentOrientation = newOrientation;
+			
+			if(_currentOrientation == ScreenOrientation.Portrait || _currentOrientation == ScreenOrientation.PortraitUpsideDown)
+			{
+				screenWidth = _screenShortLength;
+				screenHeight = _screenLongLength;
+			}
+			else //landscape
+			{
+				screenWidth = _screenLongLength;
+				screenHeight = _screenShortLength;
+			}
+			
+			width = screenWidth*displayScaleInverse;
+			height = screenHeight*displayScaleInverse;
+			
+			halfWidth = width/2.0f;
+			halfHeight = height/2.0f;
+			
+			_camera.orthographicSize = screenHeight/2 * displayScaleInverse;
+			UpdateCameraPosition(); 
+			
+			Debug.Log ("Orientating switched to " + _currentOrientation + " screen is now: " + screenWidth+","+screenHeight);
+			
+			if(SignalOrientationChange != null) SignalOrientationChange();
+			if(SignalResize != null) SignalResize(true);
+		}
+	}
 	
 	protected void Update()
 	{
+		if(Input.deviceOrientation == DeviceOrientation.LandscapeLeft && _currentOrientation != ScreenOrientation.LandscapeLeft && _futileParams.DoesSupportLandscape())
+		{
+			SwitchOrientation(ScreenOrientation.LandscapeLeft);
+		}
+		else if(Input.deviceOrientation == DeviceOrientation.LandscapeRight && _currentOrientation != ScreenOrientation.LandscapeRight && _futileParams.DoesSupportLandscape())
+		{
+			SwitchOrientation(ScreenOrientation.LandscapeRight);
+		}
+		else if(Input.deviceOrientation == DeviceOrientation.Portrait && _currentOrientation != ScreenOrientation.Portrait && _futileParams.DoesSupportPortrait())
+		{
+			SwitchOrientation(ScreenOrientation.Portrait);
+		}
+		else if(Input.deviceOrientation == DeviceOrientation.PortraitUpsideDown && _currentOrientation != ScreenOrientation.PortraitUpsideDown && _futileParams.DoesSupportPortrait())
+		{
+			SwitchOrientation(ScreenOrientation.PortraitUpsideDown);
+		}
+
 		touchManager.Update();
 		if(SignalUpdate != null) SignalUpdate();
 		stage.Redraw (false,false);
@@ -191,8 +313,8 @@ public class Futile : MonoBehaviour
 	
 	protected void UpdateCameraPosition()
 	{
-		float camXOffset = ((_originX - 0.5f) * -Screen.width)*displayScaleInverse;
-		float camYOffset = ((_originY - 0.5f) * -Screen.height)*displayScaleInverse;
+		float camXOffset = ((_originX - 0.5f) * -screenWidth)*displayScaleInverse;
+		float camYOffset = ((_originY - 0.5f) * -screenHeight)*displayScaleInverse;
 	
 		_camera.transform.position = new Vector3(camXOffset, camYOffset, -10.0f); 	
 	}
@@ -222,7 +344,19 @@ public class Futile : MonoBehaviour
 			}
 		}
 	}
-
+	
+	public ScreenOrientation currentOrientation
+	{
+		get {return _currentOrientation;}
+		set 
+		{
+			if(_currentOrientation != value)
+			{
+				SwitchOrientation(value);
+			}	
+		}
+	}
 	
 
 }
+

@@ -42,7 +42,7 @@ public class BLabelButton : FContainer, FSingleTouchableInterface
 	public bool HandleSingleTouchBegan(FTouch touch)
 	{
 		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
-		
+	
 		if(_bg.boundsRect.Contains(touchPos))
 		{
 			_bg.element = _overElement;

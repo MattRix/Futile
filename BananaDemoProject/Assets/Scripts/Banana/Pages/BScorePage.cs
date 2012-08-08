@@ -19,12 +19,14 @@ public class BScorePage : BPage
 	override public void HandleAddedToStage()
 	{
 		Futile.instance.SignalUpdate += HandleUpdate;
+		Futile.instance.SignalResize += HandleResize;
 		base.HandleAddedToStage();	
 	}
 	
 	override public void HandleRemovedFromStage()
 	{
 		Futile.instance.SignalUpdate -= HandleUpdate;
+		Futile.instance.SignalResize -= HandleResize;
 		base.HandleRemovedFromStage();	
 	}
 	
@@ -36,8 +38,7 @@ public class BScorePage : BPage
 		
 		//this will scale the background up to fit the screen
 		//but it won't let it shrink smaller than 100%
-		_background.scale = Math.Max (Math.Max(1.0f,Futile.height/_background.height),Futile.width /_background.width);
-		
+
 		_monkey = new BMonkey();
 		AddChild(_monkey);
 		_monkey.x = -5.0f;
@@ -71,8 +72,7 @@ public class BScorePage : BPage
 		_bestScoreLabel.anchorX = 1.0f;
 		_bestScoreLabel.anchorY = 0.0f;
 		_bestScoreLabel.color = new Color(1.0f,0.9f,0.2f);
-		_bestScoreLabel.x = Futile.halfWidth - 5;
-		_bestScoreLabel.y = -Futile.halfHeight + 5;
+		
 		
 		
 		_scoreLabel.scale = 0.0f;
@@ -97,6 +97,17 @@ public class BScorePage : BPage
 			floatProp("scale",1.0f).
 			setEaseType(EaseType.BackOut));
 
+		HandleResize(true); //force resize to position everything at the start
+	}
+	
+	protected void HandleResize(bool wasOrientationChange)
+	{
+		//this will scale the background up to fit the screen
+		//but it won't let it shrink smaller than 100%
+		_background.scale = Math.Max (Math.Max(1.0f,Futile.height/_background.height),Futile.width/_background.width);
+		 
+		_bestScoreLabel.x = Futile.halfWidth - 5;
+		_bestScoreLabel.y = -Futile.halfHeight + 5;
 	}
 
 	private void HandleAgainButtonTap ()

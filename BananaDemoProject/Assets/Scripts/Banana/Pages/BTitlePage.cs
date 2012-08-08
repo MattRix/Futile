@@ -5,6 +5,7 @@ using System;
 public class BTitlePage : BPage
 {
 	private FSprite _background;
+	private FContainer _logoHolder;
 	private FSprite _logo;
 	private BLabelButton _startButton;
 	private int _frameCount = 0;
@@ -17,12 +18,14 @@ public class BTitlePage : BPage
 	override public void HandleAddedToStage()
 	{
 		Futile.instance.SignalUpdate += HandleUpdate;
+		Futile.instance.SignalResize += HandleResize;
 		base.HandleAddedToStage();	
 	}
 	
 	override public void HandleRemovedFromStage()
 	{
 		Futile.instance.SignalUpdate -= HandleUpdate;
+		Futile.instance.SignalResize -= HandleResize;
 		base.HandleRemovedFromStage();	
 	}
 	
@@ -34,24 +37,24 @@ public class BTitlePage : BPage
 		
 		//this will scale the background up to fit the screen
 		//but it won't let it shrink smaller than 100%
-		_background.scale = Math.Max (Math.Max(1.0f,Futile.height/_background.height),Futile.width /_background.width);
-		 
+		
+		_logoHolder = new FContainer();
+		
+		AddChild (_logoHolder);
+
 		_logo = new FSprite("MainLogo.png");
-		AddChild(_logo);
-		_logo.x = 0.0f;
-		_logo.y = 15.0f;
+		
+		_logoHolder.AddChild(_logo);
 		
 		_startButton = new BLabelButton("START!");
 		AddChild(_startButton);
-		_startButton.x = Futile.halfWidth-75.0f;
-		_startButton.y = -Futile.halfHeight+35.0f;
-		
+
 		_startButton.SignalTap += HandleStartButtonTap;
 		
 		
-		_logo.scale = 0.0f;
+		_logoHolder.scale = 0.0f;
 		
-		Go.to(_logo, 0.5f, new TweenConfig().
+		Go.to(_logoHolder, 0.5f, new TweenConfig().
 			setDelay(0.1f).
 			floatProp("scale",1.0f).
 			setEaseType(EaseType.BackOut));
@@ -63,6 +66,25 @@ public class BTitlePage : BPage
 			setDelay(0.3f).
 			floatProp("scale",1.0f).
 			setEaseType(EaseType.BackOut));
+		
+		HandleResize(true); //force resize to position everything at the start
+	}
+	
+	protected void HandleResize(bool wasOrientationChange)
+	{
+		//this will scale the background up to fit the screen
+		//but it won't let it shrink smaller than 100%
+		_background.scale = Math.Max (Math.Max(1.0f,Futile.height/_background.height),Futile.width/_background.width);
+		 
+		_logoHolder.x = 0.0f;
+		_logoHolder.y = 15.0f;
+		
+		_startButton.x = Futile.halfWidth-75.0f;
+		_startButton.y = -Futile.halfHeight+35.0f;
+		
+		//scale the logo so it fits on the main screen 
+		_logo.scale = Math.Min(1.0f,Futile.width/_logo.boundsRect.width);
+		
 	}
 
 	private void HandleStartButtonTap ()

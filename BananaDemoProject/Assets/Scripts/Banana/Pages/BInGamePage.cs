@@ -34,6 +34,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 	{
 		Futile.touchManager.AddMultiTouchTarget(this);
 		Futile.instance.SignalUpdate += HandleUpdate;
+		Futile.instance.SignalResize += HandleResize;
 		base.HandleAddedToStage();	
 	}
 	
@@ -41,6 +42,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 	{
 		Futile.touchManager.RemoveMultiTouchTarget(this);
 		Futile.instance.SignalUpdate -= HandleUpdate;
+		Futile.instance.SignalResize -= HandleResize;
 		base.HandleRemovedFromStage();	
 	}
 	
@@ -50,38 +52,26 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		
 		_background = new FSprite("JungleBlurryBG.png");
 		AddChild(_background);
-		
-		//this will scale the background up to fit the screen
-		//but it won't let it shrink smaller than 100%
-		_background.scale = Math.Max (Math.Max(1.0f,Futile.height/_background.height),Futile.width /_background.width);
-		
+
 		//the banana container will make it easy to keep the bananas at the right depth
 		_bananaContainer = new FContainer(); 
 		AddChild(_bananaContainer); 
 		
 		_closeButton = new BCloseButton();
 		AddChild(_closeButton);
-		_closeButton.x = -Futile.halfWidth + 30.0f;
-		_closeButton.y = -Futile.halfHeight + 30.0f;
+		
 		
 		_closeButton.SignalTap += HandleCloseButtonTap;
 		
 		_scoreLabel = new FLabel("Franchise", "0 Bananas");
 		_scoreLabel.anchorX = 0.0f;
 		_scoreLabel.anchorY = 1.0f;
-		
-		
-		_scoreLabel.x = -Futile.halfWidth + 10.0f;
-		_scoreLabel.y = Futile.halfHeight - 10.0f;
 		_scoreLabel.scale = 0.75f;
 		_scoreLabel.color = new Color(1.0f,0.90f,0.0f);
 		
 		_timeLabel = new FLabel("Franchise", ((int)_secondsLeft) + " Seconds Left");
 		_timeLabel.anchorX = 1.0f;
 		_timeLabel.anchorY = 1.0f;
-		
-		_timeLabel.x = Futile.halfWidth - 10.0f;
-		_timeLabel.y = Futile.halfHeight - 10.0f;
 		_timeLabel.scale = 0.75f;
 		_timeLabel.color = new Color(1.0f,1.0f,1.0f);
 		
@@ -107,6 +97,24 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 			setDelay(0.0f).
 			floatProp("scale",1.0f).
 			setEaseType(EaseType.BackOut));
+		
+		HandleResize(true); //force resize to position everything at the start
+	}
+	
+	protected void HandleResize(bool wasOrientationChange)
+	{
+		//this will scale the background up to fit the screen
+		//but it won't let it shrink smaller than 100%
+		_background.scale = Math.Max (Math.Max(1.0f,Futile.height/_background.height),Futile.width/_background.width);
+		 
+		_closeButton.x = -Futile.halfWidth + 30.0f;
+		_closeButton.y = -Futile.halfHeight + 30.0f;
+		
+		_scoreLabel.x = -Futile.halfWidth + 10.0f;
+		_scoreLabel.y = Futile.halfHeight - 10.0f;
+		
+		_timeLabel.x = Futile.halfWidth - 10.0f;
+		_timeLabel.y = Futile.halfHeight - 10.0f;
 	}
 
 	private void HandleCloseButtonTap ()
