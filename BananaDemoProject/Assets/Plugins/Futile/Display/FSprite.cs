@@ -134,6 +134,11 @@ public class FSprite : FQuadNode
 	{
 		get {return _boundsRect;}	
 	}
+	
+	virtual public Rect localRect
+	{
+		get {return _localRect;}	
+	}
 
 	virtual public Color color 
 	{
