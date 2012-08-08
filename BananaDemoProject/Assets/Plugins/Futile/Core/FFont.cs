@@ -101,7 +101,7 @@ public class FFont
 		_element = element;
 		_configPath = configPath;
 		_fontTextParams = fontTextParams;
-					
+		
 		LoadAndParseConfigFile();
 	}
 	
