@@ -17,9 +17,10 @@ ___
 _(There will be proper tutorials and stuff coming later, but for now this is it)_
 
 ####How to open the project
-- Checkout the project from github and put it somewhere
-- Run Unity
-- Go to File -> Open Project -> Open Other -> and then choose the "BananaDemoProject" folder
+
+- Grab the project from github and put it somewhere - [For the lazy, here's a zip of the whole repo](https://github.com/MattRix/Futile/zipball/master)
+- Make sure you have Unity installed
+- Go into BananaDemoProject/Assets/Scenes and open FutileDemoScene.unity
 
 ####How to make sure you're running it at the right resolution
 - Go to File -> Build Settings -> Click "PC and Mac Standalone" -> Click "Switch Platform" (if it's already greyed out, you're good)
