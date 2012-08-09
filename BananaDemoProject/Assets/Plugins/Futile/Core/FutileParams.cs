@@ -11,13 +11,6 @@ public class FResolutionLevel
 	public string resourceSuffix;
 }
 
-public enum FSupportedOrientations
-{
-	OnlyLandscape,
-	OnlyPortrait,
-	LandscapeAndPortrait
-}
-
 public class FutileParams
 {
 	public List<FResolutionLevel> resLevels = new List<FResolutionLevel>();
@@ -31,21 +24,17 @@ public class FutileParams
 	
 	public ScreenOrientation singleOrientation = ScreenOrientation.Unknown;
 	
-	public FSupportedOrientations supportedOrientations;
+	public bool supportsLandscapeLeft;
+	public bool supportsLandscapeRight;
+	public bool supportsPortrait;
+	public bool supportsPortraitUpsideDown;
 	
-	public FutileParams(FSupportedOrientations supportedOrientations)
+	public FutileParams(bool supportsLandscapeLeft, bool supportsLandscapeRight, bool supportsPortrait, bool supportsPortraitUpsideDown)
 	{
-		this.supportedOrientations = supportedOrientations;
-	}
-	
-	public bool DoesSupportLandscape()
-	{
-		return supportedOrientations == FSupportedOrientations.OnlyLandscape || supportedOrientations == FSupportedOrientations.LandscapeAndPortrait;	
-	}
-	
-	public bool DoesSupportPortrait()
-	{
-		return supportedOrientations == FSupportedOrientations.OnlyPortrait || supportedOrientations == FSupportedOrientations.LandscapeAndPortrait;	
+		this.supportsLandscapeLeft = supportsLandscapeLeft;
+		this.supportsLandscapeRight = supportsLandscapeRight;
+		this.supportsPortrait = supportsPortrait;
+		this.supportsPortraitUpsideDown = supportsPortraitUpsideDown;
 	}
 
 	public FResolutionLevel AddResolutionLevel (float maxLength, float displayScale, float contentScale, float resourceScale, string resourceSuffix)

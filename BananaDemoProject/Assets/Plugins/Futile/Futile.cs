@@ -96,26 +96,41 @@ public class Futile : MonoBehaviour
 		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID)
 			_currentOrientation = Screen.orientation;
 		#endif
-		
-		//check if we support the current orientation
-		//if we don't, go to the other orientation
-		if((_currentOrientation == ScreenOrientation.LandscapeLeft || _currentOrientation == ScreenOrientation.LandscapeRight) && !_futileParams.DoesSupportLandscape())
-		{
-			Screen.orientation = ScreenOrientation.Portrait;
-			_currentOrientation = ScreenOrientation.Portrait;
-		}
-		else if((_currentOrientation == ScreenOrientation.Portrait || _currentOrientation == ScreenOrientation.PortraitUpsideDown) && !_futileParams.DoesSupportPortrait())
-		{
-			Screen.orientation = ScreenOrientation.LandscapeLeft;
-			_currentOrientation = ScreenOrientation.LandscapeLeft;
-		}
-		
+				
 		//special "single orientation" mode
 		if(_futileParams.singleOrientation != ScreenOrientation.Unknown)
 		{
-			Screen.orientation = _futileParams.singleOrientation;
 			_currentOrientation = _futileParams.singleOrientation;
 		}
+		else //if we're not in a supported orientation, put us in one!
+		{
+			if(_currentOrientation == ScreenOrientation.LandscapeLeft && !_futileParams.supportsLandscapeLeft)
+			{
+				if(_futileParams.supportsLandscapeRight) _currentOrientation = ScreenOrientation.LandscapeRight;
+				else if(_futileParams.supportsPortrait) _currentOrientation = ScreenOrientation.Portrait;
+				else if(_futileParams.supportsPortraitUpsideDown) _currentOrientation = ScreenOrientation.PortraitUpsideDown;
+			}	
+			else if(_currentOrientation == ScreenOrientation.LandscapeRight && !_futileParams.supportsLandscapeRight)
+			{
+				if(_futileParams.supportsLandscapeLeft) _currentOrientation = ScreenOrientation.LandscapeLeft;
+				else if(_futileParams.supportsPortrait) _currentOrientation = ScreenOrientation.Portrait;
+				else if(_futileParams.supportsPortraitUpsideDown) _currentOrientation = ScreenOrientation.PortraitUpsideDown;
+			}
+			else if(_currentOrientation == ScreenOrientation.Portrait && !_futileParams.supportsPortrait)
+			{
+				if(_futileParams.supportsPortraitUpsideDown) _currentOrientation = ScreenOrientation.PortraitUpsideDown;
+				else if(_futileParams.supportsLandscapeLeft) _currentOrientation = ScreenOrientation.LandscapeLeft;
+				else if(_futileParams.supportsLandscapeRight) _currentOrientation = ScreenOrientation.LandscapeRight;
+			}
+			else if(_currentOrientation == ScreenOrientation.PortraitUpsideDown && !_futileParams.supportsPortraitUpsideDown)
+			{
+				if(_futileParams.supportsPortrait) _currentOrientation = ScreenOrientation.Portrait;
+				else if(_futileParams.supportsLandscapeLeft) _currentOrientation = ScreenOrientation.LandscapeLeft;
+				else if(_futileParams.supportsLandscapeRight) _currentOrientation = ScreenOrientation.LandscapeRight;
+			}
+		}
+		
+		Screen.orientation = _currentOrientation;
 
 		Futile.startingQuadsPerLayer = _futileParams.startingQuadsPerLayer;
 		Futile.quadsPerLayerExpansion = _futileParams.quadsPerLayerExpansion;
@@ -273,19 +288,19 @@ public class Futile : MonoBehaviour
 	
 	protected void Update()
 	{
-		if(Input.deviceOrientation == DeviceOrientation.LandscapeLeft && _currentOrientation != ScreenOrientation.LandscapeLeft && _futileParams.DoesSupportLandscape())
+		if(Input.deviceOrientation == DeviceOrientation.LandscapeLeft && _currentOrientation != ScreenOrientation.LandscapeLeft && _futileParams.supportsLandscapeLeft)
 		{
 			SwitchOrientation(ScreenOrientation.LandscapeLeft);
 		}
-		else if(Input.deviceOrientation == DeviceOrientation.LandscapeRight && _currentOrientation != ScreenOrientation.LandscapeRight && _futileParams.DoesSupportLandscape())
+		else if(Input.deviceOrientation == DeviceOrientation.LandscapeRight && _currentOrientation != ScreenOrientation.LandscapeRight && _futileParams.supportsLandscapeRight)
 		{
 			SwitchOrientation(ScreenOrientation.LandscapeRight);
 		}
-		else if(Input.deviceOrientation == DeviceOrientation.Portrait && _currentOrientation != ScreenOrientation.Portrait && _futileParams.DoesSupportPortrait())
+		else if(Input.deviceOrientation == DeviceOrientation.Portrait && _currentOrientation != ScreenOrientation.Portrait && _futileParams.supportsPortrait)
 		{
 			SwitchOrientation(ScreenOrientation.Portrait);
 		}
-		else if(Input.deviceOrientation == DeviceOrientation.PortraitUpsideDown && _currentOrientation != ScreenOrientation.PortraitUpsideDown && _futileParams.DoesSupportPortrait())
+		else if(Input.deviceOrientation == DeviceOrientation.PortraitUpsideDown && _currentOrientation != ScreenOrientation.PortraitUpsideDown && _futileParams.supportsPortraitUpsideDown)
 		{
 			SwitchOrientation(ScreenOrientation.PortraitUpsideDown);
 		}

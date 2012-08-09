@@ -32,7 +32,11 @@ public class BMain : MonoBehaviour
 		
 		//Time.timeScale = 0.1f;
 		
-		FutileParams fparams = new FutileParams(FSupportedOrientations.LandscapeAndPortrait);
+		bool isIPad = SystemInfo.deviceModel.Contains("iPad");
+		
+		bool shouldSupportPortraitUpsideDown = isIPad; //only support portrait upside-down on iPad
+		
+		FutileParams fparams = new FutileParams(true,true,true,shouldSupportPortraitUpsideDown);
 		
 		fparams.AddResolutionLevel(480.0f,	1.0f,	1.0f,	1.0f,	"_Scale1");
 		fparams.AddResolutionLevel(960.0f,	2.0f,	1.0f,	2.0f,	"_Scale2");
