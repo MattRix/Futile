@@ -155,6 +155,8 @@ public class FRenderLayer
 			
 			_mesh.vertices = _vertices;
 			_mesh.uv = _uvs;
+			
+			//TODO: switch to using color32 at some point for performance
 			_mesh.colors = _colors;
 			_mesh.triangles = _triIndices;
 		}
