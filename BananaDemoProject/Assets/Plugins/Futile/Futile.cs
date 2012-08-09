@@ -76,11 +76,12 @@ public class Futile : MonoBehaviour
 		
 		Application.targetFrameRate = _futileParams.targetFrameRate;
 		
-		
+		#if UNITY_IPHONE || UNITY_ANDROID
 		TouchScreenKeyboard.autorotateToLandscapeLeft = false;
 		TouchScreenKeyboard.autorotateToLandscapeRight = false;
 		TouchScreenKeyboard.autorotateToPortrait = false;
 		TouchScreenKeyboard.autorotateToPortraitUpsideDown = false;
+		#endif
 		
 		//Non-mobile unity always defaults to portrait for some reason, so fix this manually
 		if(Screen.height > Screen.width)
