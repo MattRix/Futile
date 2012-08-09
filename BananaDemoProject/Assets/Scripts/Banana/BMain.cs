@@ -94,7 +94,7 @@ public class BMain : MonoBehaviour
 			}
 			 
 			_currentPage = pageToCreate;
-			_stage.AddChildAtIndex(_currentPage,0);
+			_stage.AddChild(_currentPage);
 			_currentPage.Start();
 		}
 		
