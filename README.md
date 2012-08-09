@@ -34,5 +34,16 @@ Notes:
 - If you choose a specific resolution, but the game window isn't large enough to contain that resolution, it'll open in some random scaled resolution, and everything will be wonky, which is annoying. 
 - If you're on OSX and you own iOS Basic or Pro, you can choose iOS instead of standalone
 
+#Legal stuff: The code and art assets (except for the font) can be used for anything, however the sound effects and music are not to be used in anything else
+#The font is [Franchise](http://www.losttype.com/font/?name=franchise)
 
+###MIT License###
+
+Source code for Futile is Copyright © 2012 Matt Rix and contributors.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS,” WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
