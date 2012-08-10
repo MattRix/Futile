@@ -85,7 +85,7 @@ public class FSoundManager
 		_musicSource.Stop();
 	}
 	
-	static public void UnloadAllSoundsAndMusic()
+	static public void UnloadAllSounds()
 	{
 		foreach(AudioClip audioClip in _soundClips.Values)
 		{
@@ -93,6 +93,11 @@ public class FSoundManager
 		}
 		
 		_soundClips.Clear();
+	}
+	
+	static public void UnloadAllSoundsAndMusic()
+	{
+		UnloadAllSounds();
 		
 		if(_currentMusicClip)
 		{

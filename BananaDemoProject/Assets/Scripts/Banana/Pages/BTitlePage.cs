@@ -7,7 +7,7 @@ public class BTitlePage : BPage
 	private FSprite _background;
 	private FContainer _logoHolder;
 	private FSprite _logo;
-	private BLabelButton _startButton;
+	private FButton _startButton;
 	private int _frameCount = 0;
 	
 	
@@ -46,11 +46,12 @@ public class BTitlePage : BPage
 		
 		_logoHolder.AddChild(_logo);
 		
-		_startButton = new BLabelButton("START!");
+		_startButton = new FButton("YellowButton_normal.png", "YellowButton_over.png", "ClickSound");
+		_startButton.AddLabel("Franchise","START",new Color(0.45f,0.25f,0.0f,1.0f));
+		
 		AddChild(_startButton);
 
-		_startButton.SignalTap += HandleStartButtonTap;
-		
+		_startButton.SignalRelease += HandleStartButtonRelease;
 		
 		_logoHolder.scale = 0.0f;
 		
@@ -87,7 +88,7 @@ public class BTitlePage : BPage
 		
 	}
 
-	private void HandleStartButtonTap ()
+	private void HandleStartButtonRelease ()
 	{
 		BMain.instance.GoToPage(BPageType.InGamePage);
 	}

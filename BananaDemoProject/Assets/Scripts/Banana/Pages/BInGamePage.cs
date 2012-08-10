@@ -8,7 +8,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 	
 	private FSprite _background;
 	
-	private BCloseButton _closeButton;
+	private FButton _closeButton;
 	
 	private FLabel _scoreLabel;
 	private FLabel _timeLabel;
@@ -57,11 +57,12 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		_bananaContainer = new FContainer(); 
 		AddChild(_bananaContainer); 
 		
-		_closeButton = new BCloseButton();
+		
+		_closeButton = new FButton("CloseButton_normal.png", "CloseButton_over.png", "ClickSound");
 		AddChild(_closeButton);
 		
 		
-		_closeButton.SignalTap += HandleCloseButtonTap;
+		_closeButton.SignalRelease += HandleCloseButtonRelease;
 		
 		_scoreLabel = new FLabel("Franchise", "0 Bananas");
 		_scoreLabel.anchorX = 0.0f;
@@ -117,7 +118,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		_timeLabel.y = Futile.halfHeight - 10.0f;
 	}
 
-	private void HandleCloseButtonTap ()
+	private void HandleCloseButtonRelease ()
 	{
 		BMain.instance.GoToPage(BPageType.TitlePage);
 	}

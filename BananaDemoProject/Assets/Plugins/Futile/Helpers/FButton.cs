@@ -4,10 +4,10 @@ using System;
 
 public class FButton : FContainer, FSingleTouchableInterface
 {
-	protected FAtlasElement _normalElement;
-	protected FAtlasElement _pressedElement;
+	protected FAtlasElement _upElement;
+	protected FAtlasElement _downElement;
 	protected FSprite _bg;
-	protected string _sound;
+	protected string _soundName;
 	protected FLabel _label;
 
 	public event Action SignalPress;
@@ -15,17 +15,19 @@ public class FButton : FContainer, FSingleTouchableInterface
 
 	private float _anchorX = 0.5f;
 	private float _anchorY = 0.5f;
+	
+	public float expansionAmount = 10;
 
-	public FButton (string upImage, string downImage, string sound)
+	public FButton (string upElementName, string downElementName, string soundName)
 	{
-		_normalElement = Futile.atlasManager.GetElementWithName(upImage);
-		_pressedElement = Futile.atlasManager.GetElementWithName(downImage);
-		_bg = new FSprite(_normalElement.name);
+		_upElement = Futile.atlasManager.GetElementWithName(upElementName);
+		_downElement = Futile.atlasManager.GetElementWithName(downElementName);
+		_bg = new FSprite(_upElement.name);
 		_bg.anchorX = _anchorX;
 		_bg.anchorY = _anchorY;
 		AddChild(_bg);
 
-		_sound = sound;
+		_soundName = soundName;
 	}
 	// Simpler constructors
 	public FButton (string upImage, string downImage) : this(upImage, downImage, null) {}
@@ -42,8 +44,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 		{
 			_anchorX = value;
 			_bg.anchorX = _anchorX;
-			if (_label != null)
-				_label.x = -_anchorX*_bg.width+_bg.width/2;
+			if (_label != null) _label.x = -_anchorX*_bg.width+_bg.width/2;
 		}
 		get {return _anchorX;}
 	}
@@ -54,8 +55,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 		{
 			_anchorY = value;
 			_bg.anchorY = _anchorY;
-			if (_label != null)
-				_label.y = -_anchorY*_bg.height+_bg.height/2;
+			if (_label != null) _label.y = -_anchorY*_bg.height+_bg.height/2;
 		}
 		get {return _anchorY;}
 	}
@@ -99,9 +99,9 @@ public class FButton : FContainer, FSingleTouchableInterface
 		
 		if(_bg.boundsRect.Contains(touchPos))
 		{
-			_bg.element = _pressedElement;
+			_bg.element = _downElement;
 			
-			if(_sound != null) FSoundManager.PlaySound(_sound);
+			if(_soundName != null) FSoundManager.PlaySound(_soundName);
 			
 			if(SignalPress != null) SignalPress();
 			
@@ -115,23 +115,31 @@ public class FButton : FContainer, FSingleTouchableInterface
 	{
 		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
 		
-		if(_bg.boundsRect.Contains(touchPos))
+		//expand the hitrect so that it has more error room around the edges
+		//this is what Apple does on iOS and it makes for better usability
+		Rect expandedRect = _bg.boundsRect.CloneWithExpansion(expansionAmount);
+		
+		if(expandedRect.Contains(touchPos))
 		{
-			_bg.element = _pressedElement;	
+			_bg.element = _downElement;	
 		}
 		else
 		{
-			_bg.element = _normalElement;	
+			_bg.element = _upElement;	
 		}
 	}
 	
 	public void HandleSingleTouchEnded(FTouch touch)
 	{
-		_bg.element = _normalElement;
+		_bg.element = _upElement;
 		
 		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
 		
-		if(_bg.boundsRect.Contains(touchPos))
+		//expand the hitrect so that it has more error room around the edges
+		//this is what Apple does on iOS and it makes for better usability
+		Rect expandedRect = _bg.boundsRect.CloneWithExpansion(expansionAmount);
+		
+		if(expandedRect.Contains(touchPos))
 		{
 			if(SignalRelease != null) SignalRelease();
 		}
@@ -139,7 +147,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 	
 	public void HandleSingleTouchCanceled(FTouch touch)
 	{
-		_bg.element = _normalElement;
+		_bg.element = _upElement;
 	}
 	
 	
