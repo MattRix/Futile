@@ -91,7 +91,7 @@ public class FTextParams
 		set 
 		{
 			_kerningOffset = value; 
-			scaledKerningOffset = value * Futile.contentScale;
+			scaledKerningOffset = value;
 		}
 	}
 	
@@ -101,7 +101,7 @@ public class FTextParams
 		set 
 		{
 			_lineHeightOffset = value; 
-			scaledLineHeightOffset = value * Futile.contentScale;
+			scaledLineHeightOffset = value;
 		}
 	}
 }
@@ -186,7 +186,7 @@ public class FFont
 		
 		_charInfosByID = new FCharInfo[127];
 		
-		float resourceScale = Futile.resourceScale * Futile.contentScaleInverse;
+		float resourceScale = Futile.resourceScale;
 		
 		Vector2 textureSize = _element.atlas.textureSize;
 		

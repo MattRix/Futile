@@ -80,7 +80,7 @@ public class FAtlas
 		
 		IDictionary frames = (IDictionary)hash["frames"];
 		
-		float scaleInverse = Futile.resourceScaleInverse * Futile.contentScale;
+		float scaleInverse = Futile.resourceScaleInverse;
 		
 		
 		//these offset values make sure everything is crisp on DirectX

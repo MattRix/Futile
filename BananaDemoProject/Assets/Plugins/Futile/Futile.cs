@@ -38,9 +38,6 @@ public class Futile : MonoBehaviour
 	static public float displayScale; //set based on the resolution setting (the unit to pixel scale)
 	static public float displayScaleInverse; // 1/displayScale
 	
-	static public float contentScale; //should usually be 1.0f except in rare circumstances
-	static public float contentScaleInverse; 
-	
 	static public float resourceScale; //set based on the resolution setting (the scale of assets)
 	static public float resourceScaleInverse; // 1/resourceScale
 	
@@ -207,9 +204,6 @@ public class Futile : MonoBehaviour
 		
 		resourceScale = _resLevel.resourceScale;
 		resourceScaleInverse = 1.0f/resourceScale;
-		
-		contentScale = _resLevel.contentScale;
-		contentScaleInverse = 1.0f/contentScale;
 
 		width = pixelWidth*displayScaleInverse;
 		height = pixelHeight*displayScaleInverse;
@@ -221,8 +215,6 @@ public class Futile : MonoBehaviour
 		_originY = _futileParams.origin.y;
 		
 		Debug.Log ("Futile: Display scale is " + displayScale);
-		
-		Debug.Log ("Futile: Content scale is " + contentScale);
 		
 		Debug.Log ("Futile: Resource scale is " + resourceScale);
 		

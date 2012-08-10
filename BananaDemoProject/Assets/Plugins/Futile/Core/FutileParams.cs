@@ -6,7 +6,6 @@ public class FResolutionLevel
 {
 	public float maxLength;
 	public float displayScale;
-	public float contentScale;
 	public float resourceScale;
 	public string resourceSuffix;
 }
@@ -38,13 +37,12 @@ public class FutileParams
 		this.supportsPortraitUpsideDown = supportsPortraitUpsideDown;
 	}
 
-	public FResolutionLevel AddResolutionLevel (float maxLength, float displayScale, float contentScale, float resourceScale, string resourceSuffix)
+	public FResolutionLevel AddResolutionLevel (float maxLength, float displayScale, float resourceScale, string resourceSuffix)
 	{
 		FResolutionLevel resLevel = new FResolutionLevel();
 		
 		resLevel.maxLength = maxLength;
 		resLevel.displayScale = displayScale;
-		resLevel.contentScale = contentScale;
 		resLevel.resourceScale = resourceScale;
 		resLevel.resourceSuffix = resourceSuffix;
 		
