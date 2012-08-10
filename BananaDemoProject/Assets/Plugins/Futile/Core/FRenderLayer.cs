@@ -19,7 +19,7 @@ public class FRenderLayer
 	
 	//Mesh stuff
 	private Vector3[] _vertices = new Vector3[0];
-	private int[] _triIndices = new int[0];
+	private int[] _triangles = new int[0];
 	private Vector2[] _uvs = new Vector2[0];
 	private Color[] _colors = new Color[0];
 	
@@ -28,9 +28,11 @@ public class FRenderLayer
 	private bool _didUVsChange = false;
 	private bool _didColorsChange = false;
 	private bool _didVertCountChange = false;
+	private bool _doesMeshNeedClear = false;
 	private bool _shouldUpdateBounds = false;
 
 	private int _expansionAmount;
+	private int _maxEmptyQuads;
 	private int _maxQuadCount = 0;
 	
 	private int _depth = -1;
@@ -44,6 +46,7 @@ public class FRenderLayer
 		_shader = shader;
 		
 		_expansionAmount = Futile.quadsPerLayerExpansion;
+		_maxEmptyQuads = Futile.maxEmptyQuadsPerLayer;
 		
 		batchIndex = atlas.index*10000 + shader.index;
 		
@@ -103,7 +106,16 @@ public class FRenderLayer
 
 	public void Close () //fill remaining quads with 0,0,0
 	{
-		_lowestZeroIndex = Math.Max (_nextAvailableQuadIndex, _lowestZeroIndex);
+		//if we have a ton of empty quads
+		//shrink the quads
+		if(_nextAvailableQuadIndex < _maxQuadCount-_maxEmptyQuads)
+		{
+			ShrinkMaxQuadLimit(Math.Max (0,(_maxQuadCount-_nextAvailableQuadIndex)-_expansionAmount));	
+			ExpandMaxQuadLimit(1);
+			Debug.Log ("SHHRINK");
+		}
+		
+		_lowestZeroIndex = Math.Max (_nextAvailableQuadIndex, Math.Min (_maxQuadCount,_lowestZeroIndex));
 		
 		for(int z = _nextAvailableQuadIndex; z<_lowestZeroIndex; ++z)
 		{
@@ -150,15 +162,16 @@ public class FRenderLayer
 			_shouldUpdateBounds = false;
 			
 			//in theory we shouldn't need clear because we KNOW everything is correct
-			//see http://docs.unity3d.com/Documentation/ScriptReference/Mesh.Clear.html
-			//_mesh.Clear(); 
-			
+			//see http://docs.unity3d.com/Documentation/ScriptReference/Mesh.html
+			if(_doesMeshNeedClear) _mesh.Clear(); 
 			_mesh.vertices = _vertices;
+			_mesh.triangles = _triangles;
 			_mesh.uv = _uvs;
 			
-			//TODO: switch to using color32 at some point for performance
+			//TODO: switch to using colors32 at some point for performance
+			//see http://docs.unity3d.com/Documentation/ScriptReference/Mesh-colors32.html
 			_mesh.colors = _colors;
-			_mesh.triangles = _triIndices;
+			
 		}
 		else 
 		{
@@ -201,41 +214,77 @@ public class FRenderLayer
 		_isMeshDirty = true;
 	}
 	
+	private void ShrinkMaxQuadLimit(int deltaDecrease)
+	{
+		if(deltaDecrease <= 0) return;
+		
+		_maxQuadCount = Math.Max (Futile.startingQuadsPerLayer, _maxQuadCount-deltaDecrease);
+	
+		//Vertices:
+		Vector3[] oldVertices = _vertices;
+		_vertices = new Vector3[_maxQuadCount * 4];
+		Array.Copy(oldVertices,_vertices,_vertices.Length);
+	
+		// UVs:
+		Vector2[] oldUVs = _uvs;
+		_uvs = new Vector2[_maxQuadCount * 4];
+		Array.Copy(oldUVs,_uvs,_uvs.Length);
+
+		// Colors:
+		Color[] oldColors = _colors;
+		_colors = new Color[_maxQuadCount * 4];
+		Array.Copy(oldColors,_colors,_colors.Length);
+
+		// Triangle indices:
+		int[] oldTriangles = _triangles;
+		_triangles = new int[_maxQuadCount * 6];
+		Array.Copy(oldTriangles,_triangles,_triangles.Length);
+
+		_didVertCountChange = true;
+		_didVertsChange = true;
+		_didUVsChange = true;
+		_didColorsChange = true;
+		_isMeshDirty = true;
+		_doesMeshNeedClear = true; //we only need clear when shrinking the mesh size
+	}
+	
 	private void ExpandMaxQuadLimit(int deltaIncrease)
 	{
+		if(deltaIncrease <= 0) return;
+		
 		int firstNewQuadIndex = _maxQuadCount;
 		
 		_maxQuadCount += deltaIncrease;
 		
 		// Vertices:
-		Vector3[] tempVertices = _vertices;
+		Vector3[] oldVertices = _vertices;
 		_vertices = new Vector3[_maxQuadCount * 4];
-		tempVertices.CopyTo(_vertices, 0);
+		oldVertices.CopyTo(_vertices, 0);
 
 		// UVs:
-		Vector2[] tempUVs = _uvs;
+		Vector2[] oldUVs = _uvs;
 		_uvs = new Vector2[_maxQuadCount * 4];
-		tempUVs.CopyTo(_uvs, 0);
+		oldUVs.CopyTo(_uvs, 0);
 
 		// Colors:
-		Color[] tempColors = _colors;
+		Color[] oldColors = _colors;
 		_colors = new Color[_maxQuadCount * 4];
-		tempColors.CopyTo(_colors, 0);
+		oldColors.CopyTo(_colors, 0);
 
 		// Triangle indices:
-		int[] tempTris = _triIndices;
-		_triIndices = new int[_maxQuadCount * 6];
-		tempTris.CopyTo(_triIndices, 0);
+		int[] oldTriangles = _triangles;
+		_triangles = new int[_maxQuadCount * 6];
+		oldTriangles.CopyTo(_triangles, 0);
 		
 		for(int i = firstNewQuadIndex; i<_maxQuadCount; ++i)
 		{
-			_triIndices[i*6 + 0] = i * 4 + 0;	
-			_triIndices[i*6 + 1] = i * 4 + 1;
-			_triIndices[i*6 + 2] = i * 4 + 2;
+			_triangles[i*6 + 0] = i * 4 + 0;	
+			_triangles[i*6 + 1] = i * 4 + 1;
+			_triangles[i*6 + 2] = i * 4 + 2;
 			
-			_triIndices[i*6 + 3] = i * 4 + 0;	
-			_triIndices[i*6 + 4] = i * 4 + 2;
-			_triIndices[i*6 + 5] = i * 4 + 3;
+			_triangles[i*6 + 3] = i * 4 + 0;	
+			_triangles[i*6 + 4] = i * 4 + 2;
+			_triangles[i*6 + 5] = i * 4 + 3;
 		}
 		
 		_didVertCountChange = true;
@@ -252,9 +301,10 @@ public class FRenderLayer
 		{
 			if(_depth != value)
 			{
-				_depth = value;
+				_depth = value; 
 		
-				_gameObject.transform.position = new Vector3(0,0,-_depth*0.0001f); //we multiply by a small number so it's subtle
+				//this will set the render order correctly based on the depth
+				_material.renderQueue = 3000+_depth;
 			}
 		}
 	}

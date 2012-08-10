@@ -54,6 +54,7 @@ public class Futile : MonoBehaviour
 	
 	public static int startingQuadsPerLayer;
 	public static int quadsPerLayerExpansion;
+	public static int maxEmptyQuadsPerLayer;
 	
 	private FutileParams _futileParams;
 	private FResolutionLevel _resLevel;
@@ -135,6 +136,7 @@ public class Futile : MonoBehaviour
 
 		Futile.startingQuadsPerLayer = _futileParams.startingQuadsPerLayer;
 		Futile.quadsPerLayerExpansion = _futileParams.quadsPerLayerExpansion;
+		Futile.maxEmptyQuadsPerLayer = _futileParams.maxEmptyQuadsPerLayer;
 		
 		_screenLongLength = Math.Max(Screen.height, Screen.width);
 		_screenShortLength = Math.Min(Screen.height, Screen.width);

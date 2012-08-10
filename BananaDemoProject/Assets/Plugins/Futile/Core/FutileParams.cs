@@ -17,6 +17,7 @@ public class FutileParams
 	
 	public int startingQuadsPerLayer = 10;
 	public int quadsPerLayerExpansion = 10;
+	public int maxEmptyQuadsPerLayer = 60;
 	
 	public Vector2 origin = new Vector2(0.5f,0.5f);
 	
