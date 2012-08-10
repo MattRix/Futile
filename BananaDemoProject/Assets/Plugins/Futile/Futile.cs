@@ -9,13 +9,31 @@ public class Futile : MonoBehaviour
 {
 	static public Futile instance = null;
 	
+	
+	
 	static public FAtlasManager atlasManager;
 	
 	static public FStage stage;
 	
 	static public FTouchManager touchManager;
 	
+	
+	
+	
 	static public bool isOpenGL; //assigned in Awake
+	
+	
+	static public float width; //in points, not pixels
+	static public float height; //in points, not pixels
+	
+	static public float halfWidth; //for convenience, in points
+	static public float halfHeight; //for convenience, in points
+
+	static public float pixelWidth; //in pixels
+	static public float pixelHeight; //in pixels
+	
+	
+	
 	
 	static public float displayScale; //set based on the resolution setting (the unit to pixel scale)
 	static public float displayScaleInverse; // 1/displayScale
@@ -26,16 +44,16 @@ public class Futile : MonoBehaviour
 	static public float resourceScale; //set based on the resolution setting (the scale of assets)
 	static public float resourceScaleInverse; // 1/resourceScale
 	
-	static public float width; //in points, not pixels
-	static public float height; //in points, not pixels
-	
-	static public float halfWidth; //in points
-	static public float halfHeight; //in points
-	
 	static public string resourceSuffix; //set based on the resLevel
 	
-	static public float screenWidth;
-	static public float screenHeight;
+	
+	
+	//used by the rendering engine
+	internal static int startingQuadsPerLayer;
+	internal static int quadsPerLayerExpansion;
+	internal static int maxEmptyQuadsPerLayer;	
+	
+	
 	
 	public event Action SignalUpdate;
 	public event Action SignalLateUpdate;
@@ -43,7 +61,7 @@ public class Futile : MonoBehaviour
 	public event Action SignalOrientationChange;
 	public event Action<bool> SignalResize; //the bool represents wasOrientationChange
 	
-	public int drawDepth = 100;
+	
 	
 	private GameObject _cameraHolder;
 	private Camera _camera;
@@ -52,9 +70,7 @@ public class Futile : MonoBehaviour
 	private float _originX;
 	private float _originY;
 	
-	public static int startingQuadsPerLayer;
-	public static int quadsPerLayerExpansion;
-	public static int maxEmptyQuadsPerLayer;
+
 	
 	private FutileParams _futileParams;
 	private FResolutionLevel _resLevel;
@@ -63,6 +79,10 @@ public class Futile : MonoBehaviour
 	
 	private float _screenLongLength;
 	private float _screenShortLength;
+	
+	private bool _didJustResize;
+	private float _oldWidth;
+	private float _oldHeight;
 	
 	// Use this for initialization
 	private void Awake () 
@@ -143,13 +163,13 @@ public class Futile : MonoBehaviour
 		
 		if(_currentOrientation == ScreenOrientation.Portrait || _currentOrientation == ScreenOrientation.PortraitUpsideDown)
 		{
-			screenWidth = _screenShortLength;
-			screenHeight = _screenLongLength;
+			pixelWidth = _screenShortLength;
+			pixelHeight = _screenLongLength;
 		}
 		else //landscape
 		{
-			screenWidth = _screenLongLength;
-			screenHeight = _screenShortLength;
+			pixelWidth = _screenLongLength;
+			pixelHeight = _screenShortLength;
 		}
 		
 		
@@ -191,8 +211,8 @@ public class Futile : MonoBehaviour
 		contentScale = _resLevel.contentScale;
 		contentScaleInverse = 1.0f/contentScale;
 
-		width = screenWidth*displayScaleInverse;
-		height = screenHeight*displayScaleInverse;
+		width = pixelWidth*displayScaleInverse;
+		height = pixelHeight*displayScaleInverse;
 		
 		halfWidth = width/2.0f;
 		halfHeight = height/2.0f;
@@ -208,7 +228,7 @@ public class Futile : MonoBehaviour
 		
 		Debug.Log ("Futile: Resource suffix is " + _resLevel.resourceSuffix);
 		
-		Debug.Log ("Futile: Screen size in pixels is (" + screenWidth +"px," + screenHeight+"px)");
+		Debug.Log ("Futile: Screen size in pixels is (" + pixelWidth +"px," + pixelHeight+"px)");
 		
 		Debug.Log ("Futile: Screen size in points is (" + width + "," + height+")");
 		
@@ -231,15 +251,17 @@ public class Futile : MonoBehaviour
 		_camera.clearFlags = CameraClearFlags.Depth; //TODO: check if this is faster or not?
 		_camera.nearClipPlane = -50.3f;
 		_camera.farClipPlane = 50.0f;
-		_camera.depth = drawDepth;
+		_camera.depth = 100;
 		_camera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
 		_camera.backgroundColor = Color.black;
 		
 		//we multiply this stuff by scaleInverse to make sure everything is in points, not pixels
 		_camera.orthographic = true;
-		_camera.orthographicSize = screenHeight/2 * displayScaleInverse;
+		_camera.orthographicSize = pixelHeight/2 * displayScaleInverse;
 
 		UpdateCameraPosition();
+		
+		_didJustResize = true;
 		
 		touchManager = new FTouchManager();
 		
@@ -248,7 +270,7 @@ public class Futile : MonoBehaviour
 		stage = new FStage();
 	}
 
-	protected void SwitchOrientation (ScreenOrientation newOrientation)
+	private void SwitchOrientation (ScreenOrientation newOrientation)
 	{
 		Debug.Log("Futile: Orientation changed to " + newOrientation);
 				
@@ -262,34 +284,44 @@ public class Futile : MonoBehaviour
 			Screen.orientation = newOrientation;
 			_currentOrientation = newOrientation;
 			
-			if(_currentOrientation == ScreenOrientation.Portrait || _currentOrientation == ScreenOrientation.PortraitUpsideDown)
-			{
-				screenWidth = _screenShortLength;
-				screenHeight = _screenLongLength;
-			}
-			else //landscape
-			{
-				screenWidth = _screenLongLength;
-				screenHeight = _screenShortLength;
-			}
+			UpdateScreenDimensions();
 			
-			width = screenWidth*displayScaleInverse;
-			height = screenHeight*displayScaleInverse;
-			
-			halfWidth = width/2.0f;
-			halfHeight = height/2.0f;
-			
-			_camera.orthographicSize = screenHeight/2 * displayScaleInverse;
-			UpdateCameraPosition(); 
-			
-			Debug.Log ("Orientating switched to " + _currentOrientation + " screen is now: " + screenWidth+","+screenHeight);
+			Debug.Log ("Orientating switched to " + _currentOrientation + " screen is now: " + pixelWidth+","+pixelHeight);
 			
 			if(SignalOrientationChange != null) SignalOrientationChange();
 			if(SignalResize != null) SignalResize(true);
+			
+			_didJustResize = true;
 		}
 	}
 	
-	protected void Update()
+	private void UpdateScreenDimensions()
+	{
+		_screenLongLength = Math.Max (Screen.width, Screen.height);
+		_screenShortLength = Math.Min (Screen.width, Screen.height);
+		
+		if(_currentOrientation == ScreenOrientation.Portrait || _currentOrientation == ScreenOrientation.PortraitUpsideDown)
+		{
+			pixelWidth = _screenShortLength;
+			pixelHeight = _screenLongLength;
+		}
+		else //landscape
+		{
+			pixelWidth = _screenLongLength;
+			pixelHeight = _screenShortLength;
+		}
+		
+		width = pixelWidth*displayScaleInverse;
+		height = pixelHeight*displayScaleInverse;
+		
+		halfWidth = width/2.0f;
+		halfHeight = height/2.0f;
+		
+		_camera.orthographicSize = pixelHeight/2 * displayScaleInverse;
+		UpdateCameraPosition(); 	
+	}
+	
+	private void Update()
 	{
 		if(Input.deviceOrientation == DeviceOrientation.LandscapeLeft && _currentOrientation != ScreenOrientation.LandscapeLeft && _futileParams.supportsLandscapeLeft)
 		{
@@ -307,32 +339,47 @@ public class Futile : MonoBehaviour
 		{
 			SwitchOrientation(ScreenOrientation.PortraitUpsideDown);
 		}
+		
+		if(_didJustResize)
+		{
+			_didJustResize = false;
+			_oldWidth = Screen.width;
+			_oldHeight = Screen.height;
+		}
+		else if(_oldWidth != Screen.width || _oldHeight != Screen.height)
+		{
+			_oldWidth = Screen.width;
+			_oldHeight = Screen.height;
+			
+			UpdateScreenDimensions();
+			if(SignalResize != null) SignalResize(false);
+		}
 
 		touchManager.Update();
 		if(SignalUpdate != null) SignalUpdate();
 		stage.Redraw (false,false);
 	}
 	
-	protected void LateUpdate()
+	private void LateUpdate()
 	{
 		stage.LateUpdate();
 		if(SignalLateUpdate != null) SignalLateUpdate();
 	}	
 	
-	protected void OnApplicationQuit()
+	private void OnApplicationQuit()
 	{
 		instance = null;
 	}
 	
-	protected void OnDestroy()
+	private void OnDestroy()
 	{
 		instance = null;	
 	}
 	
-	protected void UpdateCameraPosition()
+	private void UpdateCameraPosition()
 	{
-		float camXOffset = ((_originX - 0.5f) * -screenWidth)*displayScaleInverse;
-		float camYOffset = ((_originY - 0.5f) * -screenHeight)*displayScaleInverse;
+		float camXOffset = ((_originX - 0.5f) * -pixelWidth)*displayScaleInverse;
+		float camYOffset = ((_originY - 0.5f) * -pixelHeight)*displayScaleInverse;
 	
 		_camera.transform.position = new Vector3(camXOffset, camYOffset, -10.0f); 	
 	}

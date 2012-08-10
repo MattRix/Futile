@@ -74,8 +74,8 @@ public class BTitlePage : BPage
 	{
 		//this will scale the background up to fit the screen
 		//but it won't let it shrink smaller than 100%
-		_background.scale = Math.Max (Math.Max(1.0f,Futile.height/_background.height),Futile.width/_background.width);
-		 
+		_background.scale = Math.Max (1.0f,Math.Max (Futile.height/_background.boundsRect.height,Futile.width/_background.boundsRect.width));
+		
 		_logoHolder.x = 0.0f;
 		_logoHolder.y = 15.0f;
 		

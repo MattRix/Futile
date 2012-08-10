@@ -105,7 +105,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 	{
 		//this will scale the background up to fit the screen
 		//but it won't let it shrink smaller than 100%
-		_background.scale = Math.Max (Math.Max(1.0f,Futile.height/_background.height),Futile.width/_background.width);
+		_background.scale = Math.Max (Math.Max(1.0f,Futile.height/_background.boundsRect.height),Futile.width/_background.boundsRect.width);
 		 
 		_closeButton.x = -Futile.halfWidth + 30.0f;
 		_closeButton.y = -Futile.halfHeight + 30.0f;
