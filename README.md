@@ -3,9 +3,10 @@
 Futile is a super simple 2D framework for Unity. 
 
 This is for those of you who want to do everything in code with as little editor integration as possible. 
-It'll be especially familiar if you come from a background using Cocos2D or Flash.
 
-It's still super rough, under development, and completely undocumented... but it works. 
+If you've used Cocos2D or Flash you should feel right at home.
+
+It's under development and completely undocumented... but it works. 
 
 Futile contains many ideas (as well as the MiniJSON parser) from Prime 31's UIToolkit: [github.com/Prime31/UIToolkit](http://github.com/Prime31/UIToolkit)
 
