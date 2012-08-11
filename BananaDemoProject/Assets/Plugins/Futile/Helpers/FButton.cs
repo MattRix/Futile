@@ -10,8 +10,9 @@ public class FButton : FContainer, FSingleTouchableInterface
 	protected string _soundName;
 	protected FLabel _label;
 
-	public event Action SignalPress;
-	public event Action SignalRelease;
+	public event Action<FButton> SignalPress;
+	public event Action<FButton> SignalRelease;
+	public event Action<FButton> SignalReleaseOutside;
 
 	private float _anchorX = 0.5f;
 	private float _anchorY = 0.5f;
@@ -103,7 +104,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 			
 			if(_soundName != null) FSoundManager.PlaySound(_soundName);
 			
-			if(SignalPress != null) SignalPress();
+			if(SignalPress != null) SignalPress(this);
 			
 			return true;	
 		}
@@ -141,13 +142,18 @@ public class FButton : FContainer, FSingleTouchableInterface
 		
 		if(expandedRect.Contains(touchPos))
 		{
-			if(SignalRelease != null) SignalRelease();
+			if(SignalRelease != null) SignalRelease(this);
+		}
+		else
+		{
+			if(SignalReleaseOutside != null) SignalReleaseOutside(this);	
 		}
 	}
 	
 	public void HandleSingleTouchCanceled(FTouch touch)
 	{
 		_bg.element = _upElement;
+		if(SignalReleaseOutside != null) SignalReleaseOutside(this);
 	}
 	
 	

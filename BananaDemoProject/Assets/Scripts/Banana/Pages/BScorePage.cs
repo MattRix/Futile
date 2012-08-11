@@ -112,7 +112,7 @@ public class BScorePage : BPage
 		_bestScoreLabel.y = -Futile.halfHeight + 5;
 	}
 
-	private void HandleAgainButtonRelease ()
+	private void HandleAgainButtonRelease (FButton button)
 	{
 		BSoundPlayer.PlayRegularMusic();
 		BMain.instance.GoToPage(BPageType.InGamePage); 

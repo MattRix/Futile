@@ -86,10 +86,12 @@ public class Futile : MonoBehaviour
 	{
 		instance = this;
 		isOpenGL = SystemInfo.graphicsDeviceVersion.Contains("OpenGL");
+		enabled = false;
 	}
 	
 	public void Init(FutileParams futileParams)
 	{	
+		enabled = true;
 		_futileParams = futileParams;
 		
 		Application.targetFrameRate = _futileParams.targetFrameRate;

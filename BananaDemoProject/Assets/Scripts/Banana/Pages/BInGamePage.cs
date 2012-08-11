@@ -118,7 +118,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		_timeLabel.y = Futile.halfHeight - 10.0f;
 	}
 
-	private void HandleCloseButtonRelease ()
+	private void HandleCloseButtonRelease (FButton button)
 	{
 		BMain.instance.GoToPage(BPageType.TitlePage);
 	}
