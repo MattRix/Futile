@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-//FacileEngine by Matt Rix - 
+//FutileEngine by Matt Rix - 
 
 public class Futile : MonoBehaviour 
 {
