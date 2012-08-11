@@ -27,7 +27,9 @@ public class FAtlasElement
 
 public class FAtlas
 {
-	private string _atlasPath;
+	private string _atlasName;
+	private string _imagePath;
+	private string _dataPath;
 	
 	private int _index;
 	
@@ -38,9 +40,12 @@ public class FAtlas
 	private Texture _texture;
 	private Vector2 _textureSize;
 	
-	public FAtlas (string atlasPath, int index, bool shouldLoadAsSingleImage)
+	public FAtlas (string atlasName, string imagePath, string dataPath, int index, bool shouldLoadAsSingleImage)
 	{
-		_atlasPath = atlasPath;
+		_atlasName = atlasName;
+		_imagePath = imagePath;
+		_dataPath = dataPath;
+		
 		_index = index;
 		
 		LoadTexture();
@@ -57,11 +62,11 @@ public class FAtlas
 	
 	private void LoadTexture()
 	{
-		_texture = (Texture) Resources.Load (_atlasPath, typeof(Texture));
+		_texture = (Texture) Resources.Load (_imagePath, typeof(Texture));
 		 
 		if(!_texture)
 		{
-			Debug.Log ("Futile: Couldn't load the atlas texture from: " + _atlasPath);	
+			Debug.Log ("Futile: Couldn't load the atlas texture from: " + _imagePath);	
 		}
 		
 		_textureSize = new Vector2(_texture.width,_texture.height);
@@ -69,11 +74,11 @@ public class FAtlas
 	
 	private void LoadAtlasData()
 	{
-		TextAsset dataAsset = (TextAsset) Resources.Load (_atlasPath, typeof(TextAsset));
+		TextAsset dataAsset = (TextAsset) Resources.Load (_dataPath, typeof(TextAsset));
 		
 		if(!dataAsset)
 		{
-			Debug.Log ("Futile: Couldn't load the atlas data from: " + _atlasPath);
+			Debug.Log ("Futile: Couldn't load the atlas data from: " + _dataPath);
 		}
 		
 		Hashtable hash = dataAsset.text.hashtableFromJson();
@@ -171,8 +176,6 @@ public class FAtlas
 			element.sourceSize.x = float.Parse(sourceSize["w"].ToString()) * scaleInverse;	
 			element.sourceSize.y = float.Parse(sourceSize["h"].ToString()) * scaleInverse;	
 			
-			
-			
 			_elements.Add (element);
 			_elementsByName.Add(element.name, element);
 		}
@@ -184,7 +187,7 @@ public class FAtlas
 	{
 		FAtlasElement element = new FAtlasElement();
 		
-		element.name = _atlasPath;
+		element.name = _atlasName;
 		element.indexInAtlas = 0;
 		
 		//TODO: may have to offset the rect slightly
@@ -248,9 +251,19 @@ public class FAtlas
 		get {return _textureSize;}	
 	}
 	
-	public string atlasPath
+	public string atlasName
 	{
-		get {return _atlasPath;}	
+		get {return _atlasName;}	
+	}
+	
+	public string imagePath
+	{
+		get {return _imagePath;}	
+	}
+	
+	public string dataPath
+	{
+		get {return _dataPath;}	
 	}
 }
 

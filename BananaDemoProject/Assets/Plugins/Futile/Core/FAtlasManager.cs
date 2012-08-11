@@ -19,10 +19,12 @@ public class FAtlasManager
 		
 	}
 	
-	//images and atlases are both treated as atlases
-	private void LoadAtlasOrImage(string atlasPath, bool shouldLoadAsSingleImage)
+	public void ActuallyLoadAtlasOrImage(string atlasName, string imagePath, string dataPath)
 	{
-		FAtlas atlas = new FAtlas(atlasPath+Futile.resourceSuffix, _atlases.Count, shouldLoadAsSingleImage);
+		//if dataPath is empty, load it as a single image
+		bool isSingleImage = (dataPath == "");
+		
+		FAtlas atlas = new FAtlas(atlasName, imagePath, dataPath, _atlases.Count, isSingleImage);
 		
 		foreach(FAtlasElement element in atlas.elements)
 		{
@@ -39,23 +41,22 @@ public class FAtlasManager
 	
 	public void LoadAtlas(string atlasPath)
 	{
-		LoadAtlasOrImage(atlasPath,false);
+		ActuallyLoadAtlasOrImage(atlasPath, atlasPath+Futile.resourceSuffix, atlasPath+Futile.resourceSuffix);
 	}
-	
+
 	public void LoadImage(string imagePath)
 	{
-		LoadAtlasOrImage(imagePath,true);
+		ActuallyLoadAtlasOrImage(imagePath, imagePath+Futile.resourceSuffix,"");
 	}
 	
-	private void UnloadAtlasOrImage(string atlasPath)
+	public void ActuallyUnloadAtlasOrImage(string atlasName)
 	{
-		string fullPath = atlasPath+Futile.resourceSuffix;
-		
+
 		for(int a = 0; a<_atlases.Count; a++)
 		{
 			FAtlas atlas = _atlases[a];
 			
-			if(atlas.atlasPath == fullPath)
+			if(atlas.atlasName == atlasName)
 			{
 				for(int e = _allElements.Count-1; e>=0; e--)
 				{
@@ -74,14 +75,15 @@ public class FAtlasManager
 		}
 	}
 	
+	
 	public void UnloadAtlas(string atlasPath)
 	{
-		UnloadAtlasOrImage(atlasPath);
+		ActuallyUnloadAtlasOrImage(atlasPath);
 	}
 	
 	public void UnloadImage(string imagePath)
 	{
-		UnloadAtlasOrImage(imagePath);	
+		ActuallyUnloadAtlasOrImage(imagePath);	
 	}
 
 	public FAtlasElement GetElementWithName (string elementName)

@@ -80,7 +80,7 @@ public class FRenderLayer
 		_gameObject.active = false;
 		#if UNITY_EDITOR
 			//some debug code so that layers are sorted by depth properly
-			_gameObject.name = "FRenderLayer X (" + _atlas.atlasPath + " " + _shader.name+")";
+			_gameObject.name = "FRenderLayer X (" + _atlas.atlasName + " " + _shader.name+")";
 		#endif
 	}
 
@@ -132,7 +132,7 @@ public class FRenderLayer
 		
 		#if UNITY_EDITOR
 			//some debug code so that layers are sorted by depth properly
-			_gameObject.name = "FRenderLayer "+_depth+" ["+_nextAvailableQuadIndex+"/"+_maxQuadCount+"] (" + _atlas.atlasPath + " " + _shader.name+")";
+			_gameObject.name = "FRenderLayer "+_depth+" ["+_nextAvailableQuadIndex+"/"+_maxQuadCount+"] (" + _atlas.atlasName + " " + _shader.name+")";
 		#endif
 		
 	}
