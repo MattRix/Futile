@@ -29,6 +29,8 @@ public class FutileParams
 	public bool supportsPortrait;
 	public bool supportsPortraitUpsideDown;
 	
+	public Color backgroundColor = Color.black;
+	
 	public FutileParams(bool supportsLandscapeLeft, bool supportsLandscapeRight, bool supportsPortrait, bool supportsPortraitUpsideDown)
 	{
 		this.supportsLandscapeLeft = supportsLandscapeLeft;
