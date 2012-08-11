@@ -36,6 +36,7 @@ Notes:
 - If you're on OSX and you own iOS Basic or Pro, you can choose iOS instead of standalone
 
 ####Legal stuff: The code and art assets (except for the font) can be used for anything, however the sound effects and music are not to be used in anything else
+####GoKit's license is here: https://github.com/prime31/GoKit
 ####The font is [Franchise](http://www.losttype.com/font/?name=franchise)
 
 ###MIT License###
