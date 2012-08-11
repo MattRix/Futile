@@ -246,7 +246,7 @@ public class Futile : MonoBehaviour
 		_camera.farClipPlane = 50.0f;
 		_camera.depth = 100;
 		_camera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
-		_camera.backgroundColor = Color.black;
+		_camera.backgroundColor = _futileParams.backgroundColor;
 		
 		//we multiply this stuff by scaleInverse to make sure everything is in points, not pixels
 		_camera.orthographic = true;
