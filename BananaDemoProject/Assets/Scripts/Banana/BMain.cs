@@ -41,7 +41,7 @@ public class BMain : MonoBehaviour
 		fparams.AddResolutionLevel(480.0f,	1.0f,	1.0f,	"_Scale1"); //iPhone
 		fparams.AddResolutionLevel(960.0f,	2.0f,	2.0f,	"_Scale2"); //iPhone retina
 		fparams.AddResolutionLevel(1024.0f,	2.0f,	2.0f,	"_Scale2"); //iPad
-		fparams.AddResolutionLevel(1280.0f,	2.0f,	1.0f,	"_Scale2"); //Nexus 7
+		fparams.AddResolutionLevel(1280.0f,	2.0f,	2.0f,	"_Scale2"); //Nexus 7
 		fparams.AddResolutionLevel(2048.0f,	4.0f,	4.0f,	"_Scale4"); //iPad Retina
 		
 		fparams.origin = new Vector2(0.5f,0.5f);
