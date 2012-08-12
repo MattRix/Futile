@@ -18,7 +18,7 @@ ___
 
 
 
-####How to try the demo project##
+###How to try the demo project
 
 ####How to open the project
 
