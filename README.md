@@ -1,4 +1,4 @@
-#Futile
+#Futile (0.5 Alpha)
 
 Futile is a code-centric 2D framework for Unity. 
 
@@ -7,11 +7,6 @@ This is for those of you who want to do everything in code with as little editor
 If you've used Cocos2D or Flash you should feel right at home.
 
 It's under development and completely undocumented... but it works. 
-
-Futile contains many ideas (as well as the MiniJSON parser) from Prime 31's UIToolkit: [github.com/Prime31/UIToolkit](http://github.com/Prime31/UIToolkit)
-
-The demo project also uses Prime31's fantastic GoKit tweening library: [github.com/Prime31/GoKit](http://github.com/Prime31/GoKit)
-
 ___
 
 ##Go to http://struct.ca/futile for videos and stuff
@@ -37,6 +32,10 @@ ___
 Notes: 
 - If you choose a specific resolution, but the game window isn't large enough to contain that resolution, it'll open in some random scaled resolution, and everything will be wonky, which is annoying. 
 - If you're on OSX and you own iOS Basic or Pro, you can choose iOS instead of standalone
+
+Futile contains many ideas (as well as the MiniJSON parser) from Prime 31's UIToolkit: [github.com/Prime31/UIToolkit](http://github.com/Prime31/UIToolkit)
+
+The demo project also uses Prime31's fantastic GoKit tweening library: [github.com/Prime31/GoKit](http://github.com/Prime31/GoKit)
 
 ####Legal stuff: The code and art assets (except for the font) can be used for anything, however the sound effects and music are not to be used in anything else
 ####GoKit's license is here: https://github.com/prime31/GoKit
