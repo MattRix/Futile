@@ -14,6 +14,8 @@ The demo project also uses Prime31's fantastic GoKit tweening library: [github.c
 
 ___
 
+##Go to http://struct.ca/futile for videos and handy stuff
+
 ##How to try the demo project##
 _(There will be proper tutorials and stuff coming later, but for now this is it)_
 
