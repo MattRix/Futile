@@ -1,6 +1,6 @@
-#Futile 0.2
+#Futile
 
-Futile is a super simple 2D framework for Unity. 
+Futile is a code-centric 2D framework for Unity. 
 
 This is for those of you who want to do everything in code with as little editor integration as possible. 
 
