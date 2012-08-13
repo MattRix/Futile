@@ -7,8 +7,6 @@ using System.Collections;
 
 public class FMatrix
 {
-	//private static DMatrix _helperMatrix = new DMatrix();
-	
 	public float a = 1; //scaleX
 	public float b = 0; //skewY
 	public float c = 0; //skewX
