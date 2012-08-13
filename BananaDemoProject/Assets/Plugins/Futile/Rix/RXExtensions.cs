@@ -29,6 +29,17 @@ public static class RectExtensions
 		return new Rect(rect.x - expansionAmount, rect.y - expansionAmount, rect.width + expansionAmount*2, rect.height + expansionAmount*2);
 	}
 	
+	public static bool CheckIntersect(this Rect rect, rect otherRect)
+	{
+		return 
+		(
+			rect.xMax >= otherRect.xMin && 
+			rect.xMin <= otherRect.xMax && 
+			rect.yMax >= otherRect.yMin && 
+			rect.yMin <= otherRect.yMax
+		);
+	}
+	
 	public static Rect Multiply(Rect rect, float multiplier)
 	{
 		rect.x *= multiplier;
