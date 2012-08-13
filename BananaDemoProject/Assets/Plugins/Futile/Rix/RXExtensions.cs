@@ -29,7 +29,7 @@ public static class RectExtensions
 		return new Rect(rect.x - expansionAmount, rect.y - expansionAmount, rect.width + expansionAmount*2, rect.height + expansionAmount*2);
 	}
 	
-	public static bool CheckIntersect(this Rect rect, rect otherRect)
+	public static bool CheckIntersect(this Rect rect, Rect otherRect)
 	{
 		return 
 		(
