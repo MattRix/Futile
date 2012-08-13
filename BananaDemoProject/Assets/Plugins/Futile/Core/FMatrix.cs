@@ -229,7 +229,8 @@ public class FMatrix
 		(
 			vector.x*a + vector.y*c + tx,
 			vector.x*b + vector.y*d + ty
-		); }
+		); 
+	}
 	
 	public Vector3 GetVector3FromLocalVector2(Vector2 localVector, float z)
 	{
