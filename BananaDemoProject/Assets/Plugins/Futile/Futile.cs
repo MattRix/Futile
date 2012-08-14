@@ -17,6 +17,8 @@ public class Futile : MonoBehaviour
 	
 	static public FTouchManager touchManager;
 	
+	static public new FCamera camera;
+	
 	
 	
 	
@@ -42,8 +44,7 @@ public class Futile : MonoBehaviour
 	static public float resourceScaleInverse; // 1/resourceScale
 	
 	static public string resourceSuffix; //set based on the resLevel
-	
-	
+
 	
 	//used by the rendering engine
 	internal static int startingQuadsPerLayer;
@@ -57,17 +58,6 @@ public class Futile : MonoBehaviour
 	
 	public event Action SignalOrientationChange;
 	public event Action<bool> SignalResize; //the bool represents wasOrientationChange
-	
-	
-	
-	private GameObject _cameraHolder;
-	private Camera _camera;
-	
-	//this is populated by the FutileParams
-	private float _originX;
-	private float _originY;
-	
-
 	
 	private FutileParams _futileParams;
 	private FResolutionLevel _resLevel;
@@ -87,6 +77,7 @@ public class Futile : MonoBehaviour
 		instance = this;
 		isOpenGL = SystemInfo.graphicsDeviceVersion.Contains("OpenGL");
 		enabled = false;
+		name = "Futile"; 
 	}
 	
 	public void Init(FutileParams futileParams)
@@ -212,50 +203,7 @@ public class Futile : MonoBehaviour
 		
 		halfWidth = width/2.0f;
 		halfHeight = height/2.0f;
-		
-		_originX = _futileParams.origin.x;
-		_originY = _futileParams.origin.y;
-		
-		Debug.Log ("Futile: Display scale is " + displayScale);
-		
-		Debug.Log ("Futile: Resource scale is " + resourceScale);
-		
-		Debug.Log ("Futile: Resource suffix is " + _resLevel.resourceSuffix);
-		
-		Debug.Log ("Futile: Screen size in pixels is (" + pixelWidth +"px," + pixelHeight+"px)");
-		
-		Debug.Log ("Futile: Screen size in points is (" + width + "," + height+")");
-		
-		Debug.Log ("Futile: Origin is at (" + _originX*width + "," + _originY*height+")");
-		
-		Debug.Log ("Futile: Initial orientation is " + _currentOrientation);
-		
-		//
-		//Camera setup from https://github.com/prime31/UIToolkit/blob/master/Assets/Plugins/UIToolkit/UI.cs
-		//
-				
-		name = "Futile"; 
-		
-		_cameraHolder = new GameObject();
-		_cameraHolder.transform.parent = gameObject.transform;
-		_cameraHolder.AddComponent<Camera>();
-		
-		_camera = _cameraHolder.camera;
-		_camera.name = "FCamera";
-		//_camera.clearFlags = CameraClearFlags.Depth; //TODO: check if this is faster or not?
-		_camera.clearFlags = CameraClearFlags.SolidColor;
-		_camera.nearClipPlane = -50.3f;
-		_camera.farClipPlane = 50.0f;
-		_camera.depth = 100;
-		_camera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
-		_camera.backgroundColor = _futileParams.backgroundColor;
-		
-		//we multiply this stuff by scaleInverse to make sure everything is in points, not pixels
-		_camera.orthographic = true;
-		_camera.orthographicSize = pixelHeight/2 * displayScaleInverse;
-
-		UpdateCameraPosition();
-		
+					
 		_didJustResize = true;
 		
 		touchManager = new FTouchManager();
@@ -263,6 +211,16 @@ public class Futile : MonoBehaviour
 		atlasManager = new FAtlasManager();
 		
 		stage = new FStage();
+		
+		camera = new FCamera(_futileParams.origin.x, _futileParams.origin.y);
+		
+		Debug.Log ("Futile: Display scale is " + displayScale);
+		Debug.Log ("Futile: Resource scale is " + resourceScale);
+		Debug.Log ("Futile: Resource suffix is " + _resLevel.resourceSuffix);
+		Debug.Log ("Futile: Screen size in pixels is (" + pixelWidth +"px," + pixelHeight+"px)");
+		Debug.Log ("Futile: Screen size in points is (" + width + "," + height+")");
+		Debug.Log ("Futile: Origin is at (" + camera.originX*width + "," + camera.originY*height+")");
+		Debug.Log ("Futile: Initial orientation is " + _currentOrientation);
 	}
 
 	private void SwitchOrientation (ScreenOrientation newOrientation)
@@ -312,8 +270,7 @@ public class Futile : MonoBehaviour
 		halfWidth = width/2.0f;
 		halfHeight = height/2.0f;
 		
-		_camera.orthographicSize = pixelHeight/2 * displayScaleInverse;
-		UpdateCameraPosition(); 	
+		camera.Update(); 	
 	}
 	
 	private void Update()
@@ -349,8 +306,14 @@ public class Futile : MonoBehaviour
 			UpdateScreenDimensions();
 			if(SignalResize != null) SignalResize(false);
 		}
-
+		
 		touchManager.Update();
+		
+		if(camera.doesNeedUpdate)
+		{
+			camera.Update();	
+		}
+		
 		if(SignalUpdate != null) SignalUpdate();
 		stage.Redraw (false,false);
 	}
@@ -370,40 +333,8 @@ public class Futile : MonoBehaviour
 	{
 		instance = null;	
 	}
-	
-	private void UpdateCameraPosition()
-	{
-		float camXOffset = ((_originX - 0.5f) * -pixelWidth)*displayScaleInverse;
-		float camYOffset = ((_originY - 0.5f) * -pixelHeight)*displayScaleInverse;
-	
-		_camera.transform.position = new Vector3(camXOffset, camYOffset, -10.0f); 	
-	}
 
-	public float originX
-	{
-		get {return _originX;}
-		set 
-		{
-			if(_originX != value)
-			{
-				_originX = value;
-				UpdateCameraPosition();
-			}
-		}
-	}
-
-	public float originY
-	{
-		get {return _originY;}
-		set 
-		{
-			if(_originY != value)
-			{
-				_originY = value;
-				UpdateCameraPosition();
-			}
-		}
-	}
+	
 	
 	public ScreenOrientation currentOrientation
 	{
@@ -421,6 +352,8 @@ public class Futile : MonoBehaviour
 	{
 		return _currentOrientation == ScreenOrientation.LandscapeLeft || _currentOrientation == ScreenOrientation.LandscapeRight;
 	}
+	
+	
 	
 
 }
