@@ -65,4 +65,26 @@ public static class ListExtensions
 	{
 		return list[list.Count-1];
 	}
+	
+	//insertion sort is stable, in other words, equal items will stay in the same order (unlike List.Sort, which uses QuickSort)
+	//this could be replaced with a MergeSort, which should be more efficient in a lot of cases
+	//basic implementation from http://www.csharp411.com/c-stable-sort/
+	public static void InsertionSort<T>(this List<T> list, Comparison<T> comparison)
+	{
+	    int count = list.Count;
+		
+	    for (int j = 1; j < count; j++)
+	    {
+	        T item = list[j];
+	
+	        int i = j - 1;
+			
+	        for (; i >= 0 && comparison( list[i], item ) > 0; i--)
+	        {
+	            list[i + 1] = list[i];
+	        }
+			
+	        list[i + 1] = item;
+    	}
+	}
 }

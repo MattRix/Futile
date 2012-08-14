@@ -198,9 +198,14 @@ public class Futile : MonoBehaviour
 		
 		//this is what helps us figure out the display scale if we're not at a specific resolution level
 		//it's relative to the next highest resolution level
-		float displayScaleModifier = _screenLongLength/_resLevel.maxLength;
-			
 		
+		float displayScaleModifier = 1.0f;
+		
+		if(_futileParams.shouldLerpToNearestResolutionLevel)
+		{
+			displayScaleModifier = _screenLongLength/_resLevel.maxLength;
+		}
+		 
 		displayScale = _resLevel.displayScale * displayScaleModifier;
 		displayScaleInverse = 1.0f/displayScale;
 		
