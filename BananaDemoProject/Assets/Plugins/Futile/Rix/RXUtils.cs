@@ -140,7 +140,12 @@ public class RXRandom
 		return (float)_randomSource.NextDouble() * max;
 	}
 	
-	public static float Int(int max)
+	public static int Int()
+	{
+		return _randomSource.Next();
+	}
+	
+	public static int Int(int max)
 	{
 		return _randomSource.Next() % max;
 	}

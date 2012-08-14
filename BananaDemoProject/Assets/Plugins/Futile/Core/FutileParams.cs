@@ -31,6 +31,8 @@ public class FutileParams
 	
 	public Color backgroundColor = Color.black;
 	
+	public bool shouldLerpToNearestResolutionLevel = true;
+	
 	public FutileParams(bool supportsLandscapeLeft, bool supportsLandscapeRight, bool supportsPortrait, bool supportsPortraitUpsideDown)
 	{
 		this.supportsLandscapeLeft = supportsLandscapeLeft;
