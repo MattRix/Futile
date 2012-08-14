@@ -6,6 +6,7 @@ public class FNode
 {
 	protected float _x;
 	protected float _y;
+	protected int _z; //z is used for depth sorting but ONLY if the node container's shouldSortByZ = true;
 	protected float _scaleX;
 	protected float _scaleY;
 	protected float _rotation;
@@ -43,6 +44,7 @@ public class FNode
 		
 		_x = 0;
 		_y = 0;
+		_z = 0;
 		_scaleX = 1;
 		_scaleY = 1;
 		_rotation = 0;
@@ -188,6 +190,12 @@ public class FNode
 	{
 		get { return _y;}
 		set { _y = value; _isMatrixDirty = true;}
+	}
+	
+	public int z
+	{
+		get { return _z;}
+		set { _z = value;}
 	}
 	
 	public float scaleX

@@ -7,6 +7,10 @@ public class FContainer : FNode
 {
 	protected List<FNode> _childNodes = new List<FNode>();
 	
+	private int _oldChildNodesHash = 0;
+	
+	private bool _shouldSortByZ = false; //don't turn this on unless you really need it, it'll do a sort every redraw
+	
 	public FContainer ()
 	{
 		
@@ -35,7 +39,10 @@ public class FContainer : FNode
 			{
 				childNode.HandleAddedToStage();	
 			}
+			
+			if(shouldSortByZ) Futile.instance.SignalUpdate += HandleUpdate;
 		}
+		
 	}
 	
 	override public void HandleRemovedFromStage()
@@ -48,6 +55,17 @@ public class FContainer : FNode
 			{
 				childNode.HandleRemovedFromStage();	
 			}
+		}
+		
+		Futile.instance.SignalUpdate -= HandleUpdate;
+	}
+	
+	private void HandleUpdate()
+	{
+		if(SortByZ()) //if the child order was changed, rearrange the quads
+		{
+			Debug.Log ("REARRANGE QUDSSS");
+			_stage.HandleQuadsChanged();	
 		}
 	}
 	
@@ -132,6 +150,59 @@ public class FContainer : FNode
 	public FNode GetChildAt(int childIndex)
 	{
 		return _childNodes[childIndex];
+	}
+	
+	public bool shouldSortByZ
+	{
+		get {return _shouldSortByZ;}
+		set 
+		{
+			if(_shouldSortByZ != value)
+			{
+				_shouldSortByZ = value;
+				
+				if(_shouldSortByZ)
+				{
+					if(_isOnStage) Futile.instance.SignalUpdate += HandleUpdate;
+				}
+				else 
+				{
+					if(_isOnStage) Futile.instance.SignalUpdate -= HandleUpdate;
+				}
+			}
+		}
+	}
+	
+	private static int ZComparison(FNode a, FNode b) 
+	{
+		int result = a.z - b.z;
+		return result;
+	}
+	
+	private bool SortByZ() //returns true if the childNodes changed, false if they didn't
+	{
+		_childNodes.InsertionSort(ZComparison);
+		
+		//check if the order has changed, and if it has, update the quads/depth order
+		//http://stackoverflow.com/questions/3030759/arrays-lists-and-computing-hashvalues-vb-c
+		
+		int hash = 269;
+		
+		unchecked //don't throw int overflow exceptions
+		{
+			foreach (FNode node in _childNodes)
+			{
+				hash = (hash * 17) + node.GetHashCode();
+			}
+		} 
+		
+		if(hash != _oldChildNodesHash)
+		{
+			_oldChildNodesHash = hash;
+			return true; //order has changed
+		}
+		
+		return false; //order hasn't changed
 	}
 }
 
