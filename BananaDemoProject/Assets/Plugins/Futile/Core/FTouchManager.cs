@@ -33,7 +33,7 @@ public interface FMultiTouchableInterface
 {
 	void HandleMultiTouch(FTouch[] touches);
 }
-
+	
 public class FTouchManager
 {
 	public static bool shouldMouseEmulateTouch = true;
@@ -54,7 +54,6 @@ public class FTouchManager
 	
 	private Vector2 _previousMousePosition = new Vector2(0,0);
 
-	
 	public FTouchManager ()
 	{
 		Input.multiTouchEnabled = true;
@@ -240,9 +239,14 @@ public class FTouchManager
 		_isUpdating = false;
 	}
 	
+	private static int PriorityComparison(FSingleTouchableInterface a, FSingleTouchableInterface b) 
+	{
+		return b.touchPriority - a.touchPriority;
+	}
+
 	public void UpdatePrioritySorting()
 	{
-		_singleTouchables.Sort(delegate(FSingleTouchableInterface touchableA, FSingleTouchableInterface touchableB) {return touchableB.touchPriority - touchableA.touchPriority;});
+		_singleTouchables.Sort(PriorityComparison);
 	}
 	
 	public void AddSingleTouchTarget(FSingleTouchableInterface touchable)
