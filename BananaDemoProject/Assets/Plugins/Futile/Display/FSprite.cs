@@ -19,9 +19,7 @@ public class FSprite : FQuadNode
 	
 	public FSprite (string elementName) : base()
 	{
-		//_element = _layer.renderer.GetElementWithName(elementName);
-		
-		Init (Futile.atlasManager.GetElementWithName(elementName),1);
+		Init(Futile.atlasManager.GetElementWithName(elementName),1);
 		
 		_isAlphaDirty = true;
 		
@@ -111,17 +109,17 @@ public class FSprite : FQuadNode
 			Vector2[] uvs = _renderLayer.uvs;
 			Color[] colors = _renderLayer.colors;
 			
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex + 0], _localVertices[0],0);
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex], _localVertices[0],0);
 			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex + 1], _localVertices[1],0);
 			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex + 2], _localVertices[2],0);
 			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex + 3], _localVertices[3],0);
 			
-			uvs[vertexIndex + 0] = _element.uvTopLeft;
+			uvs[vertexIndex] = _element.uvTopLeft;
 			uvs[vertexIndex + 1] = _element.uvTopRight;
 			uvs[vertexIndex + 2] = _element.uvBottomRight;
 			uvs[vertexIndex + 3] = _element.uvBottomLeft;
 			
-			colors[vertexIndex + 0] = _alphaColor;
+			colors[vertexIndex] = _alphaColor;
 			colors[vertexIndex + 1] = _alphaColor;
 			colors[vertexIndex + 2] = _alphaColor;
 			colors[vertexIndex + 3] = _alphaColor;

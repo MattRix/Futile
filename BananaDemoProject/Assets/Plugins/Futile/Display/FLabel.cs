@@ -169,17 +169,17 @@ public class FLabel : FQuadNode
 			{
 				foreach(FLetterQuad quad in line.quads)
 				{
-					_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex + 0], quad.topLeft,0);
+					_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex], quad.topLeft,0);
 					_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex + 1], quad.topRight,0);
 					_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex + 2], quad.bottomRight,0);
 					_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex + 3], quad.bottomLeft,0);
 					
-					uvs[vertexIndex + 0] = quad.charInfo.uvTopLeft;
+					uvs[vertexIndex] = quad.charInfo.uvTopLeft;
 					uvs[vertexIndex + 1] = quad.charInfo.uvTopRight;
 					uvs[vertexIndex + 2] = quad.charInfo.uvBottomRight;
 					uvs[vertexIndex + 3] = quad.charInfo.uvBottomLeft;
 					
-					colors[vertexIndex + 0] = _alphaColor;
+					colors[vertexIndex] = _alphaColor;
 					colors[vertexIndex + 1] = _alphaColor;
 					colors[vertexIndex + 2] = _alphaColor;
 					colors[vertexIndex + 3] = _alphaColor;

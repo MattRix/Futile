@@ -59,7 +59,6 @@ public class FLetterQuad
 		topRight = topRight.Round();
 		bottomRight = bottomRight.Round();
 		bottomLeft = bottomLeft.Round();
-		
 	}
 	
 	
@@ -215,7 +214,7 @@ public class FFont
 				_configWidth = int.Parse(words[3].Split('=')[1]);
 				//_configHeight = int.Parse(words[4].Split('=')[1]);
 				
-				//this is the ratio of the config vs what we're actually working with
+				//this is the ratio of the config vs the size of the actual texture element
 				_configRatio = _element.sourceSize.x/_configWidth;
 				
 				_lineHeight = int.Parse(words[1].Split('=')[1]) * _configRatio;		
@@ -511,7 +510,7 @@ public class FFont
 	}
 
 //  Not gonna deal with this stuff unless it's actually needed
-//  In theory it handles nice quotes or something
+//  In theory it'll handle nice quotes
 //
 //	private int forceLowAsciiChar(int charID)
 //	{
