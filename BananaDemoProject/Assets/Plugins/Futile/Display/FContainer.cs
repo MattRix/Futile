@@ -64,7 +64,6 @@ public class FContainer : FNode
 	{
 		if(SortByZ()) //if the child order was changed, rearrange the quads
 		{
-			Debug.Log ("REARRANGE QUDSSS");
 			_stage.HandleQuadsChanged();	
 		}
 	}
@@ -175,12 +174,16 @@ public class FContainer : FNode
 	
 	private static int ZComparison(FNode a, FNode b) 
 	{
-		int result = a.z - b.z;
-		return result;
+		float delta = a.sortZ - b.sortZ;
+		if(delta < 0) return -1;
+		if(delta > 0) return 1;
+		return 0;
 	}
 	
 	private bool SortByZ() //returns true if the childNodes changed, false if they didn't
 	{
+		//using InsertionSort because it's stable (meaning equal values keep the same order)
+		//this is unlike List.Sort, which is unstable, so things would constantly shift if equal.
 		_childNodes.InsertionSort(ZComparison);
 		
 		//check if the order has changed, and if it has, update the quads/depth order

@@ -6,10 +6,11 @@ public class FNode
 {
 	protected float _x;
 	protected float _y;
-	protected int _z; //z is used for depth sorting but ONLY if the node container's shouldSortByZ = true;
 	protected float _scaleX;
 	protected float _scaleY;
 	protected float _rotation;
+	
+	protected float _sortZ; //sortZ is used for depth sorting but ONLY if the node container's shouldSortByZ = true;
 	
 	protected bool _isMatrixDirty;
 	
@@ -44,10 +45,11 @@ public class FNode
 		
 		_x = 0;
 		_y = 0;
-		_z = 0;
 		_scaleX = 1;
 		_scaleY = 1;
 		_rotation = 0;
+		
+		_sortZ = 0;
 		
 		_alpha = 1.0f;
 		_concatenatedAlpha = 1.0f;
@@ -192,10 +194,10 @@ public class FNode
 		set { _y = value; _isMatrixDirty = true;}
 	}
 	
-	public int z
+	public float sortZ
 	{
-		get { return _z;}
-		set { _z = value;}
+		get { return _sortZ;}
+		set { _sortZ = value;}
 	}
 	
 	public float scaleX
