@@ -64,7 +64,7 @@ public class FNode
 	
 	public Vector2 GlobalToLocal(Vector2 globalVector)
 	{
-		//using "this" so the getter is called (because it checks if the matrix exists)
+		//using "this" so the getter is called (because it checks if the matrix exists and lazy inits it if it doesn't)
 		return this.inverseConcatenatedMatrix.GetNewTransformedVector(globalVector);
 	}
 	
@@ -77,7 +77,7 @@ public class FNode
 	{
 		if(shouldUpdateDepth)
 		{
-			//_depth = _layer.nextSpriteDepth++;	
+			_depth = _stage.nextNodeDepth++;	
 		}
 		
 		if(_isMatrixDirty || shouldForceDirty)
@@ -204,7 +204,7 @@ public class FNode
 	
 	public float scale
 	{
-		get { return scaleX;} //return X because if we're using this, x and y should be the same
+		get { return scaleX;} //return scaleX because if we're using this, x and y should be the same anyway
 		set { _scaleX = value; scaleY = value; _isMatrixDirty = true;}
 	}
 	
@@ -250,7 +250,7 @@ public class FNode
 		{ 
 			if(_inverseConcatenatedMatrix == null) //only it create if needed
 			{
-				_needsInverseConcatenatedMatrix = true; //create it from now on
+				_needsInverseConcatenatedMatrix = true; //recreate it every update from now on
 				_inverseConcatenatedMatrix = new FMatrix();
 				_inverseConcatenatedMatrix.InvertAndCopyValues(_concatenatedMatrix);
 			}
