@@ -7,7 +7,7 @@ public struct FTouch //had to make a copy of Unity's Touch so I could make prope
 {
 	public int fingerId;
 	public Vector2 position;
-	public Vector2 deltaPosition; //this is not accurate
+	public Vector2 deltaPosition;
 	public float deltaTime;
 	public int tapCount;
 	public TouchPhase phase;
@@ -51,8 +51,6 @@ public class FTouchManager
 	private bool _isMouseDown;
 	
 	private bool _isUpdating = false;
-	
-	private Vector2 _previousMousePosition = new Vector2(0,0);
 
 	
 	public FTouchManager ()
@@ -98,33 +96,23 @@ public class FTouchManager
 		if(shouldMouseEmulateTouch)
 		{
 			mouseTouch.position = new Vector2((Input.mousePosition.x+offsetX)*touchScale, (Input.mousePosition.y+offsetY)*touchScale);
-			
 			mouseTouch.fingerId = 0;
 			mouseTouch.tapCount = 1;
-			mouseTouch.deltaTime = Time.deltaTime;
-			
-			
+			mouseTouch.deltaPosition = new Vector2(0,0);
+			mouseTouch.deltaTime = 0;
 			
 			if(Input.GetMouseButtonDown(0))
 			{
-				mouseTouch.deltaPosition = new Vector2(0,0);
-				_previousMousePosition = mouseTouch.position;
-				
 				mouseTouch.phase = TouchPhase.Began;
 				wasMouseTouch = true;
 			}
 			else if(Input.GetMouseButtonUp(0))
 			{
-				mouseTouch.deltaPosition = new Vector2(mouseTouch.position.x - _previousMousePosition.x, mouseTouch.position.y - _previousMousePosition.y);
-				_previousMousePosition = mouseTouch.position;
 				mouseTouch.phase = TouchPhase.Ended;	
 				wasMouseTouch = true;
 			}
 			else if(Input.GetMouseButton(0))
 			{
-				mouseTouch.deltaPosition = new Vector2(mouseTouch.position.x - _previousMousePosition.x, mouseTouch.position.y - _previousMousePosition.y);
-				_previousMousePosition = mouseTouch.position;
-				
 				mouseTouch.phase = TouchPhase.Moved;	
 				wasMouseTouch = true;
 			}
