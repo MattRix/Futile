@@ -201,7 +201,7 @@ public class Futile : MonoBehaviour
 		
 		float displayScaleModifier = 1.0f;
 		
-		if(_futileParams.shouldLerpToNearestResLevel)
+		if(_futileParams.shouldLerpToNearestResolutionLevel)
 		{
 			displayScaleModifier = _screenLongLength/_resLevel.maxLength;
 		}
