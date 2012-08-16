@@ -53,7 +53,7 @@ public class FAtlasElement
 
 public class FAtlas
 {
-	private string _atlasName;
+	private string _name;
 	private string _imagePath;
 	private string _dataPath;
 	
@@ -66,9 +66,9 @@ public class FAtlas
 	private Texture _texture;
 	private Vector2 _textureSize;
 	
-	public FAtlas (string atlasName, string imagePath, string dataPath, int index, bool shouldLoadAsSingleImage)
+	public FAtlas (string name, string imagePath, string dataPath, int index, bool shouldLoadAsSingleImage)
 	{
-		_atlasName = atlasName;
+		_name = name;
 		_imagePath = imagePath;
 		_dataPath = dataPath;
 		
@@ -213,7 +213,7 @@ public class FAtlas
 	{
 		FAtlasElement element = new FAtlasElement();
 		
-		element.name = _atlasName;
+		element.name = _name;
 		element.indexInAtlas = 0;
 		
 		//TODO: may have to offset the rect slightly
@@ -277,9 +277,9 @@ public class FAtlas
 		get {return _textureSize;}	
 	}
 	
-	public string atlasName
+	public string name
 	{
-		get {return _atlasName;}	
+		get {return _name;}	
 	}
 	
 	public string imagePath
