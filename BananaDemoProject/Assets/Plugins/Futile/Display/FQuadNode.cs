@@ -21,7 +21,7 @@ public class FQuadNode : FNode
 	protected void Init(FAtlasElement element, int numberOfQuadsNeeded)
 	{
 		_element = element;
-		_shader = _stage.renderer.GetDefaultShader();
+		_shader = FShader.defaultShader;
 		_numberOfQuadsNeeded = numberOfQuadsNeeded; 
 	}
 	
