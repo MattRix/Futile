@@ -4,6 +4,7 @@ using System.Collections;
 public class FStage : FContainer
 {
 	public int nextNodeDepth;
+	public int index;
 	
 	private bool _needsDepthUpdate = false;
 	
@@ -11,17 +12,13 @@ public class FStage : FContainer
 	
 	private string _name;
 	
-	private int _index;
-	
 	private FMatrix _identityMatrix;
 	
 	private bool _doesRendererNeedTransformChange = false;
 	
-	
-	public FStage(string name, int index) : base()
+	public FStage(string name) : base()
 	{
 		_name = name;
-		_index = index;
 		
 		_stage = this;
 		
@@ -82,8 +79,8 @@ public class FStage : FContainer
 		{
 			shouldForceDirty = true;
 			shouldUpdateDepth = true;
-			nextNodeDepth = 0;
-			_renderer.StartRender();
+			nextNodeDepth = index*1000;
+			_renderer.StartRender(); 
 		}
 		
 		bool wasAlphaDirty = _isAlphaDirty;
@@ -92,7 +89,7 @@ public class FStage : FContainer
 		
 		foreach(FNode node in _childNodes)
 		{
-			//key difference between Stage and Container: Stage doesn't redraw if matrix is dirty
+			//key difference between Stage and Container: Stage doesn't force dirty if matrix is dirty
 			node.Redraw(shouldForceDirty || wasAlphaDirty, shouldUpdateDepth); //if the matrix was dirty or we're supposed to force it, do it!
 		}
 		
@@ -162,11 +159,6 @@ public class FStage : FContainer
 	public string name
 	{
 		get {return _name;}	
-	}
-	
-	public int index
-	{
-		get {return _index;}	
 	}
 	
 }
