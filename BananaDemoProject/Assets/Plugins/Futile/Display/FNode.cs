@@ -92,6 +92,31 @@ public class FNode
 		return GlobalToLocal(otherNode.LocalToGlobal(otherVector));
 	}
 	
+	public void UpdateMatrix()
+	{
+		if(!_isMatrixDirty) return;
+		
+		_isMatrixDirty = false;
+		
+		_matrix.SetScaleThenRotate(_x,_y,_scaleX,_scaleY,_rotation * -RXMath.DTOR);
+			
+		if(_container != null)
+		{
+			_concatenatedMatrix.ConcatAndCopyValues(_matrix, _container.concatenatedMatrix);
+		}
+		else
+		{
+			_concatenatedMatrix.CopyValues(_matrix);	
+		}
+		
+		if(_needsSpecialMatrices)
+		{
+			_inverseConcatenatedMatrix.InvertAndCopyValues(_concatenatedMatrix);
+			_screenConcatenatedMatrix.ConcatAndCopyValues(_concatenatedMatrix, _stage.screenConcatenatedMatrix);
+			_screenInverseConcatenatedMatrix.InvertAndCopyValues(_screenConcatenatedMatrix);
+		}
+	}
+	
 	virtual protected void UpdateDepthMatrixAlpha(bool shouldForceDirty, bool shouldUpdateDepth)
 	{
 		if(shouldUpdateDepth)
