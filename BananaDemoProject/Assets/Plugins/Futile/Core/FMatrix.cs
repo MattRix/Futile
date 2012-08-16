@@ -143,7 +143,7 @@ public class FMatrix
 	public float GetRotation()
 	{
 		Vector2 newVector = GetNewTransformedVector(new Vector2(0,1));
-		return Mathf.Atan2(newVector.y, newVector.x); //TODO: may have to offset this by 90 degrees or something
+		return Mathf.Atan2(newVector.y-ty, newVector.x-tx); //TODO: may have to offset this by 90 degrees or something
 	}
 	
 	public void Concat(FMatrix other)
