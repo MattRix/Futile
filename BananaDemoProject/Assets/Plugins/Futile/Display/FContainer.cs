@@ -41,7 +41,7 @@ public class FContainer : FNode
 				childNode.HandleAddedToStage();	
 			}
 			
-			if(shouldSortByZ) Futile.instance.SignalUpdate += HandleUpdate;
+			if(_shouldSortByZ) Futile.instance.SignalUpdate += HandleUpdate;
 		}
 		
 	}
