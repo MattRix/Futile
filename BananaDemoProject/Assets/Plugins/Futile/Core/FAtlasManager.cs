@@ -19,12 +19,17 @@ public class FAtlasManager
 		
 	}
 	
-	public void ActuallyLoadAtlasOrImage(string atlasName, string imagePath, string dataPath)
+	public void ActuallyLoadAtlasOrImage(string name, string imagePath, string dataPath)
 	{
+		foreach(FAtlas existingAtlas in _atlases)
+		{
+			if(existingAtlas.name == name) return; //don't load this atlas if we already have one with the same name
+		}
+		
 		//if dataPath is empty, load it as a single image
 		bool isSingleImage = (dataPath == "");
 		
-		FAtlas atlas = new FAtlas(atlasName, imagePath, dataPath, _atlases.Count, isSingleImage);
+		FAtlas atlas = new FAtlas(name, imagePath, dataPath, _atlases.Count, isSingleImage);
 		
 		foreach(FAtlasElement element in atlas.elements)
 		{
@@ -49,14 +54,13 @@ public class FAtlasManager
 		ActuallyLoadAtlasOrImage(imagePath, imagePath+Futile.resourceSuffix,"");
 	}
 	
-	public void ActuallyUnloadAtlasOrImage(string atlasName)
+	public void ActuallyUnloadAtlasOrImage(string name)
 	{
-
 		for(int a = 0; a<_atlases.Count; a++)
 		{
 			FAtlas atlas = _atlases[a];
 			
-			if(atlas.atlasName == atlasName)
+			if(atlas.name == name)
 			{
 				for(int e = _allElements.Count-1; e>=0; e--)
 				{
