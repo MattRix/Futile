@@ -23,6 +23,32 @@ public class FAtlasElement
 	public Vector2 sourceSize;
 	public bool isTrimmed;
 	public bool isRotated;
+	
+	public FAtlasElement Clone()
+	{
+		FAtlasElement element = new FAtlasElement();
+		
+		element.name = name;
+		
+		element.indexInAtlas = indexInAtlas;
+		element.indexInManager = indexInManager;
+		
+		element.atlas = atlas;
+		element.atlasIndex = atlasIndex;
+		
+		element.uvRect = uvRect;
+		element.uvTopLeft = uvTopLeft;
+		element.uvTopRight = uvTopRight;
+		element.uvBottomRight = uvBottomRight;
+		element.uvBottomLeft = uvBottomLeft;
+		
+		element.sourceRect = sourceRect;
+		element.sourceSize = sourceSize;
+		element.isTrimmed = isTrimmed;
+		element.isRotated = isRotated;
+		
+		return element;
+	}
 }
 
 public class FAtlas
