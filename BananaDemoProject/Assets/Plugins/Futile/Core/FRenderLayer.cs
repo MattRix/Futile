@@ -8,10 +8,13 @@ public class FRenderLayer
 {
 	public int batchIndex;
 	
+	private FStage _stage;
+	
 	private FAtlas _atlas;
 	private FShader _shader;
 	
 	private GameObject _gameObject;
+	private Transform _transform;
 	private Material _material;
 	private MeshFilter _meshFilter;
 	private MeshRenderer _meshRenderer;
@@ -40,8 +43,12 @@ public class FRenderLayer
 	
 	private int _lowestZeroIndex = 0;
 	
-	public FRenderLayer (FAtlas atlas, FShader shader)
+	private bool _needsRecalculateBoundsIfTransformed = false;
+	
+	public FRenderLayer (FStage stage, FAtlas atlas, FShader shader)
 	{
+		_stage = stage;
+		
 		_atlas = atlas;
 		_shader = shader;
 		
@@ -51,7 +58,9 @@ public class FRenderLayer
 		batchIndex = atlas.index*10000 + shader.index;
 		
 		_gameObject = new GameObject("FRenderLayer");
-		_gameObject.transform.parent = Futile.instance.gameObject.transform;
+		_transform = _gameObject.transform;
+		
+		_transform.parent = Futile.instance.gameObject.transform;
 		
 		_meshFilter = _gameObject.AddComponent<MeshFilter>();
 		_meshRenderer = _gameObject.AddComponent<MeshRenderer>();
@@ -69,6 +78,19 @@ public class FRenderLayer
 		
 		ExpandMaxQuadLimit(Futile.startingQuadsPerLayer);
 	}
+
+	public void SetTransform (Vector3 position, Quaternion rotation, Vector3 localScale)
+	{
+		_transform.position = position;
+		_transform.rotation = rotation;
+		_transform.localScale = localScale;
+		
+		if(_needsRecalculateBoundsIfTransformed)
+		{
+			_needsRecalculateBoundsIfTransformed = false;
+			_mesh.RecalculateBounds();
+		}
+	}
 	
 	public void AddToWorld () //add to the transform etc
 	{
@@ -80,7 +102,7 @@ public class FRenderLayer
 		_gameObject.active = false;
 		#if UNITY_EDITOR
 			//some debug code so that layers are sorted by depth properly
-			_gameObject.name = "FRenderLayer X (" + _atlas.atlasName + " " + _shader.name+")";
+			_gameObject.name = "FStage " +_stage.index + " '"+_stage.name + "' FRenderLayer X (" + _atlas.atlasName + " " + _shader.name+")";
 		#endif
 	}
 
@@ -112,7 +134,6 @@ public class FRenderLayer
 		{
 			ShrinkMaxQuadLimit(Math.Max (0,(_maxQuadCount-_nextAvailableQuadIndex)-_expansionAmount));	
 			ExpandMaxQuadLimit(1);
-			Debug.Log ("SHHRINK");
 		}
 		
 		_lowestZeroIndex = Math.Max (_nextAvailableQuadIndex, Math.Min (_maxQuadCount,_lowestZeroIndex));
@@ -132,9 +153,8 @@ public class FRenderLayer
 		
 		#if UNITY_EDITOR
 			//some debug code so that layers are sorted by depth properly
-			_gameObject.name = "FRenderLayer "+_depth+" ["+_nextAvailableQuadIndex+"/"+_maxQuadCount+"] (" + _atlas.atlasName + " " + _shader.name+")";
+			_gameObject.name = "FStage " +_stage.index + " '"+_stage.name + "' FRenderLayer "+_depth+" ["+_nextAvailableQuadIndex+"/"+_maxQuadCount+"] (" + _atlas.atlasName + " " + _shader.name+")";
 		#endif
-		
 	}
 	
 	//ACTUAL RENDERING GOES HERE
@@ -187,7 +207,9 @@ public class FRenderLayer
 			{
 				//Taking this out because it seems heavy, and I don't think there are benefits
 				//http://docs.unity3d.com/Documentation/ScriptReference/Mesh.RecalculateBounds.html
-				//_mesh.RecalculateBounds();
+				//Ok nevermind, I put it back in for now because if you scroll the stage, it's needed
+				
+				_needsRecalculateBoundsIfTransformed = true;
 				
 				_shouldUpdateBounds = false;
 			}

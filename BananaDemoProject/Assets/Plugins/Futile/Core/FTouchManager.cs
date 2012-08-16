@@ -48,9 +48,9 @@ public class FTouchManager
 	
 	private FSingleTouchableInterface _theSingleTouchable = null;
 	
-	private bool _isMouseDown;
-	
 	private bool _isUpdating = false;
+	
+	private bool _needsPrioritySort = false;
 	
 	private Vector2 _previousMousePosition = new Vector2(0,0);
 
@@ -82,6 +82,11 @@ public class FTouchManager
 	public void Update()
 	{
 		_isUpdating = true;
+		
+		if(_needsPrioritySort)
+		{
+			UpdatePrioritySorting();	
+		}
 		
 		float touchScale = 1.0f/Futile.displayScale;
 		
@@ -238,13 +243,18 @@ public class FTouchManager
 		
 		_isUpdating = false;
 	}
+
+	public void HandleDepthChange ()
+	{
+		_needsPrioritySort = true;
+	}
 	
 	private static int PriorityComparison(FSingleTouchableInterface a, FSingleTouchableInterface b) 
 	{
 		return b.touchPriority - a.touchPriority;
 	}
 
-	public void UpdatePrioritySorting()
+	private void UpdatePrioritySorting()
 	{
 		_singleTouchables.Sort(PriorityComparison);
 	}

@@ -17,6 +17,8 @@ public class Futile : MonoBehaviour
 	
 	static public FTouchManager touchManager;
 	
+	static public List<FStage> stages;
+	
 	
 	
 	
@@ -95,6 +97,8 @@ public class Futile : MonoBehaviour
 		_futileParams = futileParams;
 		
 		Application.targetFrameRate = _futileParams.targetFrameRate;
+		
+		FShader.Init(); //set up the basic shaders
 		
 		#if UNITY_IPHONE || UNITY_ANDROID
 		TouchScreenKeyboard.autorotateToLandscapeLeft = false;
@@ -184,7 +188,7 @@ public class Futile : MonoBehaviour
 			}
 		}
 		
-		//if we couldn't find a res level, it means the screen is bigger than the biggest one, so just choose that one
+		//if we couldn't find a res level, it means the screen is bigger than the biggest one, so just choose the biggest
 		if(_resLevel == null)
 		{
 			_resLevel = _futileParams.resLevels.GetLastObject();	
@@ -243,9 +247,8 @@ public class Futile : MonoBehaviour
 		
 		_cameraHolder = new GameObject();
 		_cameraHolder.transform.parent = gameObject.transform;
-		_cameraHolder.AddComponent<Camera>();
 		
-		_camera = _cameraHolder.camera;
+		_camera = _cameraHolder.AddComponent<Camera>();
 		_camera.name = "FCamera";
 		//_camera.clearFlags = CameraClearFlags.Depth; //TODO: check if this is faster or not?
 		_camera.clearFlags = CameraClearFlags.SolidColor;
@@ -267,7 +270,10 @@ public class Futile : MonoBehaviour
 		
 		atlasManager = new FAtlasManager();
 		
-		stage = new FStage();
+		stage = new FStage("Futile.stage", 0);
+		
+		stages = new List<FStage>();
+		stages.Add (stage);
 	}
 
 	private void SwitchOrientation (ScreenOrientation newOrientation)
@@ -318,6 +324,7 @@ public class Futile : MonoBehaviour
 		halfHeight = height/2.0f;
 		
 		_camera.orthographicSize = pixelHeight/2 * displayScaleInverse;
+
 		UpdateCameraPosition(); 	
 	}
 	

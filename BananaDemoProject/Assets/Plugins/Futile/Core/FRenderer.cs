@@ -12,10 +12,20 @@ public class FRenderer
 	private FRenderLayer _topLayer;
 	
 	private int _depthToUse;
+	
+	private FStage _stage;
 		
-	public FRenderer ()
+	public FRenderer (FStage stage)
 	{
-		FShader.Init ();
+		_stage = stage;
+	}
+
+	public void SetTransformForLayers (Vector3 position, Quaternion rotation, Vector3 localScale)
+	{
+		foreach(FRenderLayer layer in _liveLayers)
+		{
+			layer.SetTransform(position,rotation,localScale);
+		}
 	}
 	
 	public void StartRender()
@@ -74,7 +84,7 @@ public class FRenderer
 		}
 		
 		//still no layer found? create a new one!
-		FRenderLayer newLayer = new FRenderLayer(atlas,shader);
+		FRenderLayer newLayer = new FRenderLayer(_stage, atlas,shader);
 		_liveLayers.Add(newLayer);
 		newLayer.AddToWorld();
 		newLayer.depth = _depthToUse++;

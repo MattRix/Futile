@@ -11,7 +11,7 @@ public class FContainer : FNode
 	
 	private bool _shouldSortByZ = false; //don't turn this on unless you really need it, it'll do a sort every redraw
 	
-	public FContainer ()
+	public FContainer () : base()
 	{
 		
 	}
@@ -21,7 +21,7 @@ public class FContainer : FNode
 		bool wasMatrixDirty = _isMatrixDirty;
 		bool wasAlphaDirty = _isAlphaDirty;
 		
-		base.Redraw(shouldForceDirty, shouldUpdateDepth);
+		UpdateDepthMatrixAlpha(shouldForceDirty, shouldUpdateDepth);
 		
 		foreach(FNode node in _childNodes)
 		{
@@ -37,6 +37,7 @@ public class FContainer : FNode
 			
 			foreach(FNode childNode in _childNodes)
 			{
+				childNode.stage = _stage;
 				childNode.HandleAddedToStage();	
 			}
 			
@@ -54,6 +55,7 @@ public class FContainer : FNode
 			foreach(FNode childNode in _childNodes)
 			{
 				childNode.HandleRemovedFromStage();	
+				childNode.stage = null;
 			}
 		}
 		
@@ -79,6 +81,7 @@ public class FContainer : FNode
 			
 			if(_isOnStage)
 			{
+				node.stage = _stage;
 				node.HandleAddedToStage();
 			}
 		}
@@ -109,6 +112,7 @@ public class FContainer : FNode
 			
 			if(_isOnStage)
 			{
+				node.stage = _stage;
 				node.HandleAddedToStage();
 			}
 		}
@@ -136,6 +140,7 @@ public class FContainer : FNode
 		if(_isOnStage)
 		{
 			node.HandleRemovedFromStage();
+			node.stage = null;
 		}
 		
 		_childNodes.Remove(node);
