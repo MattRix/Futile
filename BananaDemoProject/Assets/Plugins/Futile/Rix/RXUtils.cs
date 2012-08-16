@@ -92,7 +92,7 @@ public class RXMath
 	}
 	
 	
-	public static float getDegreeDelta(float startAngle, float endAngle) //shortRotation
+	public static float getDegreeDelta(float startAngle, float endAngle) //chooses the shortest angular distance
 	{
 		float delta = (endAngle - startAngle) % 360.0f;
 		
@@ -104,7 +104,7 @@ public class RXMath
 		return delta;
 	}
 	
-	public static float getRadianDelta(float startAngle, float endAngle) //shortRotation
+	public static float getRadianDelta(float startAngle, float endAngle) //chooses the shortest angular distance
 	{
 		float delta = (endAngle - startAngle) % DOUBLE_PI;
 		
@@ -116,7 +116,7 @@ public class RXMath
 		return delta;
 	}
 	
-	//normalized ping pong
+	//normalized ping pong (apparently Unity has this built in... so yeah) - Mathf.PingPong()
 	public static float PingPong(float input, float range)
 	{
 		float first = ((input + (range*1000000.0f)) % range)/range; //0 to 1
