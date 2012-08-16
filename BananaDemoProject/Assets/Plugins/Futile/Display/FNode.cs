@@ -87,9 +87,9 @@ public class FNode
 		return this.screenInverseConcatenatedMatrix.GetNewTransformedVector(globalVector);
 	}
 	
-	public Vector2 LocalToLocal(FNode otherNode, Vector2 otherVector)
+	public Vector2 LocalToLocal(FNode otherNode, Vector2 otherVector) //returns the position in THIS node of a point in the OTHER node 
 	{
-		return otherNode.GlobalToLocal(LocalToGlobal(otherVector));
+		return GlobalToLocal(otherNode.LocalToGlobal(otherVector));
 	}
 	
 	virtual protected void UpdateDepthMatrixAlpha(bool shouldForceDirty, bool shouldUpdateDepth)
@@ -280,7 +280,7 @@ public class FNode
 		_screenInverseConcatenatedMatrix = new FMatrix();
 		
 		_inverseConcatenatedMatrix.InvertAndCopyValues(_concatenatedMatrix);
-		_screenConcatenatedMatrix.ConcatAndCopyValues(_stage.screenConcatenatedMatrix, _concatenatedMatrix);
+		_screenConcatenatedMatrix.ConcatAndCopyValues(_concatenatedMatrix, _stage.screenConcatenatedMatrix);
 		_screenInverseConcatenatedMatrix.InvertAndCopyValues(_screenConcatenatedMatrix);
 	}
 	
