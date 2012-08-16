@@ -1,6 +1,13 @@
 using UnityEngine;
 using System.Collections;
 
+public struct FStageTransform
+{
+	public Vector3 position;
+	public Quaternion rotation;
+	public Vector3 localScale;
+}
+
 public class FStage : FContainer
 {
 	public int nextNodeDepth;
@@ -15,6 +22,14 @@ public class FStage : FContainer
 	private FMatrix _identityMatrix;
 	
 	private bool _doesRendererNeedTransformChange = false;
+	
+	private FStageTransform _transform = new FStageTransform();
+	
+	private FMatrix _followMatrix = new FMatrix();
+	private FNode _followTarget = null;
+	private bool _shouldFollowScale;
+	private bool _shouldFollowRotation;
+	
 	
 	public FStage(string name) : base()
 	{
@@ -32,6 +47,15 @@ public class FStage : FContainer
 		_screenInverseConcatenatedMatrix = new FMatrix();
 		
 		HandleAddedToStage(); //add it to itself!
+	}
+
+	public void HandleAddedToFutile ()
+	{
+	}
+	
+	public void HandleRemovedFromFutile ()
+	{
+		//TODO: Clear the renderer and all render layers
 	}
 
 	public void HandleQuadsChanged ()
@@ -71,6 +95,8 @@ public class FStage : FContainer
 	
 	override public void Redraw(bool shouldForceDirty, bool shouldUpdateDepth)
 	{
+		UpdateFollow();
+		
 		bool didNeedDepthUpdate = _needsDepthUpdate;
 		
 		_needsDepthUpdate = false;
@@ -103,13 +129,68 @@ public class FStage : FContainer
 		{
 			_doesRendererNeedTransformChange = false;
 			
-			_renderer.SetTransformForLayers
-			(
-				new Vector3(_x,_y,0),
-				Quaternion.AngleAxis(_rotation,Vector3.back),
-				new Vector3(_scaleX, _scaleY, 1.0f)
-			);
+			_transform.position = new Vector3(_x,_y,0);
+			_transform.rotation = Quaternion.AngleAxis(_rotation,Vector3.back);
+			_transform.localScale = new Vector3(_scaleX, _scaleY, 1.0f);
+			
+			_renderer.UpdateLayerTransforms();
 		}
+	}
+	
+	public void CenterOn(Vector2 globalPosition)
+	{
+		if(_followTarget != null) //stop following if we've been told to center
+		{
+			_followTarget = null;
+		}
+		
+		Vector2 stagePosition = GlobalToLocal(globalPosition);
+		
+		_followMatrix.SetScaleThenRotate(0,0,_scaleX,_scaleY,_rotation * -RXMath.DTOR);
+		
+		Vector2 resultPos = _followMatrix.GetNewTransformedVector(stagePosition);
+		this.x = -resultPos.x;
+		this.y = -resultPos.y;
+	}
+	
+	public void Follow(FNode followTarget, bool shouldFollowScale, bool shouldFollowRotation)
+	{
+		_followTarget = followTarget;
+		_shouldFollowScale = shouldFollowScale;
+		_shouldFollowRotation = shouldFollowRotation;
+	}
+	
+	private void UpdateFollow()
+	{
+		if(_followTarget != null)
+		{
+			if(_followTarget.stage == null) //the target MUST be on the same stage
+			{
+				_followTarget = null;
+				return; 
+			}
+			
+		
+		}
+	}
+	
+	public void Unfollow(FNode targetToUnfollow, bool shouldResetPosition) //if null is passed, it'll remove the current target no matter what it is
+	{
+		if(targetToUnfollow == null || _followTarget == targetToUnfollow)
+		{
+			_followTarget = null;	
+			if(shouldResetPosition) ResetPosition();
+		}
+	}
+	
+	public void ResetPosition()
+	{
+		_x = 0;
+		_y = 0;
+		_scaleX = 1.0f;
+		_scaleY = 1.0f;
+		_rotation = 0.0f;
+		_isMatrixDirty = true;
 	}
 	
 	//notice how we're returning identity matrixes
@@ -159,6 +240,11 @@ public class FStage : FContainer
 	public string name
 	{
 		get {return _name;}	
+	}
+	
+	public FStageTransform transform
+	{
+		get {return _transform;}	
 	}
 	
 }

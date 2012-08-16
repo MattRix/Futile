@@ -3,7 +3,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-
 public class FRenderLayer
 {
 	public int batchIndex;
@@ -57,7 +56,7 @@ public class FRenderLayer
 		
 		batchIndex = atlas.index*10000 + shader.index;
 		
-		_gameObject = new GameObject("FRenderLayer");
+		_gameObject = new GameObject("FRenderLayer ("+_stage.name+")");
 		_transform = _gameObject.transform;
 		
 		_transform.parent = Futile.instance.gameObject.transform;
@@ -77,13 +76,15 @@ public class FRenderLayer
 		_gameObject.active = false;
 		
 		ExpandMaxQuadLimit(Futile.startingQuadsPerLayer);
+		
+		UpdateTransform();
 	}
 
-	public void SetTransform (Vector3 position, Quaternion rotation, Vector3 localScale)
+	public void UpdateTransform()
 	{
-		_transform.position = position;
-		_transform.rotation = rotation;
-		_transform.localScale = localScale;
+		_transform.position = _stage.transform.position;
+		_transform.rotation = _stage.transform.rotation;
+		_transform.localScale = _stage.transform.localScale;
 		
 		if(_needsRecalculateBoundsIfTransformed)
 		{
@@ -102,7 +103,7 @@ public class FRenderLayer
 		_gameObject.active = false;
 		#if UNITY_EDITOR
 			//some debug code so that layers are sorted by depth properly
-			_gameObject.name = _stage.index + " "+_stage.name + " - FRenderLayer X (" + _atlas.atlasName + " " + _shader.name+")";
+			_gameObject.name = "FRenderLayer X ("+_stage.name+") (" + _atlas.name + " " + _shader.name+")";
 		#endif
 	}
 
@@ -153,7 +154,7 @@ public class FRenderLayer
 		
 		#if UNITY_EDITOR
 			//some debug code so that layers are sorted by depth properly
-			_gameObject.name = _stage.index + " "+_stage.name + " - FRenderLayer X (" + _atlas.atlasName + " " + _shader.name+")";
+			_gameObject.name = "FRenderLayer "+_depth+" ("+_stage.name+") ["+_nextAvailableQuadIndex+"/"+_maxQuadCount+"] (" + _atlas.name + " " + _shader.name+")";
 		#endif
 	}
 	

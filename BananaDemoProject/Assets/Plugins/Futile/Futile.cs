@@ -40,11 +40,11 @@ public class Futile : MonoBehaviour
 	
 	
 	//used by the rendering engine
-	internal static int startingQuadsPerLayer;
-	internal static int quadsPerLayerExpansion;
-	internal static int maxEmptyQuadsPerLayer;	
+	static internal int startingQuadsPerLayer;
+	static internal int quadsPerLayerExpansion;
+	static internal int maxEmptyQuadsPerLayer;	
 	
-	
+	static internal int nextRenderLayerDepth = 0;
 	
 	public event Action SignalUpdate;
 	public event Action SignalLateUpdate;
@@ -57,6 +57,10 @@ public class Futile : MonoBehaviour
 	
 
 	private FutileParams _futileParams;
+	
+	private bool _isDepthChangeNeeded = false;
+	
+	
 	
 	// Use this for initialization
 	private void Awake () 
@@ -91,7 +95,7 @@ public class Futile : MonoBehaviour
 		_cameraHolder.transform.parent = gameObject.transform;
 		
 		_camera = _cameraHolder.AddComponent<Camera>();
-		_camera.name = "FCamera";
+		_camera.name = "Camera";
 		//_camera.clearFlags = CameraClearFlags.Depth; //TODO: check if this is faster or not?
 		_camera.clearFlags = CameraClearFlags.SolidColor;
 		_camera.nearClipPlane = -50.3f;
@@ -106,8 +110,6 @@ public class Futile : MonoBehaviour
 
 		UpdateCameraPosition();
 		
-		
-		
 		touchManager = new FTouchManager();
 		
 		atlasManager = new FAtlasManager();
@@ -116,7 +118,89 @@ public class Futile : MonoBehaviour
 		
 		stage = new FStage("Futile.stage");
 		
-		_stages.Add (stage);
+		AddStage (stage);
+	}
+	
+	public void AddStage(FStage stageToAdd)
+	{
+		int stageIndex = _stages.IndexOf(stageToAdd);
+		
+		if(stageIndex == -1) //add it if it's not a stage
+		{
+			stageToAdd.HandleAddedToFutile();
+			_stages.Add(stageToAdd);
+		}
+		else if(stageIndex != _stages.Count-1) //if stage is already in the stages, put it at the top of the stages if it's not already
+		{
+			_stages.RemoveAt(stageIndex);
+			_stages.Add(stageToAdd);
+		}
+		
+		UpdateStageIndices();
+	}
+	
+	public void AddStageAtIndex(FStage stageToAdd, int newIndex)
+	{
+		int stageIndex = _stages.IndexOf(stageToAdd);
+		
+		if(newIndex > _stages.Count) //if it's past the end, make it at the end
+		{
+			newIndex = _stages.Count;
+		}
+		
+		if(stageIndex == newIndex) return; //if it's already at the right index, just leave it there
+		
+		if(stageIndex == -1) //add it if it's not in the stages already
+		{
+			stageToAdd.HandleAddedToFutile();
+			
+			_stages.Insert(newIndex, stageToAdd);
+		}
+		else //if stage is already in the stages, move it to the desired index
+		{
+			_stages.RemoveAt(stageIndex);
+			
+			if(stageIndex < newIndex)
+			{
+				_stages.Insert(newIndex-1, stageToAdd); //gotta subtract 1 to account for it moving in the order
+			}
+			else
+			{
+				_stages.Insert(newIndex, stageToAdd);
+			}
+		}
+		
+		UpdateStageIndices();
+	}
+	
+	public void RemoveStage(FStage stageToRemove)
+	{
+		stageToRemove.HandleRemovedFromFutile();
+		stageToRemove.index = -1;
+		
+		_stages.Remove(stageToRemove);
+		
+		UpdateStageIndices();
+	}
+
+	public void UpdateStageIndices ()
+	{
+		for(int s = 0; s<_stages.Count; s++)
+		{
+			_stages[s].index = s;	
+		}
+		
+		_isDepthChangeNeeded = true;
+	}
+	
+	public int GetStageCount()
+	{
+		return _stages.Count;
+	}
+	
+	public FStage GetStageAt(int index)
+	{
+		return _stages[index];
 	}
 
 	
@@ -127,12 +211,23 @@ public class Futile : MonoBehaviour
 
 		touchManager.Update();
 		if(SignalUpdate != null) SignalUpdate();
-		stage.Redraw (false,false);
+		
+		foreach(FStage stage in _stages)
+		{
+			stage.Redraw (false,_isDepthChangeNeeded);
+		}
+		
+		_isDepthChangeNeeded = false;
 	}
 	
 	private void LateUpdate()
 	{
-		stage.LateUpdate();
+		nextRenderLayerDepth = 0;
+		foreach(FStage stage in _stages)
+		{
+			stage.LateUpdate();
+		}
+		
 		if(SignalLateUpdate != null) SignalLateUpdate();
 	}	
 	

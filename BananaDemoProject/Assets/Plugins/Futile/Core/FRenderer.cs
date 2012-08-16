@@ -14,17 +14,17 @@ public class FRenderer
 	private int _depthToUse;
 	
 	private FStage _stage;
-		
+	
 	public FRenderer (FStage stage)
 	{
 		_stage = stage;
 	}
 
-	public void SetTransformForLayers (Vector3 position, Quaternion rotation, Vector3 localScale)
+	public void UpdateLayerTransforms()
 	{
 		foreach(FRenderLayer layer in _liveLayers)
 		{
-			layer.SetTransform(position,rotation,localScale);
+			layer.UpdateTransform();
 		}
 	}
 	
@@ -99,6 +99,7 @@ public class FRenderer
 		if(_topLayer == null)
 		{
 			_topLayer = CreateRenderLayer(batchIndex, atlas, shader);
+			_topLayer.depth = Futile.nextRenderLayerDepth++;
 			_topLayer.Open();
 		}
 		else 
@@ -108,6 +109,7 @@ public class FRenderer
 				_topLayer.Close(); //close the old layer
 				
 				_topLayer = CreateRenderLayer(batchIndex, atlas, shader);
+				_topLayer.depth = Futile.nextRenderLayerDepth++;
 				_topLayer.Open(); //open the new layer
 			}
 		}
