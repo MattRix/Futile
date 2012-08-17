@@ -46,17 +46,17 @@ public class FStage : FContainer
 		_inverseConcatenatedMatrix = new FMatrix();
 		_screenConcatenatedMatrix = new FMatrix();
 		_screenInverseConcatenatedMatrix = new FMatrix();
-		
-		HandleAddedToStage(); //add it to itself!
 	}
 
-	public void HandleAddedToFutile ()
+	public void HandleAddedToFutile()
 	{
+		HandleAddedToStage();
 	}
 	
-	public void HandleRemovedFromFutile ()
+	public void HandleRemovedFromFutile()
 	{
-		//TODO: Clear the renderer and all render layers
+		_renderer.Clear();
+		HandleRemovedFromStage();
 	}
 
 	public void HandleQuadsChanged ()
@@ -98,7 +98,7 @@ public class FStage : FContainer
 	{
 		UpdateFollow();
 		
-		bool didNeedDepthUpdate = _needsDepthUpdate;
+		bool didNeedDepthUpdate = _needsDepthUpdate || shouldUpdateDepth;
 		
 		_needsDepthUpdate = false;
 		

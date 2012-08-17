@@ -80,6 +80,11 @@ public class FRenderLayer
 		UpdateTransform();
 	}
 
+	public void Destroy()
+	{
+		UnityEngine.Object.Destroy(_gameObject);
+	}
+
 	public void UpdateTransform()
 	{
 		_transform.position = _stage.transform.position;
@@ -227,6 +232,7 @@ public class FRenderLayer
 				_mesh.uv = _uvs;
 			}
 		} 
+
 	}
 
 	public void HandleVertsChange()
@@ -328,6 +334,11 @@ public class FRenderLayer
 		
 				//this will set the render order correctly based on the depth
 				_material.renderQueue = 3000+_depth;
+				
+				#if UNITY_EDITOR
+					//some debug code so that layers are sorted by depth properly
+					_gameObject.name = "FRenderLayer "+_depth+" ("+_stage.name+") ["+_nextAvailableQuadIndex+"/"+_maxQuadCount+"] (" + _atlas.name + " " + _shader.name+")";
+				#endif
 			}
 		}
 	}

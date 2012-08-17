@@ -130,14 +130,14 @@ public class Futile : MonoBehaviour
 		{
 			stageToAdd.HandleAddedToFutile();
 			_stages.Add(stageToAdd);
+			UpdateStageIndices();
 		}
 		else if(stageIndex != _stages.Count-1) //if stage is already in the stages, put it at the top of the stages if it's not already
 		{
 			_stages.RemoveAt(stageIndex);
 			_stages.Add(stageToAdd);
+			UpdateStageIndices();
 		}
-		
-		UpdateStageIndices();
 	}
 	
 	static public void AddStageAtIndex(FStage stageToAdd, int newIndex)

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class FRenderer
 {	
+	private List<FRenderLayer> _allLayers = new List<FRenderLayer>();
 	private List<FRenderLayer> _liveLayers = new List<FRenderLayer>();
 	private List<FRenderLayer> _previousLiveLayers = new List<FRenderLayer>();
 	private List<FRenderLayer> _cachedLayers = new List<FRenderLayer>();
@@ -20,9 +21,22 @@ public class FRenderer
 		_stage = stage;
 	}
 
+	public void Clear () //wipe the renderlayers and remove their gameobjects
+	{
+		foreach(FRenderLayer renderLayer in _allLayers)
+		{
+			renderLayer.Destroy();
+		}
+		
+		_allLayers.Clear();
+		_liveLayers.Clear();
+		_previousLiveLayers.Clear();
+		_cachedLayers.Clear();
+	}
+
 	public void UpdateLayerTransforms()
 	{
-		foreach(FRenderLayer layer in _liveLayers)
+		foreach(FRenderLayer layer in _allLayers)
 		{
 			layer.UpdateTransform();
 		}
@@ -86,6 +100,7 @@ public class FRenderer
 		//still no layer found? create a new one!
 		FRenderLayer newLayer = new FRenderLayer(_stage, atlas,shader);
 		_liveLayers.Add(newLayer);
+		_allLayers.Add(newLayer);
 		newLayer.AddToWorld();
 		newLayer.depth = _depthToUse++;
 		
@@ -99,7 +114,6 @@ public class FRenderer
 		if(_topLayer == null)
 		{
 			_topLayer = CreateRenderLayer(batchIndex, atlas, shader);
-			_topLayer.depth = Futile.nextRenderLayerDepth++;
 			_topLayer.Open();
 		}
 		else 
@@ -109,7 +123,6 @@ public class FRenderer
 				_topLayer.Close(); //close the old layer
 				
 				_topLayer = CreateRenderLayer(batchIndex, atlas, shader);
-				_topLayer.depth = Futile.nextRenderLayerDepth++;
 				_topLayer.Open(); //open the new layer
 			}
 		}
@@ -127,8 +140,10 @@ public class FRenderer
 	{
 		foreach(FRenderLayer liveLayer in _liveLayers)
 		{
+			liveLayer.depth = Futile.nextRenderLayerDepth++;
 			liveLayer.Update();	
 		}
+
 	}
 }
 
