@@ -18,9 +18,7 @@ public class Futile : MonoBehaviour
 	static public FStage stage;
 	
 	static public FTouchManager touchManager;
-	
-	static private List<FStage> _stages;
-	
+
 	
 	
 	static public bool isOpenGL; //assigned in Awake
@@ -46,6 +44,11 @@ public class Futile : MonoBehaviour
 	
 	static internal int nextRenderLayerDepth = 0;
 	
+	
+	static private List<FStage> _stages;
+	static private bool _isDepthChangeNeeded = false;
+	
+	
 	public event Action SignalUpdate;
 	public event Action SignalLateUpdate;
 	
@@ -58,7 +61,6 @@ public class Futile : MonoBehaviour
 
 	private FutileParams _futileParams;
 	
-	private bool _isDepthChangeNeeded = false;
 	
 	
 	
@@ -120,7 +122,7 @@ public class Futile : MonoBehaviour
 		AddStage (stage);
 	}
 	
-	public void AddStage(FStage stageToAdd)
+	static public void AddStage(FStage stageToAdd)
 	{
 		int stageIndex = _stages.IndexOf(stageToAdd);
 		
@@ -138,7 +140,7 @@ public class Futile : MonoBehaviour
 		UpdateStageIndices();
 	}
 	
-	public void AddStageAtIndex(FStage stageToAdd, int newIndex)
+	static public void AddStageAtIndex(FStage stageToAdd, int newIndex)
 	{
 		int stageIndex = _stages.IndexOf(stageToAdd);
 		
@@ -172,7 +174,7 @@ public class Futile : MonoBehaviour
 		UpdateStageIndices();
 	}
 	
-	public void RemoveStage(FStage stageToRemove)
+	static public void RemoveStage(FStage stageToRemove)
 	{
 		stageToRemove.HandleRemovedFromFutile();
 		stageToRemove.index = -1;
@@ -182,7 +184,7 @@ public class Futile : MonoBehaviour
 		UpdateStageIndices();
 	}
 
-	public void UpdateStageIndices ()
+	static public void UpdateStageIndices ()
 	{
 		for(int s = 0; s<_stages.Count; s++)
 		{
@@ -192,12 +194,12 @@ public class Futile : MonoBehaviour
 		_isDepthChangeNeeded = true;
 	}
 	
-	public int GetStageCount()
+	static public int GetStageCount()
 	{
 		return _stages.Count;
 	}
 	
-	public FStage GetStageAt(int index)
+	static public FStage GetStageAt(int index)
 	{
 		return _stages[index];
 	}
