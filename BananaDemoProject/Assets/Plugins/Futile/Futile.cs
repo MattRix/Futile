@@ -68,6 +68,7 @@ public class Futile : MonoBehaviour
 		instance = this;
 		isOpenGL = SystemInfo.graphicsDeviceVersion.Contains("OpenGL");
 		enabled = false;
+		name = "Futile";
 	}
 	
 	public void Init(FutileParams futileParams)
@@ -88,8 +89,6 @@ public class Futile : MonoBehaviour
 		//
 		//Camera setup from https://github.com/prime31/UIToolkit/blob/master/Assets/Plugins/UIToolkit/UI.cs
 		//
-				
-		name = "Futile"; 
 		
 		_cameraHolder = new GameObject();
 		_cameraHolder.transform.parent = gameObject.transform;
@@ -98,7 +97,7 @@ public class Futile : MonoBehaviour
 		_camera.name = "Camera";
 		//_camera.clearFlags = CameraClearFlags.Depth; //TODO: check if this is faster or not?
 		_camera.clearFlags = CameraClearFlags.SolidColor;
-		_camera.nearClipPlane = -50.3f;
+		_camera.nearClipPlane = -50.0f;
 		_camera.farClipPlane = 50.0f;
 		_camera.depth = 100;
 		_camera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
@@ -249,6 +248,11 @@ public class Futile : MonoBehaviour
 		float camYOffset = ((screen.originY - 0.5f) * -screen.pixelHeight)*displayScaleInverse;
 	
 		_camera.transform.position = new Vector3(camXOffset, camYOffset, -10.0f); 	
+	}
+	
+	new public Camera camera
+	{
+		get {return _camera;}	
 	}
 	
 	//
