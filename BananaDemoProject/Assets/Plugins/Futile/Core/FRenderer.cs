@@ -107,7 +107,7 @@ public class FRenderer
 		return newLayer;
 	}
 	
-	public void GetRenderLayer (ref FRenderLayer renderLayer, ref int firstQuadIndex, FAtlas atlas, FShader shader, int numberOfQuadsNeeded)
+	public void GetRenderLayer (out FRenderLayer renderLayer, out int firstQuadIndex, FAtlas atlas, FShader shader, int numberOfQuadsNeeded)
 	{
 		int batchIndex = atlas.index*10000 + shader.index;
 		

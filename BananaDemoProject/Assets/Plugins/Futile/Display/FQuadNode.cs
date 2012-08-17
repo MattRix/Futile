@@ -27,8 +27,10 @@ public class FQuadNode : FNode
 	
 	protected void UpdateQuads()
 	{
-		_stage.renderer.GetRenderLayer(ref _renderLayer, ref _firstQuadIndex, _element.atlas, _shader, _numberOfQuadsNeeded);
+		_stage.renderer.GetRenderLayer(out _renderLayer, out _firstQuadIndex, _element.atlas, _shader, _numberOfQuadsNeeded);
 	}
+	
+
 	
 	virtual public int firstQuadIndex
 	{
