@@ -281,7 +281,7 @@ public class FNode
 		get { return _depth;}	
 	}
 	
-	public int touchPriority
+	virtual public int touchPriority
 	{
 		get { return _depth;}	
 	}
