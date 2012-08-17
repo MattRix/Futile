@@ -80,6 +80,7 @@ public class RXMath
 	public const float RTOD = 180.0f/Mathf.PI;
 	public const float DTOR = Mathf.PI/180.0f;
 	public const float DOUBLE_PI = Mathf.PI*2.0f;
+	public const float HALF_PI = Mathf.PI/2.0f;
 	
 	public static int Wrap(int input, int range)
 	{
