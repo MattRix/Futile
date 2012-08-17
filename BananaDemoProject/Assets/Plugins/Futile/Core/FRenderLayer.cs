@@ -249,25 +249,11 @@ public class FRenderLayer
 		
 		_maxQuadCount = Math.Max (Futile.startingQuadsPerLayer, _maxQuadCount-deltaDecrease);
 	
-		//Vertices:
-		Vector3[] oldVertices = _vertices;
-		_vertices = new Vector3[_maxQuadCount * 4];
-		Array.Copy(oldVertices,_vertices,_vertices.Length);
-	
-		// UVs:
-		Vector2[] oldUVs = _uvs;
-		_uvs = new Vector2[_maxQuadCount * 4];
-		Array.Copy(oldUVs,_uvs,_uvs.Length);
-
-		// Colors:
-		Color[] oldColors = _colors;
-		_colors = new Color[_maxQuadCount * 4];
-		Array.Copy(oldColors,_colors,_colors.Length);
-
-		// Triangle indices:
-		int[] oldTriangles = _triangles;
-		_triangles = new int[_maxQuadCount * 6];
-		Array.Copy(oldTriangles,_triangles,_triangles.Length);
+		//resize the arrays so they can fit everything
+		Array.Resize (ref _vertices,_maxQuadCount*4);
+		Array.Resize (ref _uvs,_maxQuadCount*4);
+		Array.Resize (ref _colors,_maxQuadCount*4);
+		Array.Resize (ref _triangles,_maxQuadCount*6);
 
 		_didVertCountChange = true;
 		_didVertsChange = true;
@@ -285,26 +271,13 @@ public class FRenderLayer
 		
 		_maxQuadCount += deltaIncrease;
 		
-		// Vertices:
-		Vector3[] oldVertices = _vertices;
-		_vertices = new Vector3[_maxQuadCount * 4];
-		oldVertices.CopyTo(_vertices, 0);
-
-		// UVs:
-		Vector2[] oldUVs = _uvs;
-		_uvs = new Vector2[_maxQuadCount * 4];
-		oldUVs.CopyTo(_uvs, 0);
-
-		// Colors:
-		Color[] oldColors = _colors;
-		_colors = new Color[_maxQuadCount * 4];
-		oldColors.CopyTo(_colors, 0);
-
-		// Triangle indices:
-		int[] oldTriangles = _triangles;
-		_triangles = new int[_maxQuadCount * 6];
-		oldTriangles.CopyTo(_triangles, 0);
+		//shrink the arrays
+		Array.Resize (ref _vertices,_maxQuadCount*4);
+		Array.Resize (ref _uvs,_maxQuadCount*4);
+		Array.Resize (ref _colors,_maxQuadCount*4);
+		Array.Resize (ref _triangles,_maxQuadCount*6);
 		
+		//fill the triangles with the correct values
 		for(int i = firstNewQuadIndex; i<_maxQuadCount; ++i)
 		{
 			_triangles[i*6 + 0] = i * 4 + 0;	
