@@ -56,7 +56,7 @@ public class FSprite : FQuadNode
 		if(wasAlphaDirty || shouldForceDirty)
 		{
 			_isMeshDirty = true;
-			_alphaColor = _color.CloneWithMultipliedAlpha(_concatenatedAlpha);	
+			_color.ApplyMultipliedAlpha(ref _alphaColor, _concatenatedAlpha);	
 		}
 		
 		if(_areLocalVerticesDirty)
@@ -128,12 +128,12 @@ public class FSprite : FQuadNode
 		}
 	}
 	
-	virtual public Rect boundsRect
+	virtual public Rect boundsRect //the full rect as if the sprite hadn't been trimmed
 	{
 		get {return _boundsRect;}	
 	}
 	
-	virtual public Rect localRect
+	virtual public Rect localRect //the rect of the actual trimmed quad drawn on screen
 	{
 		get {return _localRect;}	
 	}

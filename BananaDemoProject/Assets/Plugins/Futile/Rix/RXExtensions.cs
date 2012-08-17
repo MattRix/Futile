@@ -19,7 +19,13 @@ public static class ColorExtensions
 		return new Color(color.r, color.g, color.b, color.a*alpha);	
 	}
 	
-	//XT.To(target,0.5f).PropFloat("x",100.0f).OnComplete(OnCompleteHandler).Delay(0.5f).Start();
+	public static void ApplyMultipliedAlpha(this Color color, ref Color targetColor, float alpha)
+	{
+		otherColor.r = color.r;
+		otherColor.g = color.g;
+		otherColor.b = color.b;
+		otherColor.a = color.a*alpha;
+	}
 }
 
 public static class RectExtensions
