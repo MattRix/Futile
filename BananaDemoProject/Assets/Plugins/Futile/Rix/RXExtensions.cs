@@ -21,10 +21,10 @@ public static class ColorExtensions
 	
 	public static void ApplyMultipliedAlpha(this Color color, ref Color targetColor, float alpha)
 	{
-		otherColor.r = color.r;
-		otherColor.g = color.g;
-		otherColor.b = color.b;
-		otherColor.a = color.a*alpha;
+		targetColor.r = color.r;
+		targetColor.g = color.g;
+		targetColor.b = color.b;
+		targetColor.a = color.a*alpha;
 	}
 }
 
