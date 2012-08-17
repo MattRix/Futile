@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
 public struct FStageTransform
 {
@@ -105,7 +106,7 @@ public class FStage : FContainer
 		{
 			shouldForceDirty = true;
 			shouldUpdateDepth = true;
-			nextNodeDepth = index*1000;
+			nextNodeDepth = index*10000; //each stage will be 10000 higher in "depth" than the previous one
 			_renderer.StartRender(); 
 		}
 		
@@ -116,7 +117,7 @@ public class FStage : FContainer
 		foreach(FNode node in _childNodes)
 		{
 			//key difference between Stage and Container: Stage doesn't force dirty if matrix is dirty
-			node.Redraw(shouldForceDirty || wasAlphaDirty, shouldUpdateDepth); //if the matrix was dirty or we're supposed to force it, do it!
+			node.Redraw(shouldForceDirty || wasAlphaDirty, shouldUpdateDepth); //if the alpha is dirty or we're supposed to force it, do it!
 		}
 		
 		if(didNeedDepthUpdate)
@@ -131,7 +132,7 @@ public class FStage : FContainer
 			
 			_transform.position = new Vector3(_x,_y,0);
 			_transform.rotation = Quaternion.AngleAxis(_rotation,Vector3.back);
-			_transform.localScale = new Vector3(_scaleX, _scaleY, 1.0f);
+			_transform.localScale = new Vector3(_scaleX, _scaleX, _scaleX); //uniform scale (should be better performance)
 			
 			_renderer.UpdateLayerTransforms();
 		}
@@ -170,7 +171,22 @@ public class FStage : FContainer
 				return; 
 			}
 			
-		
+			if(_shouldFollowScale)
+			{
+				this.scale = 1.0f/_followTarget.concatenatedMatrix.GetScaleX();
+			}
+			
+			if(_shouldFollowRotation)
+			{
+				this.rotation = _followTarget.concatenatedMatrix.GetRotation() * RXMath.RTOD;
+			}
+			
+			_followMatrix.SetScaleThenRotate(0,0,_scaleX,_scaleY,_rotation * -RXMath.DTOR);
+			
+			Vector2 pos = _followMatrix.GetNewTransformedVector(new Vector2(_followTarget.concatenatedMatrix.tx,_followTarget.concatenatedMatrix.ty));
+			
+			this.x = -pos.x;
+			this.y = -pos.y;
 		}
 	}
 	
@@ -245,6 +261,18 @@ public class FStage : FContainer
 	public FStageTransform transform
 	{
 		get {return _transform;}	
+	}
+	
+	new public float scaleX
+	{
+		get {return _scaleX;}
+		set {throw new NotSupportedException("Stage scale must be uniform! Use stage.scale instead");}
+	}
+	
+	new public float scaleY
+	{
+		get {return _scaleY;}
+		set {throw new NotSupportedException("Stage scale must be uniform! Use stage.scale instead");}
 	}
 	
 }
