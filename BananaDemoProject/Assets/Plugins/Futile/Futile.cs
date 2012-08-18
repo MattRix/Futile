@@ -186,7 +186,8 @@ public class Futile : MonoBehaviour
 
 	static public void UpdateStageIndices ()
 	{
-		for(int s = 0; s<_stages.Count; s++)
+		int stageCount = _stages.Count;
+		for(int s = 0; s<stageCount; s++)
 		{
 			_stages[s].index = s;	
 		}
@@ -213,9 +214,10 @@ public class Futile : MonoBehaviour
 		touchManager.Update();
 		if(SignalUpdate != null) SignalUpdate();
 		
-		foreach(FStage stage in _stages)
+		
+		for(int s = 0; s<_stages.Count; s++)
 		{
-			stage.Redraw (false,_isDepthChangeNeeded);
+			_stages[s].Redraw (false,_isDepthChangeNeeded);
 		}
 		
 		_isDepthChangeNeeded = false;
@@ -224,9 +226,10 @@ public class Futile : MonoBehaviour
 	private void LateUpdate()
 	{
 		nextRenderLayerDepth = 0;
-		foreach(FStage stage in _stages)
+		
+		for(int s = 0; s<_stages.Count; s++)
 		{
-			stage.LateUpdate();
+			_stages[s].LateUpdate();
 		}
 		
 		if(SignalLateUpdate != null) SignalLateUpdate();

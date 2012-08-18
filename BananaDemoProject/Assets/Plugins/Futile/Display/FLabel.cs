@@ -57,9 +57,10 @@ public class FLabel : FQuadNode
 		
 		_numberOfQuadsNeeded = 0;
 		
-		foreach(FLetterQuadLine line in _letterQuadLines)
+		int lineCount = _letterQuadLines.Length;
+		for(int i = 0; i< lineCount; i++)
 		{
-			_numberOfQuadsNeeded += line.quads.Length;
+			_numberOfQuadsNeeded += _letterQuadLines[i].quads.Length;
 		}
 		
 		if(_isOnStage)
@@ -85,24 +86,28 @@ public class FLabel : FQuadNode
 		float minX = 100000000;
 		float maxX = -100000000;
 		
-		foreach(FLetterQuadLine line in _letterQuadLines)
+		int lineCount = _letterQuadLines.Length;
+		for(int i = 0; i<lineCount; i++)
 		{
+			FLetterQuadLine line = _letterQuadLines[i];
 			minY = Math.Min (line.bounds.yMin,minY);
 			maxY = Math.Max (line.bounds.yMax,maxY);
 		}
 		
 		float offsetY = -(minY + ((maxY-minY)*_anchorY));
 		
-		foreach(FLetterQuadLine line in _letterQuadLines)
+		for(int i = 0; i<lineCount; i++)
 		{
+			FLetterQuadLine line = _letterQuadLines[i];
 			float offsetX = -line.bounds.width*_anchorX;
 			
 			minX = Math.Min (offsetX,minX);
 			maxX = Math.Max (offsetX+line.bounds.width,maxX);
 			
-			foreach(FLetterQuad quad in line.quads)
+			int quadCount = line.quads.Length;
+			for(int q = 0; q< quadCount; q++)
 			{
-				quad.CalculateVectors(offsetX, offsetY);
+				line.quads[q].CalculateVectors(offsetX, offsetY);
 			}
 		}
 		
@@ -165,19 +170,26 @@ public class FLabel : FQuadNode
 			
 			int vertexIndex = _firstQuadIndex*4;
 			
-			foreach(FLetterQuadLine line in _letterQuadLines)
+			int lineCount = _letterQuadLines.Length;
+			for(int i = 0; i<lineCount; i++)
 			{
-				foreach(FLetterQuad quad in line.quads)
+				FLetterQuad[] quads = _letterQuadLines[i].quads;
+				
+				int quadCount = quads.Length;
+				for(int q = 0; q<quadCount; q++)
 				{
+					FLetterQuad quad = quads[q];
+					FCharInfo charInfo = quad.charInfo;
+					
 					_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex], quad.topLeft,0);
 					_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex + 1], quad.topRight,0);
 					_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex + 2], quad.bottomRight,0);
 					_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex + 3], quad.bottomLeft,0);
 					
-					uvs[vertexIndex] = quad.charInfo.uvTopLeft;
-					uvs[vertexIndex + 1] = quad.charInfo.uvTopRight;
-					uvs[vertexIndex + 2] = quad.charInfo.uvBottomRight;
-					uvs[vertexIndex + 3] = quad.charInfo.uvBottomLeft;
+					uvs[vertexIndex] = charInfo.uvTopLeft;
+					uvs[vertexIndex + 1] = charInfo.uvTopRight;
+					uvs[vertexIndex + 2] = charInfo.uvBottomRight;
+					uvs[vertexIndex + 3] = charInfo.uvBottomLeft;
 					
 					colors[vertexIndex] = _alphaColor;
 					colors[vertexIndex + 1] = _alphaColor;

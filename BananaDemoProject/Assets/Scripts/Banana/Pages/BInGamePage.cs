@@ -233,7 +233,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 	private void CreateBananaExplodeEffect(BBanana banana)
 	{
 		//we can't just get its x and y, because they might be transformed somehow
-		Vector2 bananaPos = banana.LocalToLocal(_effectHolder,Vector2.zero);
+		Vector2 bananaPos = _effectHolder.LocalToLocal(banana,Vector2.zero);
 		
 		FSprite explodeSprite = new FSprite("Banana.png");
 		_effectHolder.AddChild(explodeSprite);

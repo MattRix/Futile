@@ -107,8 +107,6 @@ public class FTouchManager
 			mouseTouch.tapCount = 1;
 			mouseTouch.deltaTime = Time.deltaTime;
 			
-			
-			
 			if(Input.GetMouseButtonDown(0))
 			{
 				mouseTouch.deltaPosition = new Vector2(0,0);
@@ -162,78 +160,83 @@ public class FTouchManager
 			touches[i+offset] = resultTouch;
 		}
 		
-		if(touches.Length > 0 )
+		int singleTouchableCount = _singleTouchables.Count;
+		
+		for(int t = 0; t<touchCount; t++)
 		{
-			foreach(FTouch touch in touches)
-			{
-				if(touch.fingerId == 0) // we only care about the first touch for the singleTouchables
-				{
-					if(touch.phase == TouchPhase.Began)
-					{
-						
-						foreach(FSingleTouchableInterface singleTouchable in _singleTouchables)
-						{
-							if(singleTouchable.HandleSingleTouchBegan(touch)) //the first touchable to return true becomes theSingleTouchable
-							{
-								_theSingleTouchable = singleTouchable;
-								break;
-							}
-						}
-					}
-					else if(touch.phase == TouchPhase.Ended)
-					{
-						if(_theSingleTouchable != null)
-						{
-							_theSingleTouchable.HandleSingleTouchEnded(touch);	
-						}
-						_theSingleTouchable = null;
-					}
-					else if(touch.phase == TouchPhase.Canceled)
-					{
-						if(_theSingleTouchable != null)
-						{
-							_theSingleTouchable.HandleSingleTouchCanceled(touch);	
-						}
-						_theSingleTouchable = null;
-					}
-					else //moved or stationary
-					{
-						if(_theSingleTouchable != null)
-						{
-							_theSingleTouchable.HandleSingleTouchMoved(touch);	
-						}
-					}
-					
-					break; //break out from the foreach, once we've found the first touch we don't care about the others
-				}
-			}
+			FTouch touch = touches[t];
 			
-			foreach(FMultiTouchableInterface multiTouchable in _multiTouchables)
+			if(touch.fingerId == 0) // we only care about the first touch for the singleTouchables
 			{
-				multiTouchable.HandleMultiTouch(touches);
+				if(touch.phase == TouchPhase.Began)
+				{
+					for(int s = 0; s<singleTouchableCount; s++)
+					{
+						FSingleTouchableInterface singleTouchable = _singleTouchables[s];
+						if(singleTouchable.HandleSingleTouchBegan(touch)) //the first touchable to return true becomes theSingleTouchable
+						{
+							_theSingleTouchable = singleTouchable;
+							break;
+						}
+					}
+				}
+				else if(touch.phase == TouchPhase.Ended)
+				{
+					if(_theSingleTouchable != null)
+					{
+						_theSingleTouchable.HandleSingleTouchEnded(touch);	
+					}
+					_theSingleTouchable = null;
+				}
+				else if(touch.phase == TouchPhase.Canceled)
+				{
+					if(_theSingleTouchable != null)
+					{
+						_theSingleTouchable.HandleSingleTouchCanceled(touch);	
+					}
+					_theSingleTouchable = null;
+				}
+				else //moved or stationary
+				{
+					if(_theSingleTouchable != null)
+					{
+						_theSingleTouchable.HandleSingleTouchMoved(touch);	
+					}
+				}
+				
+				break; //break out from the foreach, once we've found the first touch we don't care about the others
 			}
+		}
+		
+		if(touchCount > 0)
+		{
+			int multiTouchableCount = _multiTouchables.Count;
+			for(int m = 0; m<multiTouchableCount; m++)
+			{
+				_multiTouchables[m].HandleMultiTouch(touches);
+			}	
 		}
 		
 		//now add or remove anything that was changed while we were looping through
 		
-		foreach(FSingleTouchableInterface singleTouchableToRemove in _singleTouchablesToRemove)
+		for(int s = 0; s<_singleTouchablesToRemove.Count; s++)
 		{
-			_singleTouchables.Remove(singleTouchableToRemove);	
+			_singleTouchables.Remove(_singleTouchablesToRemove[s]);	
 		}
 		
-		foreach(FSingleTouchableInterface singleTouchableToAdd in _singleTouchablesToAdd)
+		for(int s = 0; s<_singleTouchablesToAdd.Count; s++)
 		{
-			_singleTouchables.Add(singleTouchableToAdd);	
+			_singleTouchables.Add(_singleTouchablesToAdd[s]);	
 		}
 		
-		foreach(FMultiTouchableInterface multiTouchableToRemove in _multiTouchablesToRemove)
+		for(int m = 0; m<_multiTouchablesToRemove.Count; m++)
 		{
-			_multiTouchables.Remove(multiTouchableToRemove);	
+			_multiTouchables.Remove(_multiTouchablesToRemove[m]);	
 		}
 		
-		foreach(FMultiTouchableInterface multiTouchableToAdd in _multiTouchablesToAdd)
+		for(int m = 0; m<_multiTouchablesToAdd.Count; m++)
 		{
-			_multiTouchables.Add(multiTouchableToAdd);	
+			_multiTouchables.Add(_multiTouchablesToAdd[m]);	
 		}
 		
 		_singleTouchablesToRemove.Clear();
