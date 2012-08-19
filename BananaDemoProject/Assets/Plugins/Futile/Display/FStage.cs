@@ -115,7 +115,7 @@ public class FStage : FContainer
 		UpdateDepthMatrixAlpha(shouldForceDirty, shouldUpdateDepth);
 		
 		int childCount = _childNodes.Count;
-		for(int c = 0; c<_childNodes.Count; c++)
+		for(int c = 0; c<childCount; c++)
 		{
 			//key difference between Stage and Container: Stage doesn't force dirty if matrix is dirty
 			_childNodes[c].Redraw(shouldForceDirty || wasAlphaDirty, shouldUpdateDepth); //if the alpha is dirty or we're supposed to force it, do it!
