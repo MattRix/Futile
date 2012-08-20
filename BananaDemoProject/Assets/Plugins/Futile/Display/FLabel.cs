@@ -168,7 +168,10 @@ public class FLabel : FQuadNode
 			Vector2[] uvs = _renderLayer.uvs;
 			Color[] colors = _renderLayer.colors;
 			
-			int vertexIndex = _firstQuadIndex*4;
+			int vertexIndex0 = _firstQuadIndex*4;
+			int vertexIndex1 = vertexIndex0 + 1;
+			int vertexIndex2 = vertexIndex0 + 2;
+			int vertexIndex3 = vertexIndex0 + 3;
 			
 			int lineCount = _letterQuadLines.Length;
 			for(int i = 0; i<lineCount; i++)
@@ -181,26 +184,28 @@ public class FLabel : FQuadNode
 					FLetterQuad quad = quads[q];
 					FCharInfo charInfo = quad.charInfo;
 					
-					_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex], quad.topLeft,0);
-					_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex + 1], quad.topRight,0);
-					_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex + 2], quad.bottomRight,0);
-					_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex + 3], quad.bottomLeft,0);
+					_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0], quad.topLeft,0);
+					_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex1], quad.topRight,0);
+					_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex2], quad.bottomRight,0);
+					_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex3], quad.bottomLeft,0);
 					
-					uvs[vertexIndex] = charInfo.uvTopLeft;
-					uvs[vertexIndex + 1] = charInfo.uvTopRight;
-					uvs[vertexIndex + 2] = charInfo.uvBottomRight;
-					uvs[vertexIndex + 3] = charInfo.uvBottomLeft;
+					uvs[vertexIndex0] = charInfo.uvTopLeft;
+					uvs[vertexIndex1] = charInfo.uvTopRight;
+					uvs[vertexIndex2] = charInfo.uvBottomRight;
+					uvs[vertexIndex3] = charInfo.uvBottomLeft;
 					
-					colors[vertexIndex] = _alphaColor;
-					colors[vertexIndex + 1] = _alphaColor;
-					colors[vertexIndex + 2] = _alphaColor;
-					colors[vertexIndex + 3] = _alphaColor;
+					colors[vertexIndex0] = _alphaColor;
+					colors[vertexIndex1] = _alphaColor;
+					colors[vertexIndex2] = _alphaColor;
+					colors[vertexIndex3] = _alphaColor;
 					
-					vertexIndex += 4;
+					vertexIndex0 += 4;
+					vertexIndex1 += 4;
+					vertexIndex2 += 4;
+					vertexIndex3 += 4;
 				}
 			}
 			
-			//TODO: maybe we can NOT call this when doing a depth populate, because we know it won't matter
 			_renderLayer.HandleVertsChange();
 		}
 	}

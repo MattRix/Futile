@@ -17,6 +17,11 @@ public class FSprite : FQuadNode
 	protected bool _isMeshDirty = false;
 	protected bool _areLocalVerticesDirty = false;
 	
+	protected FSprite() : base() //for overriding
+	{
+		
+	}
+	
 	public FSprite (string elementName) : base()
 	{
 		Init(Futile.atlasManager.GetElementWithName(elementName),1);
@@ -26,10 +31,6 @@ public class FSprite : FQuadNode
 		UpdateLocalVertices();
 	}
 	
-	public void SetElementByName(string elementName)
-	{
-		this.element = Futile.atlasManager.GetElementWithName(elementName);
-	}
 	
 	override public void HandleElementChanged()
 	{
@@ -103,26 +104,29 @@ public class FSprite : FQuadNode
 		{
 			_isMeshDirty = false;
 			
-			int vertexIndex = _firstQuadIndex*4;
+			int vertexIndex0 = _firstQuadIndex*4;
+			int vertexIndex1 = vertexIndex0 + 1;
+			int vertexIndex2 = vertexIndex0 + 2;
+			int vertexIndex3 = vertexIndex0 + 3;
 			
 			Vector3[] vertices = _renderLayer.vertices;
 			Vector2[] uvs = _renderLayer.uvs;
 			Color[] colors = _renderLayer.colors;
 			
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex], _localVertices[0],0);
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex + 1], _localVertices[1],0);
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex + 2], _localVertices[2],0);
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex + 3], _localVertices[3],0);
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0], _localVertices[0],0);
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex1], _localVertices[1],0);
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex2], _localVertices[2],0);
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex3], _localVertices[3],0);
 			
-			uvs[vertexIndex] = _element.uvTopLeft;
-			uvs[vertexIndex + 1] = _element.uvTopRight;
-			uvs[vertexIndex + 2] = _element.uvBottomRight;
-			uvs[vertexIndex + 3] = _element.uvBottomLeft;
+			uvs[vertexIndex0] = _element.uvTopLeft;
+			uvs[vertexIndex1] = _element.uvTopRight;
+			uvs[vertexIndex2] = _element.uvBottomRight;
+			uvs[vertexIndex3] = _element.uvBottomLeft;
 			
-			colors[vertexIndex] = _alphaColor;
-			colors[vertexIndex + 1] = _alphaColor;
-			colors[vertexIndex + 2] = _alphaColor;
-			colors[vertexIndex + 3] = _alphaColor;
+			colors[vertexIndex0] = _alphaColor;
+			colors[vertexIndex1] = _alphaColor;
+			colors[vertexIndex2] = _alphaColor;
+			colors[vertexIndex3] = _alphaColor;
 			
 			_renderLayer.HandleVertsChange();
 		}
@@ -166,13 +170,27 @@ public class FSprite : FQuadNode
 	virtual public float anchorX 
 	{
 		get { return _anchorX;}
-		set { _anchorX = value; _areLocalVerticesDirty = true; }
+		set 
+		{ 
+			if(_anchorX != value)
+			{
+				_anchorX = value; 
+				_areLocalVerticesDirty = true; 
+			}
+		}
 	}
 	
 	virtual public float anchorY 
 	{
 		get { return _anchorY;}
-		set { _anchorY = value; _areLocalVerticesDirty = true; }
+		set 
+		{ 
+			if(_anchorY != value)
+			{
+				_anchorY = value; 
+				_areLocalVerticesDirty = true; 
+			}
+		}
 	}
 }
 

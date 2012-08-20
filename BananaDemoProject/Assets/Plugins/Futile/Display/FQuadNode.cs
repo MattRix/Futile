@@ -23,6 +23,8 @@ public class FQuadNode : FNode
 		_element = element;
 		_shader = FShader.defaultShader;
 		_numberOfQuadsNeeded = numberOfQuadsNeeded; 
+		
+		HandleElementChanged();
 	}
 	
 	protected void UpdateQuads()
@@ -63,6 +65,11 @@ public class FQuadNode : FNode
 			_isOnStage = false;
 			_stage.HandleQuadsChanged();
 		}
+	}
+	
+	public void SetElementByName(string elementName)
+	{
+		this.element = Futile.atlasManager.GetElementWithName(elementName);
 	}
 	
 	public FAtlasElement element
