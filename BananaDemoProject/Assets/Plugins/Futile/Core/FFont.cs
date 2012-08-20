@@ -48,32 +48,37 @@ public class FLetterQuad
 		bottomLeft.Set(rect.xMin,rect.yMin);
 	}
 	
+	//this essentially moves the quads by a certain offset
+	//the mod stuff is used to make sure the quad is resting on a whole pixel
 	public void CalculateVectors(float offsetX, float offsetY)
 	{
-		topLeft.Set(rect.xMin+offsetX,rect.yMax+offsetY);
-		topRight.Set(rect.xMax+offsetX,rect.yMax+offsetY);
-		bottomRight.Set(rect.xMax+offsetX,rect.yMin+offsetY);
-		bottomLeft.Set(rect.xMin+offsetX,rect.yMin+offsetY);
+		float scaleInverse = Futile.displayScaleInverse;
 		
-		topLeft = topLeft.Round();
-		topRight = topRight.Round();
-		bottomRight = bottomRight.Round();
-		bottomLeft = bottomLeft.Round();
+		float xMod = (rect.xMin+offsetX) % scaleInverse;
+		float yMod = (rect.yMin+offsetY) % scaleInverse;
+		
+		offsetX -= xMod;
+		offsetY -= yMod;
+		
+		float roundedLeft = rect.xMin+offsetX;
+		float roundedRight = rect.xMax+offsetX;
+		float roundedTop = rect.yMax+offsetY;
+		float roundedBottom = rect.yMin+offsetY;
+		
+		topLeft.x = roundedLeft;
+		topLeft.y = roundedTop;
+		
+		topRight.x = roundedRight;
+		topRight.y = roundedTop;
+		
+		bottomRight.x = roundedRight;
+		bottomRight.y = roundedBottom;
+		
+		bottomLeft.x = roundedLeft;
+		bottomLeft.y = roundedBottom;
 	}
 	
 	
-}
-
-//TODO: make this stuff better and less hacky
-//right now it's just there to give us slightly more pixel perfect text
-//but it doesn't work perfectly
-public static class FVectorExtensions
-{
-	static public Vector2 Round(this Vector2 vector)
-	{
-		float scale = Futile.displayScale;
-		return new Vector2(Mathf.Floor (0.5f + vector.x*scale)/scale,Mathf.Floor (0.5f + vector.y*scale)/scale);
-	}
 }
 
 public class FTextParams
