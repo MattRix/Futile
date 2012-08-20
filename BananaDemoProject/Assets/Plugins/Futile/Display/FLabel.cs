@@ -27,7 +27,7 @@ public class FLabel : FQuadNode
 	protected bool _doesTextNeedUpdate = false;
 	protected bool _doesLocalPositionNeedUpdate = false;
 	
-	protected Rect _boundsRect;
+	protected Rect _textRect;
 	
 	protected FTextParams _textParams;
 	
@@ -111,10 +111,10 @@ public class FLabel : FQuadNode
 			}
 		}
 		
-		_boundsRect.x = minX;
-		_boundsRect.y = minY+offsetY;
-		_boundsRect.width = maxX-minX;
-		_boundsRect.height = maxY-minY;
+		_textRect.x = minX;
+		_textRect.y = minY+offsetY;
+		_textRect.width = maxX-minX;
+		_textRect.height = maxY-minY;
 		
 		_isMeshDirty = true; 
 	}
@@ -288,9 +288,15 @@ public class FLabel : FQuadNode
 		}
 	}
 	
-	virtual public Rect boundsRect
+	virtual public Rect textRect
 	{
-		get {return _boundsRect;}	
+		get {return _textRect;}	
+	}
+	
+	[Obsolete("FLabel's boundsRect is obsolete, use textRect instead")]
+	public Rect boundsRect
+	{
+		get {throw new NotSupportedException("boundsRect is obsolete! Use textRect instead");}
 	}
 	
 	

@@ -50,17 +50,17 @@ public class FRepeatSprite : FSprite
 	{
 		_areLocalVerticesDirty = false;
 		
-		_boundsRect.width = _width;
-		_boundsRect.height = _height;
-		_boundsRect.x = -_anchorX*_width;
-		_boundsRect.y = -_anchorY*_height;
+		_textureRect.width = _width;
+		_textureRect.height = _height;
+		_textureRect.x = -_anchorX*_width;
+		_textureRect.y = -_anchorY*_height;
 
-		_localRect = _boundsRect;
+		_localRect = _textureRect;
 			
-		_localVertices[0].Set(_boundsRect.xMin,_boundsRect.yMax);
-		_localVertices[1].Set(_boundsRect.xMax,_boundsRect.yMax);
-		_localVertices[2].Set(_boundsRect.xMax,_boundsRect.yMin);
-		_localVertices[3].Set(_boundsRect.xMin,_boundsRect.yMin);
+		_localVertices[0].Set(_textureRect.xMin,_textureRect.yMax);
+		_localVertices[1].Set(_textureRect.xMax,_textureRect.yMax);
+		_localVertices[2].Set(_textureRect.xMax,_textureRect.yMin);
+		_localVertices[3].Set(_textureRect.xMin,_textureRect.yMin);
 		
 		_isMeshDirty = true;
 	} 
@@ -101,9 +101,9 @@ public class FRepeatSprite : FSprite
 	}
 	
 	
-	override public Rect boundsRect //the full rect as if the sprite hadn't been trimmed
+	override public Rect textureRect //the full rect as if the sprite hadn't been trimmed
 	{
-		get {return _boundsRect;}	
+		get {return _textureRect;}	
 	}
 	
 	override public Rect localRect //the rect of the actual trimmed quad drawn on screen
