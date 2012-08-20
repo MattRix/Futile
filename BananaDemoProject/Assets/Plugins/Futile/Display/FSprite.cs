@@ -12,7 +12,7 @@ public class FSprite : FQuadNode
 	protected float _anchorY = 0.5f;
 	
 	protected Rect _localRect;
-	protected Rect _boundsRect;
+	protected Rect _textureRect;
 
 	protected bool _isMeshDirty = false;
 	protected bool _areLocalVerticesDirty = false;
@@ -75,15 +75,15 @@ public class FSprite : FQuadNode
 	{
 		_areLocalVerticesDirty = false;
 		
-		_boundsRect.width = _element.sourceSize.x;
-		_boundsRect.height = _element.sourceSize.y;
-		_boundsRect.x = -_anchorX*_boundsRect.width;
-		_boundsRect.y = -_anchorY*_boundsRect.height;
+		_textureRect.width = _element.sourceSize.x;
+		_textureRect.height = _element.sourceSize.y;
+		_textureRect.x = -_anchorX*_textureRect.width;
+		_textureRect.y = -_anchorY*_textureRect.height;
 		
 		float sourceWidth = _element.sourceRect.width;
 		float sourceHeight = _element.sourceRect.height;
-		float left = _boundsRect.x + _element.sourceRect.x;
-		float bottom = _boundsRect.y + (_boundsRect.height - _element.sourceRect.y - _element.sourceRect.height);
+		float left = _textureRect.x + _element.sourceRect.x;
+		float bottom = _textureRect.y + (_textureRect.height - _element.sourceRect.y - _element.sourceRect.height);
 		
 		_localRect.x = left;
 		_localRect.y = bottom;
@@ -132,9 +132,15 @@ public class FSprite : FQuadNode
 		}
 	}
 	
-	virtual public Rect boundsRect //the full rect as if the sprite hadn't been trimmed
+	virtual public Rect textureRect //the full rect as if the sprite hadn't been trimmed
 	{
-		get {return _boundsRect;}	
+		get {return _textureRect;}	
+	}
+	
+	[Obsolete("FSprite's boundsRect is obsolete, use textureRect instead")]
+	public Rect boundsRect
+	{
+		get {throw new NotSupportedException("boundsRect is obsolete! Use textureRect instead");}
 	}
 	
 	virtual public Rect localRect //the rect of the actual trimmed quad drawn on screen
@@ -157,14 +163,14 @@ public class FSprite : FQuadNode
 	
 	virtual public float width
 	{
-		get { return _scaleX * _boundsRect.width; }
-		set { _scaleX = value/_boundsRect.width; _isMatrixDirty = true; } 
+		get { return _scaleX * _textureRect.width; }
+		set { _scaleX = value/_textureRect.width; _isMatrixDirty = true; } 
 	}
 	
 	virtual public float height
 	{
-		get { return _scaleY * _boundsRect.height; }
-		set { _scaleY = value/_boundsRect.height; _isMatrixDirty = true; } 
+		get { return _scaleY * _textureRect.height; }
+		set { _scaleY = value/_textureRect.height; _isMatrixDirty = true; } 
 	}
 	
 	virtual public float anchorX 

@@ -106,7 +106,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 	{
 		//this will scale the background up to fit the screen
 		//but it won't let it shrink smaller than 100%
-		_background.scale = Math.Max (Math.Max(1.0f,Futile.screen.height/_background.boundsRect.height),Futile.screen.width/_background.boundsRect.width);
+		_background.scale = Math.Max (Math.Max(1.0f,Futile.screen.height/_background.textureRect.height),Futile.screen.width/_background.textureRect.width);
 		 
 		_closeButton.x = -Futile.screen.halfWidth + 30.0f;
 		_closeButton.y = -Futile.screen.halfHeight + 30.0f;
@@ -220,7 +220,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 					
 					Vector2 touchPos = banana.GlobalToLocal(touch.position);
 					
-					if(banana.boundsRect.Contains(touchPos))
+					if(banana.textureRect.Contains(touchPos))
 					{
 						HandleGotBanana(banana);	
 						break; //break so that a touch can only hit one banana at a time

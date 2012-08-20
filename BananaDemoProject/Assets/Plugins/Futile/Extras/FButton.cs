@@ -98,7 +98,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 	{
 		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
 		
-		if(_bg.boundsRect.Contains(touchPos))
+		if(_bg.textureRect.Contains(touchPos))
 		{
 			_bg.element = _downElement;
 			
@@ -118,7 +118,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 		
 		//expand the hitrect so that it has more error room around the edges
 		//this is what Apple does on iOS and it makes for better usability
-		Rect expandedRect = _bg.boundsRect.CloneWithExpansion(expansionAmount);
+		Rect expandedRect = _bg.textureRect.CloneWithExpansion(expansionAmount);
 		
 		if(expandedRect.Contains(touchPos))
 		{
@@ -138,7 +138,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 		
 		//expand the hitrect so that it has more error room around the edges
 		//this is what Apple does on iOS and it makes for better usability
-		Rect expandedRect = _bg.boundsRect.CloneWithExpansion(expansionAmount);
+		Rect expandedRect = _bg.textureRect.CloneWithExpansion(expansionAmount);
 		
 		if(expandedRect.Contains(touchPos))
 		{
