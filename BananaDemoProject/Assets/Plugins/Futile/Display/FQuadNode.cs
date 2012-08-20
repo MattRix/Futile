@@ -32,8 +32,6 @@ public class FQuadNode : FNode
 		_stage.renderer.GetRenderLayer(out _renderLayer, out _firstQuadIndex, _element.atlas, _shader, _numberOfQuadsNeeded);
 	}
 	
-
-	
 	virtual public int firstQuadIndex
 	{
 		get {return _firstQuadIndex;}	

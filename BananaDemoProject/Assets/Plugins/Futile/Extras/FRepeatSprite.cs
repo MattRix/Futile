@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-public class FScrollingSprite : FSprite
+public class FRepeatSprite : FSprite
 {
 	protected float _width;
 	protected float _height;
@@ -12,9 +12,14 @@ public class FScrollingSprite : FSprite
 	protected float _textureWidth;
 	protected float _textureHeight;
 	
-	public FScrollingSprite (string elementName, float width, float height) : this(elementName,width,height,0,0) {}
+	//FRepeatSprite uses a tiling texture
+	//Make sure it's using a single image, not an atlas
+	//Also make sure the texture is set to a Wrap Mode of "Repeat"
+	//You can set scrollX and scrollY to make the texture scroll
 	
-	public FScrollingSprite (string elementName, float width, float height, float scrollX, float scrollY) : base()
+	public FRepeatSprite (string elementName, float width, float height) : this(elementName,width,height,0,0) {}
+	
+	public FRepeatSprite (string elementName, float width, float height, float scrollX, float scrollY) : base()
 	{
 		_width = width;
 		_height = height;
@@ -26,7 +31,7 @@ public class FScrollingSprite : FSprite
 		
 		if(!_element.atlas.isSingleImage)
 		{
-			throw new Exception("ScrollingSprite must be used with a single image, not an atlas!");
+			throw new Exception("ScrollingSprite must be used with a single image, not an atlas! Use Futile.atlasManager.LoadImage()");
 		}	
 		
 		_isAlphaDirty = true;
@@ -131,6 +136,7 @@ public class FScrollingSprite : FSprite
 			}
 		} 
 	}
+
 	
 	override public float anchorX 
 	{
