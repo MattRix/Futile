@@ -9,9 +9,9 @@ If you've used Cocos2D or Flash you should feel right at home.
 It's under development and completely undocumented... but it works. 
 ___
 
-##Go to http://struct.ca/futile for videos and stuff
+##Go to http://struct.ca/futile for videos and other links
 
-
+##Ask questions on http://reddit.com/r/futile
 
 ##How to try the demo project##
 
