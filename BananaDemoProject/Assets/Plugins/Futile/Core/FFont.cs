@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 //parts of this were inspired by https://github.com/prime31/UIToolkit/blob/master/Assets/Plugins/UIToolkit/UIElements/UIText.cs
 
-public struct FCharInfo
+public class FCharInfo
 {
 	public int charID;
 	public float x;
@@ -24,7 +24,7 @@ public struct FCharInfo
 	public string letter;
 }
 
-public struct FKerningInfo
+public class FKerningInfo
 {
 	public int first;
 	public int second;
@@ -192,8 +192,12 @@ public class FFont
 		bool wasKerningFound = false;
 		
 		int lint = -1;
-		foreach(string line in lines)
+		
+		int lineCount = lines.Length;
+		for(int n = 0; n<lineCount; ++n)
 		{
+			string line = lines[n];
+			
 			lint++;
 			string [] words = line.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 			
@@ -330,7 +334,7 @@ public class FFont
 			{
 				wasKerningFound = true;
 				int kerningCount = int.Parse(words[1].Split('=')[1]);
-				_kerningInfos = new FKerningInfo[kerningCount+1]; //gotta add 1 because it's off by 1
+				_kerningInfos = new FKerningInfo[kerningCount];
 			}
 			else if(words[0] == "kerning") //kerning first=56  second=57  amount=-1
 			{
@@ -385,7 +389,8 @@ public class FFont
 		
 		FLetterQuadLine[] lines = new FLetterQuadLine[10];
 		
-		for(int c = 0; c<letters.Length; ++c)
+		int lettersLength = letters.Length;
+		for(int c = 0; c<lettersLength; ++c)
 		{
 			char letter = letters[c];
 			
@@ -431,7 +436,7 @@ public class FFont
 		float minY = 100000;
 		float maxY = -100000;
 		
-		for(int c = 0; c<letters.Length; ++c)
+		for(int c = 0; c<lettersLength; ++c)
 		{
 			char letter = letters[c];
 			
@@ -454,15 +459,15 @@ public class FFont
 			{
 				FKerningInfo foundKerning = _nullKerning;
 				
-				foreach(FKerningInfo kerningInfo in _kerningInfos)
+				int kerningInfoCount = _kerningInfos.Length;
+				for(int k = 0; k<kerningInfoCount-1; k++)
 				{
+					FKerningInfo kerningInfo = _kerningInfos[k];
 					if(kerningInfo.first == previousLetter && kerningInfo.second == letter)
 					{
 						foundKerning = kerningInfo;
 					}
 				}
-				
-				
 				
 				//TODO: Reuse letterquads with pooling!
 				FLetterQuad letterQuad = new FLetterQuad();

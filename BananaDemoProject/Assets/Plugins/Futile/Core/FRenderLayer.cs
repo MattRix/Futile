@@ -3,15 +3,17 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-
 public class FRenderLayer
 {
 	public int batchIndex;
+	
+	private FStage _stage;
 	
 	private FAtlas _atlas;
 	private FShader _shader;
 	
 	private GameObject _gameObject;
+	private Transform _transform;
 	private Material _material;
 	private MeshFilter _meshFilter;
 	private MeshRenderer _meshRenderer;
@@ -40,8 +42,12 @@ public class FRenderLayer
 	
 	private int _lowestZeroIndex = 0;
 	
-	public FRenderLayer (FAtlas atlas, FShader shader)
+	private bool _needsRecalculateBoundsIfTransformed = false;
+	
+	public FRenderLayer (FStage stage, FAtlas atlas, FShader shader)
 	{
+		_stage = stage;
+		
 		_atlas = atlas;
 		_shader = shader;
 		
@@ -50,8 +56,10 @@ public class FRenderLayer
 		
 		batchIndex = atlas.index*10000 + shader.index;
 		
-		_gameObject = new GameObject("FRenderLayer");
-		_gameObject.transform.parent = Futile.instance.gameObject.transform;
+		_gameObject = new GameObject("FRenderLayer ("+_stage.name+")");
+		_transform = _gameObject.transform;
+		
+		_transform.parent = Futile.instance.gameObject.transform;
 		
 		_meshFilter = _gameObject.AddComponent<MeshFilter>();
 		_meshRenderer = _gameObject.AddComponent<MeshRenderer>();
@@ -68,6 +76,26 @@ public class FRenderLayer
 		_gameObject.active = false;
 		
 		ExpandMaxQuadLimit(Futile.startingQuadsPerLayer);
+		
+		UpdateTransform();
+	}
+
+	public void Destroy()
+	{
+		UnityEngine.Object.Destroy(_gameObject);
+	}
+
+	public void UpdateTransform()
+	{
+		_transform.position = _stage.transform.position;
+		_transform.rotation = _stage.transform.rotation;
+		_transform.localScale = _stage.transform.localScale;
+		
+		if(_needsRecalculateBoundsIfTransformed)
+		{
+			_needsRecalculateBoundsIfTransformed = false;
+			_mesh.RecalculateBounds();
+		}
 	}
 	
 	public void AddToWorld () //add to the transform etc
@@ -80,7 +108,7 @@ public class FRenderLayer
 		_gameObject.active = false;
 		#if UNITY_EDITOR
 			//some debug code so that layers are sorted by depth properly
-			_gameObject.name = "FRenderLayer X (" + _atlas.atlasName + " " + _shader.name+")";
+			_gameObject.name = "FRenderLayer X ("+_stage.name+") (" + _atlas.name + " " + _shader.name+")";
 		#endif
 	}
 
@@ -112,7 +140,6 @@ public class FRenderLayer
 		{
 			ShrinkMaxQuadLimit(Math.Max (0,(_maxQuadCount-_nextAvailableQuadIndex)-_expansionAmount));	
 			ExpandMaxQuadLimit(1);
-			Debug.Log ("SHHRINK");
 		}
 		
 		_lowestZeroIndex = Math.Max (_nextAvailableQuadIndex, Math.Min (_maxQuadCount,_lowestZeroIndex));
@@ -132,9 +159,8 @@ public class FRenderLayer
 		
 		#if UNITY_EDITOR
 			//some debug code so that layers are sorted by depth properly
-			_gameObject.name = "FRenderLayer "+_depth+" ["+_nextAvailableQuadIndex+"/"+_maxQuadCount+"] (" + _atlas.atlasName + " " + _shader.name+")";
+			_gameObject.name = "FRenderLayer "+_depth+" ("+_stage.name+") ["+_nextAvailableQuadIndex+"/"+_maxQuadCount+"] (" + _atlas.name + " " + _shader.name+")";
 		#endif
-		
 	}
 	
 	//ACTUAL RENDERING GOES HERE
@@ -187,7 +213,9 @@ public class FRenderLayer
 			{
 				//Taking this out because it seems heavy, and I don't think there are benefits
 				//http://docs.unity3d.com/Documentation/ScriptReference/Mesh.RecalculateBounds.html
-				//_mesh.RecalculateBounds();
+				//Ok nevermind, I put it back in for now because if you scroll the stage, it's needed
+				
+				_needsRecalculateBoundsIfTransformed = true;
 				
 				_shouldUpdateBounds = false;
 			}
@@ -204,6 +232,7 @@ public class FRenderLayer
 				_mesh.uv = _uvs;
 			}
 		} 
+
 	}
 
 	public void HandleVertsChange()
@@ -220,25 +249,11 @@ public class FRenderLayer
 		
 		_maxQuadCount = Math.Max (Futile.startingQuadsPerLayer, _maxQuadCount-deltaDecrease);
 	
-		//Vertices:
-		Vector3[] oldVertices = _vertices;
-		_vertices = new Vector3[_maxQuadCount * 4];
-		Array.Copy(oldVertices,_vertices,_vertices.Length);
-	
-		// UVs:
-		Vector2[] oldUVs = _uvs;
-		_uvs = new Vector2[_maxQuadCount * 4];
-		Array.Copy(oldUVs,_uvs,_uvs.Length);
-
-		// Colors:
-		Color[] oldColors = _colors;
-		_colors = new Color[_maxQuadCount * 4];
-		Array.Copy(oldColors,_colors,_colors.Length);
-
-		// Triangle indices:
-		int[] oldTriangles = _triangles;
-		_triangles = new int[_maxQuadCount * 6];
-		Array.Copy(oldTriangles,_triangles,_triangles.Length);
+		//resize the arrays so they can fit everything
+		Array.Resize (ref _vertices,_maxQuadCount*4);
+		Array.Resize (ref _uvs,_maxQuadCount*4);
+		Array.Resize (ref _colors,_maxQuadCount*4);
+		Array.Resize (ref _triangles,_maxQuadCount*6);
 
 		_didVertCountChange = true;
 		_didVertsChange = true;
@@ -256,26 +271,13 @@ public class FRenderLayer
 		
 		_maxQuadCount += deltaIncrease;
 		
-		// Vertices:
-		Vector3[] oldVertices = _vertices;
-		_vertices = new Vector3[_maxQuadCount * 4];
-		oldVertices.CopyTo(_vertices, 0);
-
-		// UVs:
-		Vector2[] oldUVs = _uvs;
-		_uvs = new Vector2[_maxQuadCount * 4];
-		oldUVs.CopyTo(_uvs, 0);
-
-		// Colors:
-		Color[] oldColors = _colors;
-		_colors = new Color[_maxQuadCount * 4];
-		oldColors.CopyTo(_colors, 0);
-
-		// Triangle indices:
-		int[] oldTriangles = _triangles;
-		_triangles = new int[_maxQuadCount * 6];
-		oldTriangles.CopyTo(_triangles, 0);
+		//shrink the arrays
+		Array.Resize (ref _vertices,_maxQuadCount*4);
+		Array.Resize (ref _uvs,_maxQuadCount*4);
+		Array.Resize (ref _colors,_maxQuadCount*4);
+		Array.Resize (ref _triangles,_maxQuadCount*6);
 		
+		//fill the triangles with the correct values
 		for(int i = firstNewQuadIndex; i<_maxQuadCount; ++i)
 		{
 			_triangles[i*6 + 0] = i * 4 + 0;	
@@ -305,6 +307,11 @@ public class FRenderLayer
 		
 				//this will set the render order correctly based on the depth
 				_material.renderQueue = 3000+_depth;
+				
+				#if UNITY_EDITOR
+					//some debug code so that layers are sorted by depth properly
+					_gameObject.name = "FRenderLayer "+_depth+" ("+_stage.name+") ["+_nextAvailableQuadIndex+"/"+_maxQuadCount+"] (" + _atlas.name + " " + _shader.name+")";
+				#endif
 			}
 		}
 	}

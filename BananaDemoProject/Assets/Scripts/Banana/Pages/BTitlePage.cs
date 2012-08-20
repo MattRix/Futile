@@ -18,14 +18,14 @@ public class BTitlePage : BPage
 	override public void HandleAddedToStage()
 	{
 		Futile.instance.SignalUpdate += HandleUpdate;
-		Futile.instance.SignalResize += HandleResize;
+		Futile.screen.SignalResize += HandleResize;
 		base.HandleAddedToStage();	
 	}
 	
 	override public void HandleRemovedFromStage()
 	{
 		Futile.instance.SignalUpdate -= HandleUpdate;
-		Futile.instance.SignalResize -= HandleResize;
+		Futile.screen.SignalResize -= HandleResize;
 		base.HandleRemovedFromStage();	
 	}
 	
@@ -75,16 +75,16 @@ public class BTitlePage : BPage
 	{
 		//this will scale the background up to fit the screen
 		//but it won't let it shrink smaller than 100%
-		_background.scale = Math.Max (1.0f,Math.Max (Futile.height/_background.boundsRect.height,Futile.width/_background.boundsRect.width));
+		_background.scale = Math.Max (1.0f,Math.Max (Futile.screen.height/_background.boundsRect.height,Futile.screen.width/_background.boundsRect.width));
 		
 		_logoHolder.x = 0.0f;
 		_logoHolder.y = 15.0f;
 		
-		_startButton.x = Futile.halfWidth-75.0f;
-		_startButton.y = -Futile.halfHeight+35.0f;
+		_startButton.x = Futile.screen.halfWidth-75.0f;
+		_startButton.y = -Futile.screen.halfHeight+35.0f;
 		
 		//scale the logo so it fits on the main screen 
-		_logo.scale = Math.Min(1.0f,Futile.width/_logo.boundsRect.width);
+		_logo.scale = Math.Min(1.0f,Futile.screen.width/_logo.boundsRect.width);
 		
 	}
 

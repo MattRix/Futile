@@ -143,7 +143,7 @@ public class FMatrix
 	public float GetRotation()
 	{
 		Vector2 newVector = GetNewTransformedVector(new Vector2(0,1));
-		return Mathf.Atan2(newVector.y, newVector.x); //TODO: may have to offset this by 90 degrees or something
+		return Mathf.Atan2(newVector.y-ty, newVector.x-tx) - RXMath.HALF_PI;
 	}
 	
 	public void Concat(FMatrix other)
@@ -242,12 +242,9 @@ public class FMatrix
 	
 	public void ApplyVector3FromLocalVector2(ref Vector3 outVector, Vector2 localVector, float z)
 	{
-		outVector.Set 
-		(
-			localVector.x*a + localVector.y*c + tx,
-			localVector.x*b + localVector.y*d + ty,
-			z
-		);	
+		outVector.x = localVector.x*a + localVector.y*c + tx;
+		outVector.y = localVector.x*b + localVector.y*d + ty;
+		outVector.z = z;
 	}
 	
 	public void Identity()

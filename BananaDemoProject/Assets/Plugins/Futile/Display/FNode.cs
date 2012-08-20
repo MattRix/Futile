@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 public class FNode
 {
@@ -16,11 +17,15 @@ public class FNode
 	
 	protected FContainer _container = null;
 	
-	protected bool _needsInverseConcatenatedMatrix = false;
-	
 	protected FMatrix _matrix;
 	protected FMatrix _concatenatedMatrix;
 	protected FMatrix _inverseConcatenatedMatrix = null;
+
+	protected FMatrix _screenConcatenatedMatrix = null;
+	protected FMatrix _screenInverseConcatenatedMatrix = null;
+	
+	protected bool _needsSpecialMatrices = false;
+	
 	
 	protected float _alpha;
 	protected float _concatenatedAlpha;
@@ -30,7 +35,7 @@ public class FNode
 	
 	protected int _depth;
 	
-	protected FStage _stage;
+	protected FStage _stage = null; //assigned in HandleAddedToStage
 	
 	protected bool _isVisible = true;
 	protected float _visibleAlpha = 1.0f;
@@ -39,8 +44,6 @@ public class FNode
 	
 	public FNode () 
 	{
-		_stage = Futile.stage;
-		
 		_depth = 0;
 		
 		_x = 0;
@@ -61,20 +64,57 @@ public class FNode
 		
 	}
 	
-	public Vector2 LocalToGlobal(Vector2 localVector)
+	public Vector2 LocalToStage(Vector2 localVector)
 	{
 		return _concatenatedMatrix.GetNewTransformedVector(localVector);
 	}
 	
-	public Vector2 GlobalToLocal(Vector2 globalVector)
+	public Vector2 StageToLocal(Vector2 globalVector) 
 	{
 		//using "this" so the getter is called (because it checks if the matrix exists and lazy inits it if it doesn't)
 		return this.inverseConcatenatedMatrix.GetNewTransformedVector(globalVector);
 	}
 	
-	public Vector2 LocalToLocal(FNode otherNode, Vector2 otherVector)
+	public Vector2 LocalToGlobal(Vector2 localVector)
 	{
-		return otherNode.GlobalToLocal(LocalToGlobal(otherVector));
+		//using "this" so the getter is called (because it checks if the matrix exists and lazy inits it if it doesn't)
+		return this.screenConcatenatedMatrix.GetNewTransformedVector(localVector);
+	}
+	
+	public Vector2 GlobalToLocal(Vector2 globalVector)
+	{
+		//using "this" so the getter is called (because it checks if the matrix exists and lazy inits it if it doesn't)
+		return this.screenInverseConcatenatedMatrix.GetNewTransformedVector(globalVector);
+	}
+	
+	public Vector2 LocalToLocal(FNode otherNode, Vector2 otherVector) //returns the position in THIS node of a point in the OTHER node 
+	{
+		return GlobalToLocal(otherNode.LocalToGlobal(otherVector));
+	}
+	
+	public void UpdateMatrix()
+	{
+		if(!_isMatrixDirty) return;
+		
+		_isMatrixDirty = false;
+		
+		_matrix.SetScaleThenRotate(_x,_y,_scaleX,_scaleY,_rotation * -RXMath.DTOR);
+			
+		if(_container != null)
+		{
+			_concatenatedMatrix.ConcatAndCopyValues(_matrix, _container.concatenatedMatrix);
+		}
+		else
+		{
+			_concatenatedMatrix.CopyValues(_matrix);	
+		}
+		
+		if(_needsSpecialMatrices)
+		{
+			_inverseConcatenatedMatrix.InvertAndCopyValues(_concatenatedMatrix);
+			_screenConcatenatedMatrix.ConcatAndCopyValues(_concatenatedMatrix, _stage.screenConcatenatedMatrix);
+			_screenInverseConcatenatedMatrix.InvertAndCopyValues(_screenConcatenatedMatrix);
+		}
 	}
 	
 	virtual protected void UpdateDepthMatrixAlpha(bool shouldForceDirty, bool shouldUpdateDepth)
@@ -98,11 +138,13 @@ public class FNode
 			{
 				_concatenatedMatrix.CopyValues(_matrix);	
 			}
-			
-			if(_needsInverseConcatenatedMatrix)
-			{
-				_inverseConcatenatedMatrix.InvertAndCopyValues(_concatenatedMatrix);
-			}
+		}
+		
+		if(_needsSpecialMatrices)
+		{
+			_inverseConcatenatedMatrix.InvertAndCopyValues(_concatenatedMatrix);
+			_screenConcatenatedMatrix.ConcatAndCopyValues(_concatenatedMatrix, _stage.screenConcatenatedMatrix);
+			_screenInverseConcatenatedMatrix.InvertAndCopyValues(_screenConcatenatedMatrix);
 		}
 		
 		if(_isAlphaDirty || shouldForceDirty)
@@ -194,10 +236,10 @@ public class FNode
 		set { _y = value; _isMatrixDirty = true;}
 	}
 	
-	public float sortZ
+	virtual public float sortZ
 	{
 		get { return _sortZ;}
-		set { _sortZ = value;}
+		set { _sortZ = value;} 
 	}
 	
 	public float scaleX
@@ -239,33 +281,61 @@ public class FNode
 		get { return _depth;}	
 	}
 	
-	public int touchPriority
+	virtual public int touchPriority
 	{
 		get { return _depth;}	
 	}
 	
-	public FMatrix matrix 
+	virtual public FMatrix matrix 
 	{
 		get { return _matrix; }
 	}
 	
-	public FMatrix concatenatedMatrix 
+	virtual public FMatrix concatenatedMatrix 
 	{
 		get { return _concatenatedMatrix; }
 	}
 	
-	public FMatrix inverseConcatenatedMatrix 
+	protected void CreateSpecialMatrices() 
+	{
+		_needsSpecialMatrices = true; //after now the matrices will be updated on redraw	 
+		
+		_inverseConcatenatedMatrix = new FMatrix();
+		_screenConcatenatedMatrix = new FMatrix();
+		_screenInverseConcatenatedMatrix = new FMatrix();
+		
+		_inverseConcatenatedMatrix.InvertAndCopyValues(_concatenatedMatrix);
+		_screenConcatenatedMatrix.ConcatAndCopyValues(_concatenatedMatrix, _stage.screenConcatenatedMatrix);
+		_screenInverseConcatenatedMatrix.InvertAndCopyValues(_screenConcatenatedMatrix);
+	}
+	
+	virtual public FMatrix inverseConcatenatedMatrix 
 	{
 		get 
 		{ 
-			if(_inverseConcatenatedMatrix == null) //only it create if needed
-			{
-				_needsInverseConcatenatedMatrix = true; //recreate it every update from now on
-				_inverseConcatenatedMatrix = new FMatrix();
-				_inverseConcatenatedMatrix.InvertAndCopyValues(_concatenatedMatrix);
-			}
+			if(!_needsSpecialMatrices) CreateSpecialMatrices(); //only it create if needed
 			
 			return _inverseConcatenatedMatrix; 
+		}
+	}
+	
+	virtual public FMatrix screenConcatenatedMatrix 
+	{
+		get 
+		{ 
+			if(!_needsSpecialMatrices) CreateSpecialMatrices(); //only it create if needed
+			
+			return _screenConcatenatedMatrix; 
+		}
+	}
+	
+	virtual public FMatrix screenInverseConcatenatedMatrix 
+	{
+		get 
+		{ 
+			if(!_needsSpecialMatrices) CreateSpecialMatrices(); //only it create if needed
+
+			return _screenInverseConcatenatedMatrix; 
 		}
 	}
 	
@@ -286,6 +356,12 @@ public class FNode
 	public float concatenatedAlpha 
 	{
 		get { return _concatenatedAlpha; }
+	}
+	
+	public FStage stage
+	{
+		get {return _stage;}
+		set {_stage = value;}
 	}
 	
 }

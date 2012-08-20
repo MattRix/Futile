@@ -11,7 +11,7 @@ public class FContainer : FNode
 	
 	private bool _shouldSortByZ = false; //don't turn this on unless you really need it, it'll do a sort every redraw
 	
-	public FContainer ()
+	public FContainer () : base()
 	{
 		
 	}
@@ -21,11 +21,12 @@ public class FContainer : FNode
 		bool wasMatrixDirty = _isMatrixDirty;
 		bool wasAlphaDirty = _isAlphaDirty;
 		
-		base.Redraw(shouldForceDirty, shouldUpdateDepth);
+		UpdateDepthMatrixAlpha(shouldForceDirty, shouldUpdateDepth);
 		
-		foreach(FNode node in _childNodes)
+		int childCount = _childNodes.Count;
+		for(int c = 0; c<childCount; c++)
 		{
-			node.Redraw(shouldForceDirty || wasMatrixDirty || wasAlphaDirty, shouldUpdateDepth); //if the matrix was dirty or we're supposed to force it, do it!
+			_childNodes[c].Redraw(shouldForceDirty || wasMatrixDirty || wasAlphaDirty, shouldUpdateDepth); //if the matrix was dirty or we're supposed to force it, do it!
 		}
 	}
 	
@@ -35,12 +36,15 @@ public class FContainer : FNode
 		{
 			_isOnStage = true;
 			
-			foreach(FNode childNode in _childNodes)
+			int childCount = _childNodes.Count;
+			for(int c = 0; c<childCount; c++)
 			{
+				FNode childNode = _childNodes[c];
+				childNode.stage = _stage;
 				childNode.HandleAddedToStage();	
 			}
 			
-			if(shouldSortByZ) Futile.instance.SignalUpdate += HandleUpdate;
+			if(_shouldSortByZ) Futile.instance.SignalUpdate += HandleUpdate;
 		}
 		
 	}
@@ -51,9 +55,12 @@ public class FContainer : FNode
 		{
 			_isOnStage = false;
 			
-			foreach(FNode childNode in _childNodes)
+			int childCount = _childNodes.Count;
+			for(int c = 0; c<childCount; c++)
 			{
+				FNode childNode = _childNodes[c];
 				childNode.HandleRemovedFromStage();	
+				childNode.stage = null;
 			}
 		}
 		
@@ -79,6 +86,7 @@ public class FContainer : FNode
 			
 			if(_isOnStage)
 			{
+				node.stage = _stage;
 				node.HandleAddedToStage();
 			}
 		}
@@ -109,6 +117,7 @@ public class FContainer : FNode
 			
 			if(_isOnStage)
 			{
+				node.stage = _stage;
 				node.HandleAddedToStage();
 			}
 		}
@@ -136,6 +145,7 @@ public class FContainer : FNode
 		if(_isOnStage)
 		{
 			node.HandleRemovedFromStage();
+			node.stage = null;
 		}
 		
 		_childNodes.Remove(node);
@@ -193,9 +203,10 @@ public class FContainer : FNode
 		
 		unchecked //don't throw int overflow exceptions
 		{
-			foreach (FNode node in _childNodes)
+			int childCount = _childNodes.Count;
+			for(int c = 0; c<childCount; c++)
 			{
-				hash = (hash * 17) + node.GetHashCode();
+				hash = (hash * 17) + _childNodes[c].GetHashCode();
 			}
 		} 
 		
