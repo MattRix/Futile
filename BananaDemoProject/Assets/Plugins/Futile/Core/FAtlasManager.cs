@@ -116,9 +116,9 @@ public class FAtlasManager
 	
 	public void LoadFont (string name, string elementName, string configPath, FTextParams fontTextParams)
 	{
-		FAtlasElement element = _allElementsByName[elementName];
+		FAtlasElement element = GetElementWithName(elementName);
 		FFont font = new FFont(name,element,configPath, fontTextParams);
-		
+	
 		_fonts.Add(font);
 		_fontsByName.Add (name, font);
 	}
