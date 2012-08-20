@@ -242,12 +242,9 @@ public class FMatrix
 	
 	public void ApplyVector3FromLocalVector2(ref Vector3 outVector, Vector2 localVector, float z)
 	{
-		outVector.Set 
-		(
-			localVector.x*a + localVector.y*c + tx,
-			localVector.x*b + localVector.y*d + ty,
-			z
-		);	
+		outVector.x = localVector.x*a + localVector.y*c + tx;
+		outVector.y = localVector.x*b + localVector.y*d + ty;
+		outVector.z = z;
 	}
 	
 	public void Identity()
