@@ -97,7 +97,11 @@ public class FAtlasManager
 
 	public FAtlasElement GetElementWithName (string elementName)
 	{
-		return _allElementsByName[elementName];
+		if(_allElementsByName.ContainsKey(elementName))
+		{
+			return _allElementsByName[elementName];
+		}
+		throw new Exception("Couldn't find element named '"+elementName+"'");
 	}
 	
 	public FFont GetFontWithName(string fontName)
