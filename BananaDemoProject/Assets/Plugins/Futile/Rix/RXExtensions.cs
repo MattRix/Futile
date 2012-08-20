@@ -61,6 +61,15 @@ public static class RectExtensions
 		rect.y += offsetY;
 		return rect;
 	}
+	
+	public static Rect CloneAndScaleThenOffset(this Rect rect, float scaleX, float scaleY, float offsetX, float offsetY)
+	{
+		rect.x = rect.x*scaleX + offsetX;
+		rect.y = rect.y*scaleY + offsetY;
+		rect.width *= scaleX;
+		rect.height *= scaleY;
+		return rect;
+	}
 }
 
 public static class GoKitExtensions
