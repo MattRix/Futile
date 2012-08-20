@@ -21,13 +21,15 @@ public class FQuadNode : FNode
 	protected void Init(FAtlasElement element, int numberOfQuadsNeeded)
 	{
 		_element = element;
-		_shader = _stage.renderer.GetDefaultShader();
+		_shader = FShader.defaultShader;
 		_numberOfQuadsNeeded = numberOfQuadsNeeded; 
+		
+		HandleElementChanged();
 	}
 	
 	protected void UpdateQuads()
 	{
-		_stage.renderer.GetRenderLayer(ref _renderLayer, ref _firstQuadIndex, _element.atlas, _shader, _numberOfQuadsNeeded);
+		_stage.renderer.GetRenderLayer(out _renderLayer, out _firstQuadIndex, _element.atlas, _shader, _numberOfQuadsNeeded);
 	}
 	
 	virtual public int firstQuadIndex
@@ -61,6 +63,11 @@ public class FQuadNode : FNode
 			_isOnStage = false;
 			_stage.HandleQuadsChanged();
 		}
+	}
+	
+	public void SetElementByName(string elementName)
+	{
+		this.element = Futile.atlasManager.GetElementWithName(elementName);
 	}
 	
 	public FAtlasElement element

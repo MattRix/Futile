@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class FRenderer
 {	
+	private List<FRenderLayer> _allLayers = new List<FRenderLayer>();
 	private List<FRenderLayer> _liveLayers = new List<FRenderLayer>();
 	private List<FRenderLayer> _previousLiveLayers = new List<FRenderLayer>();
 	private List<FRenderLayer> _cachedLayers = new List<FRenderLayer>();
@@ -12,10 +13,35 @@ public class FRenderer
 	private FRenderLayer _topLayer;
 	
 	private int _depthToUse;
-		
-	public FRenderer ()
+	
+	private FStage _stage;
+	
+	public FRenderer (FStage stage)
 	{
-		FShader.Init ();
+		_stage = stage;
+	}
+
+	public void Clear () //wipe the renderlayers and remove their gameobjects
+	{
+		int allLayerCount = _allLayers.Count;
+		for(int a = 0; a<allLayerCount; ++a)
+		{
+			_allLayers[a].Destroy();
+		}
+		
+		_allLayers.Clear();
+		_liveLayers.Clear();
+		_previousLiveLayers.Clear();
+		_cachedLayers.Clear();
+	}
+
+	public void UpdateLayerTransforms()
+	{
+		int allLayerCount = _allLayers.Count;
+		for(int a = 0; a<allLayerCount; ++a)
+		{
+			_allLayers[a].UpdateTransform();
+		}
 	}
 	
 	public void StartRender()
@@ -32,10 +58,11 @@ public class FRenderer
 	
 	public void EndRender()
 	{
-		foreach(FRenderLayer previousLiveLayer in _previousLiveLayers)
+		int previousLiveLayerCount = _previousLiveLayers.Count;
+		for(int p = 0; p<previousLiveLayerCount; ++p)
 		{
-			previousLiveLayer.RemoveFromWorld();
-			_cachedLayers.Add(previousLiveLayer);
+			_previousLiveLayers[p].RemoveFromWorld();
+			_cachedLayers.Add(_previousLiveLayers[p]);
 		}
 		
 		_previousLiveLayers.Clear();
@@ -47,7 +74,8 @@ public class FRenderer
 	protected FRenderLayer CreateRenderLayer(int batchIndex, FAtlas atlas, FShader shader)
 	{
 		//first, check and see if we already have a layer that matches the batchIndex
-		for(int p = 0; p < _previousLiveLayers.Count; ++p)
+		int previousLiveLayerCount = _previousLiveLayers.Count;
+		for(int p = 0; p<previousLiveLayerCount; ++p)
 		{
 			FRenderLayer previousLiveLayer = _previousLiveLayers[p];
 			if(previousLiveLayer.batchIndex == batchIndex)
@@ -60,7 +88,8 @@ public class FRenderer
 		}
 		
 		//now see if we have a cached (old, now unused layer) that matches the batchIndex
-		for(int c = 0; c< _cachedLayers.Count; ++c)
+		int cachedLayerCount = _cachedLayers.Count;
+		for(int c = 0; c<cachedLayerCount; ++c)
 		{
 			FRenderLayer cachedLayer = _cachedLayers[c];
 			if(cachedLayer.batchIndex == batchIndex)
@@ -74,15 +103,16 @@ public class FRenderer
 		}
 		
 		//still no layer found? create a new one!
-		FRenderLayer newLayer = new FRenderLayer(atlas,shader);
+		FRenderLayer newLayer = new FRenderLayer(_stage, atlas,shader);
 		_liveLayers.Add(newLayer);
+		_allLayers.Add(newLayer);
 		newLayer.AddToWorld();
 		newLayer.depth = _depthToUse++;
 		
 		return newLayer;
 	}
 	
-	public void GetRenderLayer (ref FRenderLayer renderLayer, ref int firstQuadIndex, FAtlas atlas, FShader shader, int numberOfQuadsNeeded)
+	public void GetRenderLayer (out FRenderLayer renderLayer, out int firstQuadIndex, FAtlas atlas, FShader shader, int numberOfQuadsNeeded)
 	{
 		int batchIndex = atlas.index*10000 + shader.index;
 		
@@ -113,10 +143,13 @@ public class FRenderer
 	
 	public void Update()
 	{
-		foreach(FRenderLayer liveLayer in _liveLayers)
+		int liveLayerCount = _liveLayers.Count;
+		for(int v = 0; v<liveLayerCount; ++v)
 		{
-			liveLayer.Update();	
-		}
+			_liveLayers[v].depth = Futile.nextRenderLayerDepth++;
+			_liveLayers[v].Update();	
+		} 
+
 	}
 }
 

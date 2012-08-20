@@ -11,30 +11,22 @@ public class Futile : MonoBehaviour
 	
 	
 	
+	static public FScreen screen;
+	
 	static public FAtlasManager atlasManager;
 	
 	static public FStage stage;
 	
 	static public FTouchManager touchManager;
-	
-	
+
 	
 	
 	static public bool isOpenGL; //assigned in Awake
 	
 	
-	static public float width; //in points, not pixels
-	static public float height; //in points, not pixels
-	
-	static public float halfWidth; //for convenience, in points
-	static public float halfHeight; //for convenience, in points
-
-	static public float pixelWidth; //in pixels
-	static public float pixelHeight; //in pixels
 	
 	
-	
-	
+	//These are set in FScreen
 	static public float displayScale; //set based on the resolution setting (the unit to pixel scale)
 	static public float displayScaleInverse; // 1/displayScale
 	
@@ -46,40 +38,31 @@ public class Futile : MonoBehaviour
 	
 	
 	//used by the rendering engine
-	internal static int startingQuadsPerLayer;
-	internal static int quadsPerLayerExpansion;
-	internal static int maxEmptyQuadsPerLayer;	
+	static internal int startingQuadsPerLayer;
+	static internal int quadsPerLayerExpansion;
+	static internal int maxEmptyQuadsPerLayer;	
 	
+	static internal int nextRenderLayerDepth = 0;
+	
+	
+	static private List<FStage> _stages;
+	static private bool _isDepthChangeNeeded = false;
 	
 	
 	public event Action SignalUpdate;
 	public event Action SignalLateUpdate;
 	
-	public event Action SignalOrientationChange;
-	public event Action<bool> SignalResize; //the bool represents wasOrientationChange
 	
 	
 	
 	private GameObject _cameraHolder;
 	private Camera _camera;
 	
-	//this is populated by the FutileParams
-	private float _originX;
-	private float _originY;
-	
 
-	
 	private FutileParams _futileParams;
-	private FResolutionLevel _resLevel;
 	
-	private ScreenOrientation _currentOrientation;
 	
-	private float _screenLongLength;
-	private float _screenShortLength;
 	
-	private bool _didJustResize;
-	private float _oldWidth;
-	private float _oldHeight;
 	
 	// Use this for initialization
 	private void Awake () 
@@ -87,6 +70,7 @@ public class Futile : MonoBehaviour
 		instance = this;
 		isOpenGL = SystemInfo.graphicsDeviceVersion.Contains("OpenGL");
 		enabled = false;
+		name = "Futile";
 	}
 	
 	public void Init(FutileParams futileParams)
@@ -96,160 +80,26 @@ public class Futile : MonoBehaviour
 		
 		Application.targetFrameRate = _futileParams.targetFrameRate;
 		
-		#if UNITY_IPHONE || UNITY_ANDROID
-		TouchScreenKeyboard.autorotateToLandscapeLeft = false;
-		TouchScreenKeyboard.autorotateToLandscapeRight = false;
-		TouchScreenKeyboard.autorotateToPortrait = false;
-		TouchScreenKeyboard.autorotateToPortraitUpsideDown = false;
-		#endif
+		FShader.Init(); //set up the basic shaders
 		
-		//Non-mobile unity always defaults to portrait for some reason, so fix this manually
-		if(Screen.height > Screen.width)
-		{
-			_currentOrientation = ScreenOrientation.Portrait;	
-		}
-		else
-		{
-			_currentOrientation = ScreenOrientation.LandscapeLeft;
-		}
-		
-		//get the correct orientation if we're on a mobile platform
-		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_ANDROID)
-			_currentOrientation = Screen.orientation;
-		#endif
-				
-		//special "single orientation" mode
-		if(_futileParams.singleOrientation != ScreenOrientation.Unknown)
-		{
-			_currentOrientation = _futileParams.singleOrientation;
-		}
-		else //if we're not in a supported orientation, put us in one!
-		{
-			if(_currentOrientation == ScreenOrientation.LandscapeLeft && !_futileParams.supportsLandscapeLeft)
-			{
-				if(_futileParams.supportsLandscapeRight) _currentOrientation = ScreenOrientation.LandscapeRight;
-				else if(_futileParams.supportsPortrait) _currentOrientation = ScreenOrientation.Portrait;
-				else if(_futileParams.supportsPortraitUpsideDown) _currentOrientation = ScreenOrientation.PortraitUpsideDown;
-			}	
-			else if(_currentOrientation == ScreenOrientation.LandscapeRight && !_futileParams.supportsLandscapeRight)
-			{
-				if(_futileParams.supportsLandscapeLeft) _currentOrientation = ScreenOrientation.LandscapeLeft;
-				else if(_futileParams.supportsPortrait) _currentOrientation = ScreenOrientation.Portrait;
-				else if(_futileParams.supportsPortraitUpsideDown) _currentOrientation = ScreenOrientation.PortraitUpsideDown;
-			}
-			else if(_currentOrientation == ScreenOrientation.Portrait && !_futileParams.supportsPortrait)
-			{
-				if(_futileParams.supportsPortraitUpsideDown) _currentOrientation = ScreenOrientation.PortraitUpsideDown;
-				else if(_futileParams.supportsLandscapeLeft) _currentOrientation = ScreenOrientation.LandscapeLeft;
-				else if(_futileParams.supportsLandscapeRight) _currentOrientation = ScreenOrientation.LandscapeRight;
-			}
-			else if(_currentOrientation == ScreenOrientation.PortraitUpsideDown && !_futileParams.supportsPortraitUpsideDown)
-			{
-				if(_futileParams.supportsPortrait) _currentOrientation = ScreenOrientation.Portrait;
-				else if(_futileParams.supportsLandscapeLeft) _currentOrientation = ScreenOrientation.LandscapeLeft;
-				else if(_futileParams.supportsLandscapeRight) _currentOrientation = ScreenOrientation.LandscapeRight;
-			}
-		}
-		
-		Screen.orientation = _currentOrientation;
-
 		Futile.startingQuadsPerLayer = _futileParams.startingQuadsPerLayer;
 		Futile.quadsPerLayerExpansion = _futileParams.quadsPerLayerExpansion;
 		Futile.maxEmptyQuadsPerLayer = _futileParams.maxEmptyQuadsPerLayer;
 		
-		_screenLongLength = Math.Max(Screen.height, Screen.width);
-		_screenShortLength = Math.Min(Screen.height, Screen.width);
-		
-		if(_currentOrientation == ScreenOrientation.Portrait || _currentOrientation == ScreenOrientation.PortraitUpsideDown)
-		{
-			pixelWidth = _screenShortLength;
-			pixelHeight = _screenLongLength;
-		}
-		else //landscape
-		{
-			pixelWidth = _screenLongLength;
-			pixelHeight = _screenShortLength;
-		}
-		
-		
-		//get the resolution level - the one we're closest to WITHOUT going over, price is right rules :)
-		_resLevel = null;
-		
-		foreach(FResolutionLevel resLevel in _futileParams.resLevels)
-		{
-			if(_screenLongLength <= resLevel.maxLength) //we've found our resLevel
-			{
-				_resLevel = resLevel;
-				break;
-			}
-		}
-		
-		//if we couldn't find a res level, it means the screen is bigger than the biggest one, so just choose that one
-		if(_resLevel == null)
-		{
-			_resLevel = _futileParams.resLevels.GetLastObject();	
-			if(_resLevel == null)
-			{
-				throw new Exception("You must add at least one FResolutionLevel!");	
-			}
-		}
-		
-		Futile.resourceSuffix = _resLevel.resourceSuffix;
-		
-		//this is what helps us figure out the display scale if we're not at a specific resolution level
-		//it's relative to the next highest resolution level
-		
-		float displayScaleModifier = 1.0f;
-		
-		if(_futileParams.shouldLerpToNearestResolutionLevel)
-		{
-			displayScaleModifier = _screenLongLength/_resLevel.maxLength;
-		}
-		 
-		displayScale = _resLevel.displayScale * displayScaleModifier;
-		displayScaleInverse = 1.0f/displayScale;
-		
-		resourceScale = _resLevel.resourceScale;
-		resourceScaleInverse = 1.0f/resourceScale;
-
-		width = pixelWidth*displayScaleInverse;
-		height = pixelHeight*displayScaleInverse;
-		
-		halfWidth = width/2.0f;
-		halfHeight = height/2.0f;
-		
-		_originX = _futileParams.origin.x;
-		_originY = _futileParams.origin.y;
-		
-		Debug.Log ("Futile: Display scale is " + displayScale);
-		
-		Debug.Log ("Futile: Resource scale is " + resourceScale);
-		
-		Debug.Log ("Futile: Resource suffix is " + _resLevel.resourceSuffix);
-		
-		Debug.Log ("Futile: Screen size in pixels is (" + pixelWidth +"px," + pixelHeight+"px)");
-		
-		Debug.Log ("Futile: Screen size in points is (" + width + "," + height+")");
-		
-		Debug.Log ("Futile: Origin is at (" + _originX*width + "," + _originY*height+")");
-		
-		Debug.Log ("Futile: Initial orientation is " + _currentOrientation);
+		screen = new FScreen(_futileParams);
 		
 		//
 		//Camera setup from https://github.com/prime31/UIToolkit/blob/master/Assets/Plugins/UIToolkit/UI.cs
 		//
-				
-		name = "Futile"; 
 		
 		_cameraHolder = new GameObject();
 		_cameraHolder.transform.parent = gameObject.transform;
-		_cameraHolder.AddComponent<Camera>();
 		
-		_camera = _cameraHolder.camera;
-		_camera.name = "FCamera";
+		_camera = _cameraHolder.AddComponent<Camera>();
+		_camera.name = "Camera";
 		//_camera.clearFlags = CameraClearFlags.Depth; //TODO: check if this is faster or not?
 		_camera.clearFlags = CameraClearFlags.SolidColor;
-		_camera.nearClipPlane = -50.3f;
+		_camera.nearClipPlane = -50.0f;
 		_camera.farClipPlane = 50.0f;
 		_camera.depth = 100;
 		_camera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
@@ -257,112 +107,131 @@ public class Futile : MonoBehaviour
 		
 		//we multiply this stuff by scaleInverse to make sure everything is in points, not pixels
 		_camera.orthographic = true;
-		_camera.orthographicSize = pixelHeight/2 * displayScaleInverse;
+		_camera.orthographicSize = screen.pixelHeight/2 * displayScaleInverse;
 
 		UpdateCameraPosition();
-		
-		_didJustResize = true;
 		
 		touchManager = new FTouchManager();
 		
 		atlasManager = new FAtlasManager();
 		
-		stage = new FStage();
+		_stages = new List<FStage>();
+		
+		stage = new FStage("Futile.stage");
+		
+		AddStage (stage);
 	}
-
-	private void SwitchOrientation (ScreenOrientation newOrientation)
+	
+	static public void AddStage(FStage stageToAdd)
 	{
-		Debug.Log("Futile: Orientation changed to " + newOrientation);
-				
-		if(_futileParams.singleOrientation != ScreenOrientation.Unknown) //if we're in single orientation mode, just broadcast the change, don't actually change anything
+		int stageIndex = _stages.IndexOf(stageToAdd);
+		
+		if(stageIndex == -1) //add it if it's not a stage
 		{
-			_currentOrientation = newOrientation;
-			if(SignalOrientationChange != null) SignalOrientationChange();
+			stageToAdd.HandleAddedToFutile();
+			_stages.Add(stageToAdd);
+			UpdateStageIndices();
 		}
-		else
+		else if(stageIndex != _stages.Count-1) //if stage is already in the stages, put it at the top of the stages if it's not already
 		{
-			Screen.orientation = newOrientation;
-			_currentOrientation = newOrientation;
-			
-			UpdateScreenDimensions();
-			
-			Debug.Log ("Orientating switched to " + _currentOrientation + " screen is now: " + pixelWidth+","+pixelHeight);
-			
-			if(SignalOrientationChange != null) SignalOrientationChange();
-			if(SignalResize != null) SignalResize(true);
-			
-			_didJustResize = true;
+			_stages.RemoveAt(stageIndex);
+			_stages.Add(stageToAdd);
+			UpdateStageIndices();
 		}
 	}
 	
-	private void UpdateScreenDimensions()
+	static public void AddStageAtIndex(FStage stageToAdd, int newIndex)
 	{
-		_screenLongLength = Math.Max (Screen.width, Screen.height);
-		_screenShortLength = Math.Min (Screen.width, Screen.height);
+		int stageIndex = _stages.IndexOf(stageToAdd);
 		
-		if(_currentOrientation == ScreenOrientation.Portrait || _currentOrientation == ScreenOrientation.PortraitUpsideDown)
+		if(newIndex > _stages.Count) //if it's past the end, make it at the end
 		{
-			pixelWidth = _screenShortLength;
-			pixelHeight = _screenLongLength;
-		}
-		else //landscape
-		{
-			pixelWidth = _screenLongLength;
-			pixelHeight = _screenShortLength;
+			newIndex = _stages.Count;
 		}
 		
-		width = pixelWidth*displayScaleInverse;
-		height = pixelHeight*displayScaleInverse;
+		if(stageIndex == newIndex) return; //if it's already at the right index, just leave it there
 		
-		halfWidth = width/2.0f;
-		halfHeight = height/2.0f;
+		if(stageIndex == -1) //add it if it's not in the stages already
+		{
+			stageToAdd.HandleAddedToFutile();
+			
+			_stages.Insert(newIndex, stageToAdd);
+		}
+		else //if stage is already in the stages, move it to the desired index
+		{
+			_stages.RemoveAt(stageIndex);
+			
+			if(stageIndex < newIndex)
+			{
+				_stages.Insert(newIndex-1, stageToAdd); //gotta subtract 1 to account for it moving in the order
+			}
+			else
+			{
+				_stages.Insert(newIndex, stageToAdd);
+			}
+		}
 		
-		_camera.orthographicSize = pixelHeight/2 * displayScaleInverse;
-		UpdateCameraPosition(); 	
+		UpdateStageIndices();
 	}
+	
+	static public void RemoveStage(FStage stageToRemove)
+	{
+		stageToRemove.HandleRemovedFromFutile();
+		stageToRemove.index = -1;
+		
+		_stages.Remove(stageToRemove);
+		
+		UpdateStageIndices();
+	}
+
+	static public void UpdateStageIndices ()
+	{
+		int stageCount = _stages.Count;
+		for(int s = 0; s<stageCount; s++)
+		{
+			_stages[s].index = s;	
+		}
+		
+		_isDepthChangeNeeded = true;
+	}
+	
+	static public int GetStageCount()
+	{
+		return _stages.Count;
+	}
+	
+	static public FStage GetStageAt(int index)
+	{
+		return _stages[index];
+	}
+
+	
 	
 	private void Update()
 	{
-		if(Input.deviceOrientation == DeviceOrientation.LandscapeLeft && _currentOrientation != ScreenOrientation.LandscapeLeft && _futileParams.supportsLandscapeLeft)
-		{
-			SwitchOrientation(ScreenOrientation.LandscapeLeft);
-		}
-		else if(Input.deviceOrientation == DeviceOrientation.LandscapeRight && _currentOrientation != ScreenOrientation.LandscapeRight && _futileParams.supportsLandscapeRight)
-		{
-			SwitchOrientation(ScreenOrientation.LandscapeRight);
-		}
-		else if(Input.deviceOrientation == DeviceOrientation.Portrait && _currentOrientation != ScreenOrientation.Portrait && _futileParams.supportsPortrait)
-		{
-			SwitchOrientation(ScreenOrientation.Portrait);
-		}
-		else if(Input.deviceOrientation == DeviceOrientation.PortraitUpsideDown && _currentOrientation != ScreenOrientation.PortraitUpsideDown && _futileParams.supportsPortraitUpsideDown)
-		{
-			SwitchOrientation(ScreenOrientation.PortraitUpsideDown);
-		}
-		
-		if(_didJustResize)
-		{
-			_didJustResize = false;
-			_oldWidth = Screen.width;
-			_oldHeight = Screen.height;
-		}
-		else if(_oldWidth != Screen.width || _oldHeight != Screen.height)
-		{
-			_oldWidth = Screen.width;
-			_oldHeight = Screen.height;
-			
-			UpdateScreenDimensions();
-			if(SignalResize != null) SignalResize(false);
-		}
+		screen.Update();
 
 		touchManager.Update();
 		if(SignalUpdate != null) SignalUpdate();
-		stage.Redraw (false,false);
+		
+		
+		for(int s = 0; s<_stages.Count; s++)
+		{
+			_stages[s].Redraw (false,_isDepthChangeNeeded);
+		}
+		
+		_isDepthChangeNeeded = false;
 	}
 	
 	private void LateUpdate()
 	{
-		stage.LateUpdate();
+		nextRenderLayerDepth = 0;
+		
+		for(int s = 0; s<_stages.Count; s++)
+		{
+			_stages[s].LateUpdate();
+		}
+		
 		if(SignalLateUpdate != null) SignalLateUpdate();
 	}	
 	
@@ -376,55 +245,58 @@ public class Futile : MonoBehaviour
 		instance = null;	
 	}
 	
-	private void UpdateCameraPosition()
+	public void UpdateCameraPosition()
 	{
-		float camXOffset = ((_originX - 0.5f) * -pixelWidth)*displayScaleInverse;
-		float camYOffset = ((_originY - 0.5f) * -pixelHeight)*displayScaleInverse;
+		_camera.orthographicSize = screen.pixelHeight/2 * displayScaleInverse;
+		
+		float camXOffset = ((screen.originX - 0.5f) * -screen.pixelWidth)*displayScaleInverse;
+		float camYOffset = ((screen.originY - 0.5f) * -screen.pixelHeight)*displayScaleInverse;
 	
 		_camera.transform.position = new Vector3(camXOffset, camYOffset, -10.0f); 	
 	}
+	
+	new public Camera camera
+	{
+		get {return _camera;}	
+	}
+	
+	//
+	//THE MIGHTY LAND OF DEPRECATION
+	//
 
+	public bool IsLandscape()
+	{
+		throw new NotSupportedException("Deprecated! Use Futile.screen.IsLandscape() instead");
+	}
+	
 	public float originX
 	{
-		get {return _originX;}
-		set 
-		{
-			if(_originX != value)
-			{
-				_originX = value;
-				UpdateCameraPosition();
-			}
-		}
+		get {throw new NotSupportedException("Deprecated! Use Futile.screen.originX instead");}
+		set {throw new NotSupportedException("Deprecated! Use Futile.screen.originX instead");}
 	}
 
 	public float originY
 	{
-		get {return _originY;}
-		set 
-		{
-			if(_originY != value)
-			{
-				_originY = value;
-				UpdateCameraPosition();
-			}
-		}
+		get {throw new NotSupportedException("Deprecated! Use Futile.screen.originY instead"); }
+		set {throw new NotSupportedException("Deprecated! Use Futile.screen.originY instead");}
 	}
 	
 	public ScreenOrientation currentOrientation
 	{
-		get {return _currentOrientation;}
-		set 
-		{
-			if(_currentOrientation != value)
-			{
-				SwitchOrientation(value);
-			}	
-		}
+		get {throw new NotSupportedException("Deprecated! Use Futile.screen.currentOrientation instead");}
+		set {throw new NotSupportedException("Deprecated! Use Futile.screen.currentOrientation instead");}
 	}
 	
-	public bool IsLandscape()
+	static public float width
 	{
-		return _currentOrientation == ScreenOrientation.LandscapeLeft || _currentOrientation == ScreenOrientation.LandscapeRight;
+		get {throw new NotSupportedException("Deprecated! Use Futile.screen.width instead");}
+		set {throw new NotSupportedException("Deprecated! Use Futile.screen.width instead");}
+	}
+	
+	static public float height
+	{
+		get {throw new NotSupportedException("Deprecated! Use Futile.screen.height instead");}
+		set {throw new NotSupportedException("Deprecated! Use Futile.screen.height instead");}
 	}
 	
 

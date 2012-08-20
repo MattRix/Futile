@@ -1,4 +1,4 @@
-#Futile (0.5 Alpha)
+#Futile (0.6 Alpha)
 
 Futile is a code-centric 2D framework for Unity. 
 
@@ -9,11 +9,11 @@ If you've used Cocos2D or Flash you should feel right at home.
 It's under development and completely undocumented... but it works. 
 ___
 
-##Go to http://struct.ca/futile for videos and stuff
+##Go to http://struct.ca/futile for videos and other links
 
+##Ask questions on http://reddit.com/r/futile
 
-
-##How to try the demo project
+##How to try the demo project##
 
 ####How to open the project
 
@@ -33,15 +33,22 @@ Notes:
 - If you choose a specific resolution, but the game window isn't large enough to contain that resolution, it'll open in some random scaled resolution, and everything will be wonky, which is annoying. 
 - If you're on OSX and you own iOS Basic or Pro, you can choose iOS instead of standalone
 
+##Third Party add-ons for Futile
+
+- https://github.com/ManaOrb/FSceneManager (Futile Scene Manager and Parallax Scrolling Layer)
+
+
+##Legal stuff##
+
 Futile contains many ideas (as well as the MiniJSON parser) from Prime 31's UIToolkit: [github.com/Prime31/UIToolkit](http://github.com/Prime31/UIToolkit)
 
 The demo project also uses Prime31's fantastic GoKit tweening library: [github.com/Prime31/GoKit](http://github.com/Prime31/GoKit)
 
-####Legal stuff: The code and art assets (except for the font) can be used for anything, however the sound effects and music are not to be used in anything else
+####The code and art assets (except for the font) can be used for anything, however the sound effects and music are not to be used in anything else
 ####GoKit's license is here: https://github.com/prime31/GoKit
 ####The font is [Franchise](http://www.losttype.com/font/?name=franchise)
 
-###MIT License###
+##MIT License##
 
 Source code for Futile is Copyright © 2012 Matt Rix and contributors.
 

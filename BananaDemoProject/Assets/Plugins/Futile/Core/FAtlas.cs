@@ -23,11 +23,37 @@ public class FAtlasElement
 	public Vector2 sourceSize;
 	public bool isTrimmed;
 	public bool isRotated;
+	
+	public FAtlasElement Clone()
+	{
+		FAtlasElement element = new FAtlasElement();
+		
+		element.name = name;
+		
+		element.indexInAtlas = indexInAtlas;
+		element.indexInManager = indexInManager;
+		
+		element.atlas = atlas;
+		element.atlasIndex = atlasIndex;
+		
+		element.uvRect = uvRect;
+		element.uvTopLeft = uvTopLeft;
+		element.uvTopRight = uvTopRight;
+		element.uvBottomRight = uvBottomRight;
+		element.uvBottomLeft = uvBottomLeft;
+		
+		element.sourceRect = sourceRect;
+		element.sourceSize = sourceSize;
+		element.isTrimmed = isTrimmed;
+		element.isRotated = isRotated;
+		
+		return element;
+	}
 }
 
 public class FAtlas
 {
-	private string _atlasName;
+	private string _name;
 	private string _imagePath;
 	private string _dataPath;
 	
@@ -40,9 +66,11 @@ public class FAtlas
 	private Texture _texture;
 	private Vector2 _textureSize;
 	
-	public FAtlas (string atlasName, string imagePath, string dataPath, int index, bool shouldLoadAsSingleImage)
+	private bool _isSingleImage;
+	
+	public FAtlas (string name, string imagePath, string dataPath, int index, bool shouldLoadAsSingleImage)
 	{
-		_atlasName = atlasName;
+		_name = name;
 		_imagePath = imagePath;
 		_dataPath = dataPath;
 		
@@ -52,10 +80,12 @@ public class FAtlas
 		
 		if(shouldLoadAsSingleImage)
 		{
+			_isSingleImage = true;
 			CreateAtlasFromSingleImage();
 		}
 		else
 		{
+			_isSingleImage = false;
 			LoadAtlasData();
 		}
 	}
@@ -187,7 +217,7 @@ public class FAtlas
 	{
 		FAtlasElement element = new FAtlasElement();
 		
-		element.name = _atlasName;
+		element.name = _name;
 		element.indexInAtlas = 0;
 		
 		//TODO: may have to offset the rect slightly
@@ -251,9 +281,9 @@ public class FAtlas
 		get {return _textureSize;}	
 	}
 	
-	public string atlasName
+	public string name
 	{
-		get {return _atlasName;}	
+		get {return _name;}	
 	}
 	
 	public string imagePath
@@ -264,6 +294,11 @@ public class FAtlas
 	public string dataPath
 	{
 		get {return _dataPath;}	
+	}
+	
+	public bool isSingleImage
+	{
+		get {return _isSingleImage;}	
 	}
 }
 

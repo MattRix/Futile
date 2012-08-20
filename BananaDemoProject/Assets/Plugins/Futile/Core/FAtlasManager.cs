@@ -19,15 +19,24 @@ public class FAtlasManager
 		
 	}
 	
-	public void ActuallyLoadAtlasOrImage(string atlasName, string imagePath, string dataPath)
+	public void ActuallyLoadAtlasOrImage(string name, string imagePath, string dataPath)
 	{
+		int atlasCount = _atlases.Count;
+		for(int a = 0; a<atlasCount; ++a)
+		{
+			if(_atlases[a].name == name) return; //don't load this atlas if we already have one with the same name
+		}
+		
 		//if dataPath is empty, load it as a single image
 		bool isSingleImage = (dataPath == "");
 		
-		FAtlas atlas = new FAtlas(atlasName, imagePath, dataPath, _atlases.Count, isSingleImage);
+		FAtlas atlas = new FAtlas(name, imagePath, dataPath, _atlases.Count, isSingleImage);
 		
-		foreach(FAtlasElement element in atlas.elements)
+		int elementCount = atlas.elements.Count;
+		for(int e = 0; e<elementCount; ++e)
 		{
+			FAtlasElement element = atlas.elements[e];
+			
 			element.indexInManager = _allElements.Count;
 			element.atlas = atlas;
 			element.atlasIndex = atlas.index;
@@ -49,14 +58,14 @@ public class FAtlasManager
 		ActuallyLoadAtlasOrImage(imagePath, imagePath+Futile.resourceSuffix,"");
 	}
 	
-	public void ActuallyUnloadAtlasOrImage(string atlasName)
+	public void ActuallyUnloadAtlasOrImage(string name)
 	{
-
-		for(int a = 0; a<_atlases.Count; a++)
+		int atlasCount = _atlases.Count;
+		for(int a = 0; a<atlasCount; ++a)
 		{
 			FAtlas atlas = _atlases[a];
 			
-			if(atlas.atlasName == atlasName)
+			if(atlas.name == name)
 			{
 				for(int e = _allElements.Count-1; e>=0; e--)
 				{
@@ -88,7 +97,11 @@ public class FAtlasManager
 
 	public FAtlasElement GetElementWithName (string elementName)
 	{
-		return _allElementsByName[elementName];
+		if(_allElementsByName.ContainsKey(elementName))
+		{
+			return _allElementsByName[elementName];
+		}
+		throw new Exception("Couldn't find element named '"+elementName+"'");
 	}
 	
 	public FFont GetFontWithName(string fontName)
