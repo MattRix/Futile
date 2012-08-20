@@ -66,6 +66,8 @@ public class FAtlas
 	private Texture _texture;
 	private Vector2 _textureSize;
 	
+	private bool _isSingleImage;
+	
 	public FAtlas (string name, string imagePath, string dataPath, int index, bool shouldLoadAsSingleImage)
 	{
 		_name = name;
@@ -78,10 +80,12 @@ public class FAtlas
 		
 		if(shouldLoadAsSingleImage)
 		{
+			_isSingleImage = true;
 			CreateAtlasFromSingleImage();
 		}
 		else
 		{
+			_isSingleImage = false;
 			LoadAtlasData();
 		}
 	}
@@ -290,6 +294,11 @@ public class FAtlas
 	public string dataPath
 	{
 		get {return _dataPath;}	
+	}
+	
+	public bool isSingleImage
+	{
+		get {return _isSingleImage;}	
 	}
 }
 
