@@ -46,12 +46,19 @@ public static class RectExtensions
 		);
 	}
 	
-	public static Rect Multiply(Rect rect, float multiplier)
+	public static Rect CloneAndMultiply(this Rect rect, float multiplier)
 	{
 		rect.x *= multiplier;
 		rect.y *= multiplier;
 		rect.width *= multiplier;
 		rect.height *= multiplier;
+		return rect;
+	}
+	
+	public static Rect CloneAndOffset(this Rect rect, float offsetX, float offsetY)
+	{
+		rect.x += offsetX;
+		rect.y += offsetY;
 		return rect;
 	}
 }

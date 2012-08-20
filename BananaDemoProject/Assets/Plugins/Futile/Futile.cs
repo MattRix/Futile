@@ -263,36 +263,42 @@ public class Futile : MonoBehaviour
 	//
 	//THE MIGHTY LAND OF DEPRECATION
 	//
-
+	
+	[Obsolete("Futile.IsLandscape() is obsolete, use Futile.screen.IsLandscape() instead")]
 	public bool IsLandscape()
 	{
 		throw new NotSupportedException("Deprecated! Use Futile.screen.IsLandscape() instead");
 	}
 	
+	[Obsolete("Futile.originX is obsolete, use Futile.screen.originX instead")]
 	public float originX
 	{
 		get {throw new NotSupportedException("Deprecated! Use Futile.screen.originX instead");}
 		set {throw new NotSupportedException("Deprecated! Use Futile.screen.originX instead");}
 	}
-
+	
+	[Obsolete("Futile.originY is obsolete, use Futile.screen.originY instead")]
 	public float originY
 	{
 		get {throw new NotSupportedException("Deprecated! Use Futile.screen.originY instead"); }
 		set {throw new NotSupportedException("Deprecated! Use Futile.screen.originY instead");}
 	}
 	
+	[Obsolete("Futile.currentOrientation is obsolete, use Futile.screen.currentOrientation instead")]
 	public ScreenOrientation currentOrientation
 	{
 		get {throw new NotSupportedException("Deprecated! Use Futile.screen.currentOrientation instead");}
 		set {throw new NotSupportedException("Deprecated! Use Futile.screen.currentOrientation instead");}
 	}
 	
+	[Obsolete("Futile.width is obsolete, use Futile.screen.width instead")]
 	static public float width
 	{
 		get {throw new NotSupportedException("Deprecated! Use Futile.screen.width instead");}
 		set {throw new NotSupportedException("Deprecated! Use Futile.screen.width instead");}
 	}
 	
+	[Obsolete("Futile.height is obsolete, use Futile.screen.height instead")]
 	static public float height
 	{
 		get {throw new NotSupportedException("Deprecated! Use Futile.screen.height instead");}
