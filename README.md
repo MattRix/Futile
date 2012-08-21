@@ -1,4 +1,4 @@
-#Futile (0.6 Alpha)
+#Futile (0.67 Alpha)
 
 Futile is a code-centric 2D framework for Unity. 
 
