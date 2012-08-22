@@ -46,7 +46,7 @@ public class FRepeatSprite : FSprite
 		_textureHeight = _element.atlas.textureSize.y * Futile.resourceScaleInverse;
 	}
 	
-	override protected void UpdateLocalVertices()
+	override public void UpdateLocalVertices()
 	{
 		_areLocalVerticesDirty = false;
 		

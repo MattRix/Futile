@@ -71,7 +71,7 @@ public class FSprite : FQuadNode
 		}
 	}
 	
-	virtual protected void UpdateLocalVertices()
+	virtual public void UpdateLocalVertices()
 	{
 		_areLocalVerticesDirty = false;
 		

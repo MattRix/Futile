@@ -48,12 +48,12 @@ public class FLetterQuad
 		bottomLeft.Set(rect.xMin,rect.yMin);
 	}
 	
-	//this essentially moves the quads by a certain offset
-	//the mod stuff is used to make sure the quad is resting on a whole pixel
+	//this moves the quads by a certain offset
 	public void CalculateVectors(float offsetX, float offsetY)
 	{
 		float scaleInverse = Futile.displayScaleInverse;
 		
+		//the stuff is used to make sure the quad is resting on a whole pixel
 		float xMod = (rect.xMin+offsetX) % scaleInverse;
 		float yMod = (rect.yMin+offsetY) % scaleInverse;
 		
