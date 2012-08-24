@@ -6,7 +6,7 @@ public class FQuadNode : FNode
 {
 	protected FAtlasElement _element;
 	
-	protected FShader _shader;
+	protected FShader _shader = null;
 	
 	protected int _firstQuadIndex = -1;
 	protected int _numberOfQuadsNeeded;
@@ -21,7 +21,7 @@ public class FQuadNode : FNode
 	protected void Init(FAtlasElement element, int numberOfQuadsNeeded)
 	{
 		_element = element;
-		_shader = FShader.defaultShader;
+		if(_shader == null) _shader = FShader.defaultShader;
 		_numberOfQuadsNeeded = numberOfQuadsNeeded; 
 		
 		HandleElementChanged();
