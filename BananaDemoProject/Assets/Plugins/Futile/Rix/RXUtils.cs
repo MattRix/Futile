@@ -159,7 +159,7 @@ public class RXRandom
 		return low + (high-low)*(float)_randomSource.NextDouble();
 	}
 	
-	public static float Range(int low, int high)
+	public static int Range(int low, int high)
 	{
 		return low + _randomSource.Next() % (high-low); 
 	}
