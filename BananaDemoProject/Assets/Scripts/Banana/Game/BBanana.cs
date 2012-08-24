@@ -12,14 +12,24 @@ public class BBanana : FSprite
 		_speedY = RXRandom.Range(-0.1f,-0.5f);	
 	}
 	
-	override public void Redraw(bool shouldForceDirty, bool shouldUpdateDepth)
+	override public void HandleAddedToStage()
+	{
+		Futile.instance.SignalUpdate += HandleUpdate;
+		base.HandleAddedToStage();	
+	}
+	
+	override public void HandleRemovedFromStage()
+	{
+		Futile.instance.SignalUpdate -= HandleUpdate;
+		base.HandleRemovedFromStage();	
+	}
+	
+	public void HandleUpdate()
 	{
 		_speedY -= 0.013f;
 		
 		this.rotation += _rotationSpeed;
-		this.y += _speedY;
-		
-		base.Redraw(shouldForceDirty, shouldUpdateDepth);
+		this.y += _speedY;	
 	}
 
 }
