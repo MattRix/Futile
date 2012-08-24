@@ -10,6 +10,7 @@ public class FShader
 	//shader types
 	public static FShader Normal;
 	public static FShader Additive;
+	public static FShader AdditiveColor;
 	public static FShader Solid;
 	
 	private static int _nextShaderIndex = 0;
@@ -35,6 +36,7 @@ public class FShader
 	{
 		Normal = CreateShader("Normal", Shader.Find("Unlit Transparent Vertex Colored"));	
 		Additive = CreateShader("Additive", Shader.Find("Unlit Transparent Vertex Colored Additive"));	
+		AdditiveColor = CreateShader("AdditiveColor", Shader.Find("Unlit Transparent Vertex Colored Additive Color"));	
 		Solid = CreateShader("Solid", Shader.Find("Unlit Transparent Vertex Colored Solid"));	
 		
 		defaultShader = Normal;
