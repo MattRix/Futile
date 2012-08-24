@@ -81,6 +81,9 @@ public class RXMath
 	public const float DTOR = Mathf.PI/180.0f;
 	public const float DOUBLE_PI = Mathf.PI*2.0f;
 	public const float HALF_PI = Mathf.PI/2.0f;
+	public const float PI = Mathf.PI;
+	public const float INVERSE_PI = 1.0f/Mathf.PI;
+	public const float INVERSE_DOUBLE_PI = 1.0f/(Mathf.PI*2.0f);
 	
 	public static int Wrap(int input, int range)
 	{
