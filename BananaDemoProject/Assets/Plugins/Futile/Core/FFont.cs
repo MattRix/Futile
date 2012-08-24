@@ -132,6 +132,7 @@ public class FFont
 	private FCharInfo[] _charInfos;
 	private FCharInfo[] _charInfosByID; //chars with the index of array being the char id
 	private FKerningInfo[] _kerningInfos;
+	private int _kerningCount;
 	
 	private FKerningInfo _nullKerning = new FKerningInfo();
 	
@@ -188,7 +189,7 @@ public class FFont
 		int c = 0;
 		int k = 0;
 		
-		_charInfosByID = new FCharInfo[127];
+		_charInfosByID = new FCharInfo[255];
 		
 		float resourceScale = Futile.resourceScale;
 		
@@ -339,7 +340,7 @@ public class FFont
 			{
 				wasKerningFound = true;
 				int kerningCount = int.Parse(words[1].Split('=')[1]);
-				_kerningInfos = new FKerningInfo[kerningCount];
+				_kerningInfos = new FKerningInfo[kerningCount+100]; //kerning count can be wrong so just add 100 items of potential fudge factor
 			}
 			else if(words[0] == "kerning") //kerning first=56  second=57  amount=-1
 			{
@@ -373,6 +374,9 @@ public class FFont
 			}
 			
 		}
+		
+		_kerningCount = k;
+		
 		
 		if(!wasKerningFound) //if there are no kernings at all (like in a pixel font), then make an empty kerning array
 		{
@@ -464,8 +468,7 @@ public class FFont
 			{
 				FKerningInfo foundKerning = _nullKerning;
 				
-				int kerningInfoCount = _kerningInfos.Length;
-				for(int k = 0; k<kerningInfoCount-1; k++)
+				for(int k = 0; k<_kerningCount; k++)
 				{
 					FKerningInfo kerningInfo = _kerningInfos[k];
 					if(kerningInfo.first == previousLetter && kerningInfo.second == letter)
