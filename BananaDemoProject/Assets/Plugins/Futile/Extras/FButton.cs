@@ -18,6 +18,8 @@ public class FButton : FContainer, FSingleTouchableInterface
 	private float _anchorY = 0.5f;
 	
 	public float expansionAmount = 10;
+	
+	private bool _isEnabled = true;
 
 	public FButton (string upElementName, string downElementName, string soundName)
 	{
@@ -96,6 +98,8 @@ public class FButton : FContainer, FSingleTouchableInterface
 	
 	public bool HandleSingleTouchBegan(FTouch touch)
 	{
+		if(!_isEnabled) return false;
+		
 		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
 		
 		if(_bg.textureRect.Contains(touchPos))
@@ -154,6 +158,25 @@ public class FButton : FContainer, FSingleTouchableInterface
 	{
 		_bg.element = _upElement;
 		if(SignalReleaseOutside != null) SignalReleaseOutside(this);
+	}
+	
+	public bool isEnabled
+	{
+		get {return _isEnabled;}
+		set 
+		{
+			if(_isEnabled != value)
+			{
+				_isEnabled = value;
+				
+				if(_isEnabled)
+				{
+				}
+				else
+				{
+				}
+			}
+		}
 	}
 	
 	
