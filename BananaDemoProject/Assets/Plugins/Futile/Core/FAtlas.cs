@@ -111,9 +111,9 @@ public class FAtlas
 			Debug.Log ("Futile: Couldn't load the atlas data from: " + _dataPath);
 		}
 		
-		Hashtable hash = dataAsset.text.hashtableFromJson();
+		Dictionary<string,object> dict = dataAsset.text.dictionaryFromJson();
 		
-		IDictionary frames = (IDictionary)hash["frames"];
+		Dictionary<string,object> frames = (Dictionary<string,object>) dict["frames"];
 		
 		float scaleInverse = Futile.resourceScaleInverse;
 		
@@ -136,7 +136,7 @@ public class FAtlas
 		
 		int index = 0;
 		
-		foreach(DictionaryEntry item in frames)
+		foreach(KeyValuePair<string,object> item in frames)
 		{
 			FAtlasElement element = new FAtlasElement();
 			 
