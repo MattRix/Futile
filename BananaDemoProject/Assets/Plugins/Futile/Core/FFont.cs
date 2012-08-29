@@ -384,8 +384,11 @@ public class FFont
 		}
 		
 		//make sure the space character doesn't have offsetY and offsetX
-		_charInfosByID[32].offsetX = 0;
-		_charInfosByID[32].offsetY = 0;
+		if(_charInfosByID[32] != null)
+		{
+			_charInfosByID[32].offsetX = 0;
+			_charInfosByID[32].offsetY = 0;
+		}
 		
 	}
 	
