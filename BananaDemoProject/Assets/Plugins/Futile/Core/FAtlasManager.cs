@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public class FAtlasManager
 {
+	static private int _nextAtlasIndex;
+	
 	private List<FAtlas> _atlases = new List<FAtlas>();
 	
 	private List<FAtlasElement> _allElements = new List<FAtlasElement>();
@@ -19,19 +21,39 @@ public class FAtlasManager
 		
 	}
 	
-	public void ActuallyLoadAtlasOrImage(string name, string imagePath, string dataPath)
+	public bool DoesContainAtlas(string name)
 	{
 		int atlasCount = _atlases.Count;
 		for(int a = 0; a<atlasCount; ++a)
 		{
-			if(_atlases[a].name == name) return; //don't load this atlas if we already have one with the same name
+			if(_atlases[a].name == name) return true;
 		}
+		return false;
+	}
+
+	public void LoadAtlasFromTexture (string name, Texture texture)
+	{
+		if(DoesContainAtlas(name)) return; //we already have it, don't load it again
+		
+		FAtlas atlas = new FAtlas(name, texture, _nextAtlasIndex++);
+		
+		AddAtlas(atlas);
+	}
+	
+	public void ActuallyLoadAtlasOrImage(string name, string imagePath, string dataPath)
+	{
+		if(DoesContainAtlas(name)) return; //we already have it, don't load it again
 		
 		//if dataPath is empty, load it as a single image
 		bool isSingleImage = (dataPath == "");
 		
-		FAtlas atlas = new FAtlas(name, imagePath, dataPath, _atlases.Count, isSingleImage);
+		FAtlas atlas = new FAtlas(name, imagePath, dataPath, _nextAtlasIndex++, isSingleImage);
 		
+		AddAtlas(atlas);
+	}
+	
+	private void AddAtlas(FAtlas atlas)
+	{
 		int elementCount = atlas.elements.Count;
 		for(int e = 0; e<elementCount; ++e)
 		{
@@ -42,7 +64,15 @@ public class FAtlasManager
 			element.atlasIndex = atlas.index;
 			
 			_allElements.Add(element);
-			_allElementsByName.Add (element.name, element);
+			
+			if(_allElementsByName.ContainsKey(element.name))
+			{
+				throw new Exception("Duplicate element name found! All element names must be unique!");	
+			}
+			else 
+			{
+				_allElementsByName.Add (element.name, element);
+			}
 		}
 		
 		_atlases.Add(atlas); 
