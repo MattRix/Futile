@@ -3,13 +3,16 @@ using System;
 
 public class FSprite : FQuadNode
 {
+	public static float defaultAnchorX = 0.5f;
+	public static float defaultAnchorY = 0.5f;
+	
 	protected Color _color = Color.white;
 	protected Color _alphaColor = Color.white;
 	
 	protected Vector2[] _localVertices = new Vector2[4];
 	
-	protected float _anchorX = 0.5f;
-	protected float _anchorY = 0.5f;
+	protected float _anchorX = defaultAnchorX;
+	protected float _anchorY = defaultAnchorY;
 	
 	protected Rect _localRect;
 	protected Rect _textureRect;

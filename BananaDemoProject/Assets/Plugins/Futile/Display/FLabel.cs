@@ -7,6 +7,9 @@ using System.Collections.Generic;
 
 public class FLabel : FQuadNode
 {
+	public static float defaultAnchorX = 0.5f;
+	public static float defaultAnchorY = 0.5f;
+	
 	protected FFont _font;
 	protected string _fontName;
 	protected string _text;
@@ -18,8 +21,8 @@ public class FLabel : FQuadNode
 	
 	protected bool _isMeshDirty = false;
 	
-	protected float _anchorX = 0.5f;
-	protected float _anchorY = 0.5f;
+	protected float _anchorX = defaultAnchorX;
+	protected float _anchorY = defaultAnchorY;
 	
 	protected float _lineHeightDelta;
 	protected float _letterSpacingDelta;
