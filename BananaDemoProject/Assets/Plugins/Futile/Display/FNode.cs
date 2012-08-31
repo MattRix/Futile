@@ -64,6 +64,19 @@ public class FNode
 		
 	}
 	
+	public Vector2 ScreenToLocal(Vector2 screenVector) //for transforming mouse or touch directly
+	{
+		float touchScale = 1.0f/Futile.displayScale;
+		
+		//the offsets account for the camera's 0,0 point (eg, center, bottom left, etc.)
+		float offsetX = -Futile.screen.originX * Futile.screen.pixelWidth;
+		float offsetY = -Futile.screen.originY * Futile.screen.pixelHeight;
+		
+		screenVector = new Vector2((screenVector.x+offsetX)*touchScale, (screenVector.y+offsetY)*touchScale);
+		
+		return this.screenInverseConcatenatedMatrix.GetNewTransformedVector(screenVector);
+	}
+	
 	public Vector2 LocalToStage(Vector2 localVector)
 	{
 		return _concatenatedMatrix.GetNewTransformedVector(localVector);
