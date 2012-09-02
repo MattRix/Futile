@@ -346,29 +346,37 @@ public class FFont
 			{
 				FKerningInfo kerningInfo = new FKerningInfo();
 				
+				kerningInfo.first = -1;
+				
 				wordCount = words.Length;
 				
 				for(int w = 1; w<wordCount; w++)
 				{
 					string[] parts = words[w].Split('=');	
-					string partName = parts[0];
-					int partValue = int.Parse(parts[1]);
-					
-					if(partName == "first")
+					if(parts.Length >= 2)
 					{
-						kerningInfo.first = partValue;
-					}
-					else if(partName == "second")
-					{
-						kerningInfo.second = partValue;
-					}
-					else if(partName == "amount")
-					{
-						kerningInfo.amount = partValue * _configRatio;
+						string partName = parts[0];
+						int partValue = int.Parse(parts[1]);
+						
+						if(partName == "first")
+						{
+							kerningInfo.first = partValue;
+						}
+						else if(partName == "second")
+						{
+							kerningInfo.second = partValue;
+						}
+						else if(partName == "amount")
+						{
+							kerningInfo.amount = partValue * _configRatio;
+						}
 					}
 				}
 				
-				_kerningInfos[k] = kerningInfo;
+				if(kerningInfo.first != -1)
+				{
+					_kerningInfos[k] = kerningInfo;
+				}
 				
 				k++;
 			}

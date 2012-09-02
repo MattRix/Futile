@@ -259,6 +259,7 @@ public class FTouchManager
 
 	private void UpdatePrioritySorting()
 	{
+		_needsPrioritySort = false;
 		_singleTouchables.Sort(PriorityComparison);
 	}
 	
@@ -280,7 +281,7 @@ public class FTouchManager
 				_singleTouchables.Add(touchable);
 			}
 		}
-		
+		_needsPrioritySort = true;
 	}
 	
 	public void AddMultiTouchTarget(FMultiTouchableInterface touchable)

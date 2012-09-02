@@ -68,6 +68,22 @@ public class FAtlas
 	
 	private bool _isSingleImage;
 	
+	private bool _isTextureAnAsset = false;
+	
+	//TODO: allow users to pass a dictionary of pre-built atlas data if they want
+	public FAtlas (string name, Texture texture, int index)
+	{
+		_name = name;
+		_imagePath = "";
+		_dataPath = "";
+		_index = index;
+		
+		_texture = texture;
+		_textureSize = new Vector2(_texture.width,_texture.height);
+		
+		CreateAtlasFromSingleImage();
+	}
+	
 	public FAtlas (string name, string imagePath, string dataPath, int index, bool shouldLoadAsSingleImage)
 	{
 		_name = name;
@@ -98,6 +114,8 @@ public class FAtlas
 		{
 			Debug.Log ("Futile: Couldn't load the atlas texture from: " + _imagePath);	
 		}
+		
+		_isTextureAnAsset = true;
 		
 		_textureSize = new Vector2(_texture.width,_texture.height);
 	}
@@ -258,7 +276,12 @@ public class FAtlas
 
 	public void Unload ()
 	{
-		Resources.UnloadAsset(_texture);
+		if(_isTextureAnAsset)
+		{
+			Resources.UnloadAsset(_texture);
+		}
+		
+		UnityEngine.Object.Destroy(_texture);
 	}
 	
 	public List<FAtlasElement> elements
