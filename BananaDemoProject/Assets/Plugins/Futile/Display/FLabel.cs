@@ -29,6 +29,7 @@ public class FLabel : FQuadNode
 	
 	protected bool _doesTextNeedUpdate = false;
 	protected bool _doesLocalPositionNeedUpdate = false;
+	protected bool _doQuadsNeedUpdate = false;
 	
 	protected Rect _textRect;
 	
@@ -48,6 +49,18 @@ public class FLabel : FQuadNode
 		Init(_font.element, 0);
 		
 		CreateTextQuads();
+	}
+	
+	override public void HandleAddedToStage()
+	{
+		Futile.instance.SignalUpdate += HandleUpdate;
+		base.HandleAddedToStage();
+	}
+	
+	override public void HandleRemovedFromStage()
+	{
+		Futile.instance.SignalUpdate -= HandleUpdate;
+		base.HandleRemovedFromStage();
 	}
 	
 	public void CreateTextQuads()
@@ -121,6 +134,14 @@ public class FLabel : FQuadNode
 		
 		_isMeshDirty = true; 
 	}
+	
+	private void HandleUpdate()
+	{
+		if(_doesTextNeedUpdate)
+		{
+			CreateTextQuads();
+		}		
+	}
 
 	override public void Redraw(bool shouldForceDirty, bool shouldUpdateDepth)
 	{
@@ -128,11 +149,6 @@ public class FLabel : FQuadNode
 		bool wasAlphaDirty = _isAlphaDirty;
 		
 		UpdateDepthMatrixAlpha(shouldForceDirty, shouldUpdateDepth);
-		
-		if(_doesTextNeedUpdate)
-		{
-			CreateTextQuads();
-		}
 		
 		if(shouldUpdateDepth)
 		{
@@ -181,7 +197,9 @@ public class FLabel : FQuadNode
 			{
 				FLetterQuad[] quads = _letterQuadLines[i].quads;
 				
+				
 				int quadCount = quads.Length;
+				
 				for(int q = 0; q<quadCount; q++)
 				{
 					FLetterQuad quad = quads[q];

@@ -210,10 +210,9 @@ public class Futile : MonoBehaviour
 	private void Update()
 	{
 		screen.Update();
-
 		touchManager.Update();
-		if(SignalUpdate != null) SignalUpdate();
 		
+		if(SignalUpdate != null) SignalUpdate();
 		
 		for(int s = 0; s<_stages.Count; s++)
 		{
