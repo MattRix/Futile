@@ -135,6 +135,12 @@ public class FSprite : FQuadNode
 		}
 	}
 	
+	//Note: this does not consider rotation at all!
+	public Rect GetTextureRectRelativeToContainer()
+	{
+		return _textureRect.CloneAndScaleThenOffset(_scaleX,_scaleY,_x,_y);
+	}
+	
 	virtual public Rect textureRect //the full rect as if the sprite hadn't been trimmed
 	{
 		get {return _textureRect;}	
