@@ -7,6 +7,8 @@ using System.Collections;
 
 public class FMatrix
 {
+	static public FMatrix tempMatrix = new FMatrix(); //useful for doing calulations without allocating a new matrix every time
+	
 	public float a = 1; //scaleX
 	public float b = 0; //skewY
 	public float c = 0; //skewX
@@ -247,7 +249,7 @@ public class FMatrix
 		outVector.z = z;
 	}
 	
-	public void Identity()
+	public void ResetToIdentity()
 	{
 		a = 1;
 		b = 0;

@@ -41,7 +41,7 @@ public class FStage : FContainer
 		_renderer = new FRenderer(this);
 		
 		_identityMatrix = new FMatrix();
-		_identityMatrix.Identity();
+		_identityMatrix.ResetToIdentity();
 		
 		_inverseConcatenatedMatrix = new FMatrix();
 		_screenConcatenatedMatrix = new FMatrix();
