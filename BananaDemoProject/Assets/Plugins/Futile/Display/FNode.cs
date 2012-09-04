@@ -109,7 +109,7 @@ public class FNode
 	{
 		if(!_isMatrixDirty) return;
 		
-		_isMatrixDirty = false;
+		//do NOT set _isMatrixDirty to false here because it is used in the redraw loop and will be set false then
 		
 		_matrix.SetScaleThenRotate(_x,_y,_scaleX,_scaleY,_rotation * -RXMath.DTOR);
 			
@@ -377,5 +377,51 @@ public class FNode
 		set {_stage = value;}
 	}
 	
-}
+	
+	//use node.LocalToLocal to use a point from a different coordinate space
+	public void RotateAroundPointRelative(Vector2 localPoint, float relativeDegrees)
+	{
+		FMatrix.tempMatrix.ResetToIdentity();
+		FMatrix.tempMatrix.SetScaleThenRotate(0,0,_scaleX,_scaleY,_rotation * -RXMath.DTOR);
+		Vector2 firstVector = FMatrix.tempMatrix.GetNewTransformedVector(new Vector2(-localPoint.x,-localPoint.y));
+		
+		_rotation += relativeDegrees;
+		
+		FMatrix.tempMatrix.ResetToIdentity();
+		FMatrix.tempMatrix.SetScaleThenRotate(0,0,_scaleX,_scaleY,_rotation * -RXMath.DTOR);
+		Vector2 secondVector = FMatrix.tempMatrix.GetNewTransformedVector(new Vector2(-localPoint.x,-localPoint.y));
+		
+		_x += secondVector.x-firstVector.x;
+		_y += secondVector.y-firstVector.y;
+		
+		_isMatrixDirty = true;
+	}
+	
+	//use node.LocalToLocal to use a point from a different coordinate space
+	public void RotateAroundPointAbsolute(Vector2 localPoint, float absoluteDegrees)
+	{
+		RotateAroundPointRelative(localPoint, absoluteDegrees - _rotation);
+	}
+	
+	//use node.LocalToLocal to use a point from a different coordinate space
+	public void ScaleAroundPointRelative(Vector2 localPoint, float relativeScaleX, float relativeScaleY)
+	{
+		FMatrix.tempMatrix.ResetToIdentity();
+		FMatrix.tempMatrix.SetScaleThenRotate(0, 0,(relativeScaleX-1.0f),(relativeScaleY-1.0f),_rotation * -RXMath.DTOR);
+		Vector2 moveVector = FMatrix.tempMatrix.GetNewTransformedVector(new Vector2(localPoint.x*_scaleX,localPoint.y*_scaleY));	
 
+		_x += -moveVector.x;
+		_y += -moveVector.y;
+
+		_scaleX *= relativeScaleX;
+		_scaleY *= relativeScaleY;
+		
+		_isMatrixDirty = true;
+	}
+	
+	//use node.LocalToLocal to use a point from a different coordinate space
+	public void ScaleAroundPointAbsolute(Vector2 localPoint, float absoluteScaleX, float absoluteScaleY)
+	{
+		ScaleAroundPointRelative(localPoint, absoluteScaleX/_scaleX, absoluteScaleX/_scaleY);
+	}
+}
