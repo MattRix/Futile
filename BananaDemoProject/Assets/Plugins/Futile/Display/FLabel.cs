@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 //parts of this were inspired by https://github.com/prime31/UIToolkit/blob/master/Assets/Plugins/UIToolkit/UIElements/UIText.cs
 
-public class FLabel : FQuadNode
+public class FLabel : FFacetNode
 {
 	public static float defaultAnchorX = 0.5f;
 	public static float defaultAnchorY = 0.5f;
@@ -46,7 +46,7 @@ public class FLabel : FQuadNode
 		_font = Futile.atlasManager.GetFontWithName(_fontName);
 		_textParams = textParams;
 		 
-		Init(_font.element, 0);
+		Init(FFacetType.Quad, _font.element, 0);
 		
 		CreateTextQuads();
 	}
@@ -67,25 +67,25 @@ public class FLabel : FQuadNode
 	{
 		_doesTextNeedUpdate = false;
 		
-		int oldQuadsNeeded = _numberOfQuadsNeeded;
+		int oldFacetsNeeded = _numberOfFacetsNeeded;
 		
 		_letterQuadLines = _font.GetQuadInfoForText(_text,_textParams);
 		
-		_numberOfQuadsNeeded = 0;
+		_numberOfFacetsNeeded = 0;
 		
 		int lineCount = _letterQuadLines.Length;
 		for(int i = 0; i< lineCount; i++)
 		{
-			_numberOfQuadsNeeded += _letterQuadLines[i].quads.Length;
+			_numberOfFacetsNeeded += _letterQuadLines[i].quads.Length;
 		}
 		
 		if(_isOnStage)
 		{
-			int delta = _numberOfQuadsNeeded - oldQuadsNeeded;
+			int delta = _numberOfFacetsNeeded - oldFacetsNeeded;
 			
 			if(delta != 0) //if the number of letter quads has changed, tell the stage
 			{
-				_stage.HandleQuadsChanged();
+				_stage.HandleFacetsChanged();
 			}
 		}
 		
@@ -152,7 +152,7 @@ public class FLabel : FQuadNode
 		
 		if(shouldUpdateDepth)
 		{
-			UpdateQuads();
+			UpdateFacets();
 		}
 		
 		if(wasMatrixDirty || shouldForceDirty || shouldUpdateDepth)
@@ -179,7 +179,7 @@ public class FLabel : FQuadNode
 	
 	override public void PopulateRenderLayer()
 	{
-		if(_isOnStage && _firstQuadIndex != -1)
+		if(_isOnStage && _firstFacetIndex != -1)
 		{
 			_isMeshDirty = false;
 			
@@ -187,7 +187,7 @@ public class FLabel : FQuadNode
 			Vector2[] uvs = _renderLayer.uvs;
 			Color[] colors = _renderLayer.colors;
 			
-			int vertexIndex0 = _firstQuadIndex*4;
+			int vertexIndex0 = _firstFacetIndex*4;
 			int vertexIndex1 = vertexIndex0 + 1;
 			int vertexIndex2 = vertexIndex0 + 2;
 			int vertexIndex3 = vertexIndex0 + 3;

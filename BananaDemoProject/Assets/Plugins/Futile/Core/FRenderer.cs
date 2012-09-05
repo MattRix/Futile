@@ -71,7 +71,7 @@ public class FRenderer
 		
 	}
 	
-	protected FRenderLayer CreateRenderLayer(int batchIndex, FAtlas atlas, FShader shader)
+	protected FRenderLayer CreateRenderLayer(FFacetType facetType, int batchIndex, FAtlas atlas, FShader shader)
 	{
 		//first, check and see if we already have a layer that matches the batchIndex
 		int previousLiveLayerCount = _previousLiveLayers.Count;
@@ -103,7 +103,8 @@ public class FRenderer
 		}
 		
 		//still no layer found? create a new one!
-		FRenderLayer newLayer = new FRenderLayer(_stage, atlas,shader);
+		
+		FRenderLayer newLayer = facetType.createRenderLayer(_stage, facetType,atlas,shader);
 		_liveLayers.Add(newLayer);
 		_allLayers.Add(newLayer);
 		newLayer.AddToWorld();
@@ -112,13 +113,13 @@ public class FRenderer
 		return newLayer;
 	}
 	
-	public void GetRenderLayer (out FRenderLayer renderLayer, out int firstQuadIndex, FAtlas atlas, FShader shader, int numberOfQuadsNeeded)
+	public void GetRenderLayer (out FRenderLayer renderLayer, out int firstFacetIndex, FFacetType facetType, FAtlas atlas, FShader shader, int numberOfFacetsNeeded)
 	{
-		int batchIndex = atlas.index*10000 + shader.index;
+		int batchIndex = facetType.index*10000000 + atlas.index*10000 + shader.index;
 		
 		if(_topLayer == null)
 		{
-			_topLayer = CreateRenderLayer(batchIndex, atlas, shader);
+			_topLayer = CreateRenderLayer(facetType, batchIndex, atlas, shader);
 			_topLayer.Open();
 		}
 		else 
@@ -127,13 +128,13 @@ public class FRenderer
 			{
 				_topLayer.Close(); //close the old layer
 				
-				_topLayer = CreateRenderLayer(batchIndex, atlas, shader);
+				_topLayer = CreateRenderLayer(facetType, batchIndex, atlas, shader);
 				_topLayer.Open(); //open the new layer
 			}
 		}
 		
 		renderLayer = _topLayer;
-		firstQuadIndex = _topLayer.GetNextQuadIndex(numberOfQuadsNeeded);
+		firstFacetIndex = _topLayer.GetNextFacetIndex(numberOfFacetsNeeded);
 	}
 	
 	public FShader GetDefaultShader()

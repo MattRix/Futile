@@ -59,7 +59,7 @@ public class FStage : FContainer
 		HandleRemovedFromStage();
 	}
 
-	public void HandleQuadsChanged ()
+	public void HandleFacetsChanged ()
 	{
 		_needsDepthUpdate = true;
 	}

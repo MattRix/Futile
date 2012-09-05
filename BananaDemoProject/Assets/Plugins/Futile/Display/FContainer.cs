@@ -71,7 +71,7 @@ public class FContainer : FNode
 	{
 		if(SortByZ()) //if the child order was changed, rearrange the quads
 		{
-			_stage.HandleQuadsChanged();	
+			_stage.HandleFacetsChanged();	
 		}
 	}
 	
@@ -94,7 +94,7 @@ public class FContainer : FNode
 		{
 			_childNodes.RemoveAt(nodeIndex);
 			_childNodes.Add(node);
-			if(_isOnStage) _stage.HandleQuadsChanged(); 
+			if(_isOnStage) _stage.HandleFacetsChanged(); 
 		}
 	}
 	
@@ -134,7 +134,7 @@ public class FContainer : FNode
 				_childNodes.Insert(newIndex, node);
 			}
 			
-			if(_isOnStage) _stage.HandleQuadsChanged();
+			if(_isOnStage) _stage.HandleFacetsChanged();
 		}
 	}
 	

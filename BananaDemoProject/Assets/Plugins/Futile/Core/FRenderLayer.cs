@@ -7,56 +7,58 @@ public class FRenderLayer
 {
 	public int batchIndex;
 	
-	private FStage _stage;
+	protected FStage _stage;
 	
-	private FAtlas _atlas;
-	private FShader _shader;
+	protected FFacetType _facetType;
+	protected FAtlas _atlas;
+	protected FShader _shader;
 	
-	private GameObject _gameObject;
-	private Transform _transform;
-	private Material _material;
-	private MeshFilter _meshFilter;
-	private MeshRenderer _meshRenderer;
-	private Mesh _mesh;
+	protected GameObject _gameObject;
+	protected Transform _transform;
+	protected Material _material;
+	protected MeshFilter _meshFilter;
+	protected MeshRenderer _meshRenderer;
+	protected Mesh _mesh;
 	
 	//Mesh stuff
-	private Vector3[] _vertices = new Vector3[0];
-	private int[] _triangles = new int[0];
-	private Vector2[] _uvs = new Vector2[0];
-	private Color[] _colors = new Color[0];
+	protected Vector3[] _vertices = new Vector3[0];
+	protected int[] _triangles = new int[0];
+	protected Vector2[] _uvs = new Vector2[0];
+	protected Color[] _colors = new Color[0];
 	
-	private bool _isMeshDirty = false;
-	private bool _didVertsChange = false;
-	private bool _didUVsChange = false;
-	private bool _didColorsChange = false;
-	private bool _didVertCountChange = false;
-	private bool _doesMeshNeedClear = false;
-	private bool _shouldUpdateBounds = false;
+	protected bool _isMeshDirty = false;
+	protected bool _didVertsChange = false;
+	protected bool _didUVsChange = false;
+	protected bool _didColorsChange = false;
+	protected bool _didVertCountChange = false;
+	protected bool _doesMeshNeedClear = false;
+	protected bool _shouldUpdateBounds = false;
 
-	private int _expansionAmount;
-	private int _maxEmptyQuads;
-	private int _maxQuadCount = 0;
+	protected int _expansionAmount;
+	protected int _maxEmptyFacets;
+	protected int _maxFacetCount = 0;
 	
-	private int _depth = -1;
-	private int _nextAvailableQuadIndex;
+	protected int _depth = -1;
+	protected int _nextAvailableFacetIndex;
 	
-	private int _lowestZeroIndex = 0;
+	protected int _lowestZeroIndex = 0;
 	
-	private bool _needsRecalculateBoundsIfTransformed = false;
+	protected bool _needsRecalculateBoundsIfTransformed = false;
 	
-	public FRenderLayer (FStage stage, FAtlas atlas, FShader shader)
+	public FRenderLayer (FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)
 	{
 		_stage = stage;
 		
+		_facetType = facetType;
 		_atlas = atlas;
 		_shader = shader;
 		
-		_expansionAmount = Futile.quadsPerLayerExpansion;
-		_maxEmptyQuads = Futile.maxEmptyQuadsPerLayer;
+		_expansionAmount = _facetType.expansionAmount;
+		_maxEmptyFacets = _facetType.maxEmptyAmount;
 		
-		batchIndex = atlas.index*10000 + shader.index;
+		batchIndex = _facetType.index*10000000 + atlas.index*10000 + shader.index;
 		
-		_gameObject = new GameObject("FRenderLayer ("+_stage.name+")");
+		_gameObject = new GameObject("FRender"+_facetType.name+"Layer ("+_stage.name+")");
 		_transform = _gameObject.transform;
 		
 		_transform.parent = Futile.instance.gameObject.transform;
@@ -75,7 +77,7 @@ public class FRenderLayer
 		
 		_gameObject.active = false;
 		
-		ExpandMaxQuadLimit(Futile.startingQuadsPerLayer);
+		ExpandMaxFacetLimit(_facetType.initialAmount);
 		
 		UpdateTransform();
 	}
@@ -108,59 +110,60 @@ public class FRenderLayer
 		_gameObject.active = false;
 		#if UNITY_EDITOR
 			//some debug code so that layers are sorted by depth properly
-			_gameObject.name = "FRenderLayer X ("+_stage.name+") (" + _atlas.name + " " + _shader.name+")";
+			_gameObject.name = "FRender"+_facetType.name+"Layer X ("+_stage.name+") (" + _atlas.name + " " + _shader.name+")";
 		#endif
 	}
 
 	public void Open ()
 	{
-		_nextAvailableQuadIndex = 0;
+		_nextAvailableFacetIndex = 0;
 	}
 	
-	public int GetNextQuadIndex (int numberOfQuadsNeeded)
+	public int GetNextFacetIndex (int numberOfFacetsNeeded)
 	{		
-		int indexToReturn = _nextAvailableQuadIndex;
-		_nextAvailableQuadIndex += numberOfQuadsNeeded;
+		int indexToReturn = _nextAvailableFacetIndex;
+		_nextAvailableFacetIndex += numberOfFacetsNeeded;
 		
-		//expand the layer (if needed) now that we know how many quads we need to fit
-		if(_nextAvailableQuadIndex-1 >= _maxQuadCount)
+		//expand the layer (if needed) now that we know how many facets we need to fit
+		if(_nextAvailableFacetIndex-1 >= _maxFacetCount)
 		{
-			int deltaNeeded = (_nextAvailableQuadIndex - _maxQuadCount) + 1;
-			ExpandMaxQuadLimit(Math.Max (deltaNeeded, _expansionAmount)); //expand it by expansionAmount or the amount needed
+			int deltaNeeded = (_nextAvailableFacetIndex - _maxFacetCount) + 1;
+			ExpandMaxFacetLimit(Math.Max (deltaNeeded, _expansionAmount)); //expand it by expansionAmount or the amount needed
 		} 
 			
 		return indexToReturn;
 	}
 
-	public void Close () //fill remaining quads with 0,0,0
+	public void Close () //fill remaining facets with 0,0,0
 	{
-		//if we have a ton of empty quads
-		//shrink the quads
-		if(_nextAvailableQuadIndex < _maxQuadCount-_maxEmptyQuads)
+		//if we have a ton of empty facets
+		//shrink the facets
+		if(_nextAvailableFacetIndex < _maxFacetCount-_maxEmptyFacets)
 		{
-			ShrinkMaxQuadLimit(Math.Max (0,(_maxQuadCount-_nextAvailableQuadIndex)-_expansionAmount));	
-			ExpandMaxQuadLimit(1);
+			ShrinkMaxFacetLimit(Math.Max (0,(_maxFacetCount-_nextAvailableFacetIndex)-_expansionAmount));	
 		}
 		
-		_lowestZeroIndex = Math.Max (_nextAvailableQuadIndex, Math.Min (_maxQuadCount,_lowestZeroIndex));
-		
-		for(int z = _nextAvailableQuadIndex; z<_lowestZeroIndex; ++z)
-		{
-			int vertexIndex = z*4;	
-			//the high 100000 Z should make them get culled and not rendered... 
-			//TODO: test if the high z actually gives better performance or not
-			_vertices[vertexIndex + 0].Set(0,0,100000);	
-			_vertices[vertexIndex + 1].Set(0,0,100000);	
-			_vertices[vertexIndex + 2].Set(0,0,100000);	
-			_vertices[vertexIndex + 3].Set(0,0,100000);	
-		}
-		
-		_lowestZeroIndex = _nextAvailableQuadIndex;
+		FillUnusedFacetsWithZeroes();
 		
 		#if UNITY_EDITOR
 			//some debug code so that layers are sorted by depth properly
-			_gameObject.name = "FRenderLayer "+_depth+" ("+_stage.name+") ["+_nextAvailableQuadIndex+"/"+_maxQuadCount+"] (" + _atlas.name + " " + _shader.name+")";
+			_gameObject.name = "FRender"+_facetType.name+"Layer "+_depth+" ("+_stage.name+") ["+_nextAvailableFacetIndex+"/"+_maxFacetCount+"] (" + _atlas.name + " " + _shader.name+")";
 		#endif
+	}
+
+	virtual protected void FillUnusedFacetsWithZeroes ()
+	{
+		throw new NotImplementedException("Override me!");
+	}
+	
+	virtual protected void ShrinkMaxFacetLimit(int deltaDecrease)
+	{
+		throw new NotImplementedException("Override me!");
+	}
+	
+	virtual protected void ExpandMaxFacetLimit(int deltaIncrease)
+	{
+		throw new NotImplementedException("Override me!");
 	}
 	
 	//ACTUAL RENDERING GOES HERE
@@ -243,17 +246,85 @@ public class FRenderLayer
 		_isMeshDirty = true;
 	}
 	
-	private void ShrinkMaxQuadLimit(int deltaDecrease)
+	public int depth
+	{
+		get {return _depth;}
+		set 
+		{
+			if(_depth != value)
+			{
+				_depth = value; 
+		
+				//this will set the render order correctly based on the depth
+				_material.renderQueue = 3000+_depth;
+				
+				#if UNITY_EDITOR
+					//some debug code so that layers are sorted by depth properly
+					_gameObject.name = "FRender"+_facetType.name+"Layer "+_depth+" ("+_stage.name+") ["+_nextAvailableFacetIndex+"/"+_maxFacetCount+"] (" + _atlas.name + " " + _shader.name+")";
+				#endif
+			}
+		}
+	}
+	
+	public int expansionAmount
+	{
+		set {_expansionAmount = value;}
+		get {return _expansionAmount;}
+	}
+	
+	public Vector3[] vertices
+	{
+		get {return _vertices;}
+	}
+	
+	public Vector2[] uvs
+	{
+		get {return _uvs;}
+	}
+	
+	public Color[] colors
+	{
+		get {return _colors;}
+	}
+}
+
+public class FRenderQuadLayer : FRenderLayer
+{
+	
+	public FRenderQuadLayer (FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)  : base (stage,facetType,atlas,shader)
+	{
+		
+	}
+	
+	override protected void FillUnusedFacetsWithZeroes ()
+	{
+		_lowestZeroIndex = Math.Max (_nextAvailableFacetIndex, Math.Min (_maxFacetCount,_lowestZeroIndex));
+		
+		for(int z = _nextAvailableFacetIndex; z<_lowestZeroIndex; z++)
+		{
+			int vertexIndex = z*4;	
+			//the high 1000000 Z should make them get culled and not rendered because they're behind the camera 
+			//TODO: test if the high z actually gives better performance or not
+			_vertices[vertexIndex + 0].Set(0,0,1000000);	
+			_vertices[vertexIndex + 1].Set(0,0,1000000);	
+			_vertices[vertexIndex + 2].Set(0,0,1000000);	
+			_vertices[vertexIndex + 3].Set(0,0,1000000);	
+		}
+		
+		_lowestZeroIndex = _nextAvailableFacetIndex;
+	}
+	
+	override protected void ShrinkMaxFacetLimit(int deltaDecrease)
 	{
 		if(deltaDecrease <= 0) return;
 		
-		_maxQuadCount = Math.Max (Futile.startingQuadsPerLayer, _maxQuadCount-deltaDecrease);
+		_maxFacetCount = Math.Max (_facetType.initialAmount, _maxFacetCount-deltaDecrease);
 	
-		//resize the arrays so they can fit everything
-		Array.Resize (ref _vertices,_maxQuadCount*4);
-		Array.Resize (ref _uvs,_maxQuadCount*4);
-		Array.Resize (ref _colors,_maxQuadCount*4);
-		Array.Resize (ref _triangles,_maxQuadCount*6);
+		//shrink the arrays
+		Array.Resize (ref _vertices,_maxFacetCount*4);
+		Array.Resize (ref _uvs,_maxFacetCount*4);
+		Array.Resize (ref _colors,_maxFacetCount*4);
+		Array.Resize (ref _triangles,_maxFacetCount*6);
 
 		_didVertCountChange = true;
 		_didVertsChange = true;
@@ -263,22 +334,22 @@ public class FRenderLayer
 		_doesMeshNeedClear = true; //we only need clear when shrinking the mesh size
 	}
 	
-	private void ExpandMaxQuadLimit(int deltaIncrease)
+	override protected void ExpandMaxFacetLimit(int deltaIncrease)
 	{
 		if(deltaIncrease <= 0) return;
 		
-		int firstNewQuadIndex = _maxQuadCount;
+		int firstNewFacetIndex = _maxFacetCount;
 		
-		_maxQuadCount += deltaIncrease;
+		_maxFacetCount += deltaIncrease;
 		
-		//shrink the arrays
-		Array.Resize (ref _vertices,_maxQuadCount*4);
-		Array.Resize (ref _uvs,_maxQuadCount*4);
-		Array.Resize (ref _colors,_maxQuadCount*4);
-		Array.Resize (ref _triangles,_maxQuadCount*6);
+		//expand the arrays
+		Array.Resize (ref _vertices,_maxFacetCount*4);
+		Array.Resize (ref _uvs,_maxFacetCount*4);
+		Array.Resize (ref _colors,_maxFacetCount*4);
+		Array.Resize (ref _triangles,_maxFacetCount*6);
 		
 		//fill the triangles with the correct values
-		for(int i = firstNewQuadIndex; i<_maxQuadCount; ++i)
+		for(int i = firstNewFacetIndex; i<_maxFacetCount; ++i)
 		{
 			_triangles[i*6 + 0] = i * 4 + 0;	
 			_triangles[i*6 + 1] = i * 4 + 1;
@@ -295,50 +366,83 @@ public class FRenderLayer
 		_didColorsChange = true;
 		_isMeshDirty = true;
 	}
+}
+
+
+public class FRenderTriLayer : FRenderLayer
+{
 	
-	public int depth
+	public FRenderTriLayer (FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)  : base (stage,facetType,atlas,shader)
 	{
-		get {return _depth;}
-		set 
-		{
-			if(_depth != value)
-			{
-				_depth = value; 
 		
-				//this will set the render order correctly based on the depth
-				_material.renderQueue = 3000+_depth;
-				
-				#if UNITY_EDITOR
-					//some debug code so that layers are sorted by depth properly
-					_gameObject.name = "FRenderLayer "+_depth+" ("+_stage.name+") ["+_nextAvailableQuadIndex+"/"+_maxQuadCount+"] (" + _atlas.name + " " + _shader.name+")";
-				#endif
-			}
+	}
+	
+	override protected void FillUnusedFacetsWithZeroes ()
+	{
+		_lowestZeroIndex = Math.Max (_nextAvailableFacetIndex, Math.Min (_maxFacetCount,_lowestZeroIndex));
+		
+		for(int z = _nextAvailableFacetIndex; z<_lowestZeroIndex; z++)
+		{
+			int vertexIndex = z*3;	
+			//the high 1000000 Z should make them get culled and not rendered because they're behind the camera 
+			//TODO: test if the high z actually gives better performance or not
+			_vertices[vertexIndex + 0].Set(0,0,1000000);	
+			_vertices[vertexIndex + 1].Set(0,0,1000000);	
+			_vertices[vertexIndex + 2].Set(0,0,1000000);	
 		}
+		
+		_lowestZeroIndex = _nextAvailableFacetIndex;
 	}
 	
-	public int expansionAmount
+	override protected void ShrinkMaxFacetLimit(int deltaDecrease)
 	{
-		set {_expansionAmount = value;}
-		get {return _expansionAmount;}
+		if(deltaDecrease <= 0) return;
+		
+		_maxFacetCount = Math.Max (_facetType.initialAmount, _maxFacetCount-deltaDecrease);
+	
+		//shrink the arrays
+		Array.Resize (ref _vertices,_maxFacetCount*3);
+		Array.Resize (ref _uvs,_maxFacetCount*3);
+		Array.Resize (ref _colors,_maxFacetCount*3);
+		Array.Resize (ref _triangles,_maxFacetCount*3);
+
+		_didVertCountChange = true;
+		_didVertsChange = true;
+		_didUVsChange = true;
+		_didColorsChange = true;
+		_isMeshDirty = true;
+		_doesMeshNeedClear = true; //we only need clear when shrinking the mesh size
 	}
 	
-	public Vector3[] vertices
+	override protected void ExpandMaxFacetLimit(int deltaIncrease)
 	{
-		get {return _vertices;}
-		//set {_vertices = value;}
-	}
-	
-	public Vector2[] uvs
-	{
-		get {return _uvs;}
-		//set {_uvs = value;}
-	}
-	
-	public Color[] colors
-	{
-		get {return _colors;}
-		//set {_colors = value;}
+		if(deltaIncrease <= 0) return;
+		
+		int firstNewFacetIndex = _maxFacetCount;
+		
+		_maxFacetCount += deltaIncrease;
+		
+		//expand the arrays
+		Array.Resize (ref _vertices,_maxFacetCount*3);
+		Array.Resize (ref _uvs,_maxFacetCount*3);
+		Array.Resize (ref _colors,_maxFacetCount*3);
+		Array.Resize (ref _triangles,_maxFacetCount*3);
+		
+		//fill the triangles with the correct values
+		for(int i = firstNewFacetIndex; i<_maxFacetCount; ++i)
+		{
+			_triangles[i*6 + 0] = i * 4 + 0;	
+			_triangles[i*6 + 1] = i * 4 + 1;
+			_triangles[i*6 + 2] = i * 4 + 2;
+		}
+		
+		_didVertCountChange = true;
+		_didVertsChange = true;
+		_didUVsChange = true;
+		_didColorsChange = true;
+		_isMeshDirty = true;
 	}
 }
+
 
 

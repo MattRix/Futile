@@ -1,40 +1,43 @@
 using UnityEngine;
 using System;
 
-
-public class FQuadNode : FNode
+public class FFacetNode : FNode
 {
 	protected FAtlasElement _element;
 	
 	protected FShader _shader = null;
 	
-	protected int _firstQuadIndex = -1;
-	protected int _numberOfQuadsNeeded;
+	protected int _firstFacetIndex = -1;
+	protected int _numberOfFacetsNeeded;
 	
 	protected FRenderLayer _renderLayer;
 	
-	public FQuadNode ()
+	protected FFacetType _facetType;
+	
+	public FFacetNode ()
 	{
 		
 	}
 	
-	protected void Init(FAtlasElement element, int numberOfQuadsNeeded)
+	protected void Init(FFacetType facetType, FAtlasElement element, int numberOfFacetsNeeded)
 	{
+		_facetType = facetType;
+		
 		_element = element;
 		if(_shader == null) _shader = FShader.defaultShader;
-		_numberOfQuadsNeeded = numberOfQuadsNeeded; 
+		_numberOfFacetsNeeded = numberOfFacetsNeeded; 
 		
 		HandleElementChanged();
 	}
 	
-	protected void UpdateQuads()
+	protected void UpdateFacets()
 	{
-		_stage.renderer.GetRenderLayer(out _renderLayer, out _firstQuadIndex, _element.atlas, _shader, _numberOfQuadsNeeded);
+		_stage.renderer.GetRenderLayer(out _renderLayer, out _firstFacetIndex, _facetType, _element.atlas, _shader, _numberOfFacetsNeeded);
 	}
 	
-	virtual public int firstQuadIndex
+	virtual public int firstFacetIndex
 	{
-		get {return _firstQuadIndex;}	
+		get {return _firstFacetIndex;}	
 	}
 	
 	virtual public void HandleElementChanged()
@@ -52,7 +55,7 @@ public class FQuadNode : FNode
 		if(!_isOnStage)
 		{
 			_isOnStage = true;
-			_stage.HandleQuadsChanged();
+			_stage.HandleFacetsChanged();
 		}
 	}
 	
@@ -61,7 +64,7 @@ public class FQuadNode : FNode
 		if(_isOnStage)
 		{
 			_isOnStage = false;
-			_stage.HandleQuadsChanged();
+			_stage.HandleFacetsChanged();
 		}
 	}
 	
@@ -83,7 +86,7 @@ public class FQuadNode : FNode
 				
 				if(isAtlasDifferent)
 				{
-					if(_isOnStage) _stage.HandleQuadsChanged();	
+					if(_isOnStage) _stage.HandleFacetsChanged();	
 				}
 				
 				HandleElementChanged();
@@ -99,9 +102,14 @@ public class FQuadNode : FNode
 			if(_shader != value)
 			{
 				_shader = value;
-				if(_isOnStage) _stage.HandleQuadsChanged();	
+				if(_isOnStage) _stage.HandleFacetsChanged();	
 			}
 		}
+	}
+	
+	public FFacetType facetType
+	{
+		get {return _facetType;}	
 	}
 	
 	

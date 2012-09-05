@@ -36,12 +36,6 @@ public class Futile : MonoBehaviour
 	static public string resourceSuffix; //set based on the resLevel
 	
 	
-	
-	//used by the rendering engine
-	static internal int startingQuadsPerLayer;
-	static internal int quadsPerLayerExpansion;
-	static internal int maxEmptyQuadsPerLayer;	
-	
 	static internal int nextRenderLayerDepth = 0;
 	
 	
@@ -81,10 +75,7 @@ public class Futile : MonoBehaviour
 		Application.targetFrameRate = _futileParams.targetFrameRate;
 		
 		FShader.Init(); //set up the basic shaders
-		
-		Futile.startingQuadsPerLayer = _futileParams.startingQuadsPerLayer;
-		Futile.quadsPerLayerExpansion = _futileParams.quadsPerLayerExpansion;
-		Futile.maxEmptyQuadsPerLayer = _futileParams.maxEmptyQuadsPerLayer;
+		FFacetType.Init(); //set up the types of facets (Quads, Triangles, etc)
 		
 		screen = new FScreen(_futileParams);
 		
