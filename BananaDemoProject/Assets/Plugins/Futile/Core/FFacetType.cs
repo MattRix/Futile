@@ -66,7 +66,7 @@ public class FFacetType
 	
 	static private FRenderLayer CreateTriLayer(FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)
 	{
-		return new FRenderTriLayer(stage,facetType,atlas,shader);
+		return new FRenderTriangleLayer(stage,facetType,atlas,shader);
 	}
 	
 }

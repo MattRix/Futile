@@ -58,7 +58,7 @@ public class FRenderLayer
 		
 		batchIndex = _facetType.index*10000000 + atlas.index*10000 + shader.index;
 		
-		_gameObject = new GameObject("FRender"+_facetType.name+"Layer ("+_stage.name+")");
+		_gameObject = new GameObject("FRenderLayer ("+_stage.name+") ("+_facetType.name+")");
 		_transform = _gameObject.transform;
 		
 		_transform.parent = Futile.instance.gameObject.transform;
@@ -110,7 +110,7 @@ public class FRenderLayer
 		_gameObject.active = false;
 		#if UNITY_EDITOR
 			//some debug code so that layers are sorted by depth properly
-			_gameObject.name = "FRender"+_facetType.name+"Layer X ("+_stage.name+") (" + _atlas.name + " " + _shader.name+")";
+			_gameObject.name = "FRenderLayer X ("+_stage.name+") (" + _atlas.name + " " + _shader.name+" "+_facetType.name+ ")";
 		#endif
 	}
 
@@ -147,7 +147,7 @@ public class FRenderLayer
 		
 		#if UNITY_EDITOR
 			//some debug code so that layers are sorted by depth properly
-			_gameObject.name = "FRender"+_facetType.name+"Layer "+_depth+" ("+_stage.name+") ["+_nextAvailableFacetIndex+"/"+_maxFacetCount+"] (" + _atlas.name + " " + _shader.name+")";
+			_gameObject.name = "FRenderLayer "+_depth+" ("+_stage.name+") ["+_nextAvailableFacetIndex+"/"+_maxFacetCount+"] (" + _atlas.name + " " + _shader.name+" "+_facetType.name+ ")";
 		#endif
 	}
 
@@ -200,7 +200,6 @@ public class FRenderLayer
 			//TODO: switch to using colors32 at some point for performance
 			//see http://docs.unity3d.com/Documentation/ScriptReference/Mesh-colors32.html
 			_mesh.colors = _colors;
-			
 		}
 		else 
 		{
@@ -260,7 +259,7 @@ public class FRenderLayer
 				
 				#if UNITY_EDITOR
 					//some debug code so that layers are sorted by depth properly
-					_gameObject.name = "FRender"+_facetType.name+"Layer "+_depth+" ("+_stage.name+") ["+_nextAvailableFacetIndex+"/"+_maxFacetCount+"] (" + _atlas.name + " " + _shader.name+")";
+					_gameObject.name = "FRenderLayer "+_depth+" ("+_stage.name+") ["+_nextAvailableFacetIndex+"/"+_maxFacetCount+"] (" + _atlas.name + " " + _shader.name+" "+_facetType.name+ ")";
 				#endif
 			}
 		}
@@ -304,11 +303,13 @@ public class FRenderQuadLayer : FRenderLayer
 		{
 			int vertexIndex = z*4;	
 			//the high 1000000 Z should make them get culled and not rendered because they're behind the camera 
+			//need x to be 50 so they're "in screen" and not getting culled outside the bounds
+			//because once something is marked outside the bounds, it won't get rendered until the next mesh.Clear()
 			//TODO: test if the high z actually gives better performance or not
-			_vertices[vertexIndex + 0].Set(0,0,1000000);	
-			_vertices[vertexIndex + 1].Set(0,0,1000000);	
-			_vertices[vertexIndex + 2].Set(0,0,1000000);	
-			_vertices[vertexIndex + 3].Set(0,0,1000000);	
+			_vertices[vertexIndex + 0].Set(50,0,1000000);	
+			_vertices[vertexIndex + 1].Set(50,0,1000000);	
+			_vertices[vertexIndex + 2].Set(50,0,1000000);	
+			_vertices[vertexIndex + 3].Set(50,0,1000000);	
 		}
 		
 		_lowestZeroIndex = _nextAvailableFacetIndex;
@@ -369,10 +370,10 @@ public class FRenderQuadLayer : FRenderLayer
 }
 
 
-public class FRenderTriLayer : FRenderLayer
+public class FRenderTriangleLayer : FRenderLayer
 {
 	
-	public FRenderTriLayer (FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)  : base (stage,facetType,atlas,shader)
+	public FRenderTriangleLayer (FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)  : base (stage,facetType,atlas,shader)
 	{
 		
 	}
@@ -381,14 +382,18 @@ public class FRenderTriLayer : FRenderLayer
 	{
 		_lowestZeroIndex = Math.Max (_nextAvailableFacetIndex, Math.Min (_maxFacetCount,_lowestZeroIndex));
 		
+		//Debug.Log ("FILLING FROM " + _nextAvailableFacetIndex + " to " + _lowestZeroIndex + " with zeroes!");
+		
 		for(int z = _nextAvailableFacetIndex; z<_lowestZeroIndex; z++)
 		{
 			int vertexIndex = z*3;	
 			//the high 1000000 Z should make them get culled and not rendered because they're behind the camera 
+			//need x to be 50 so they're "in screen" and not getting culled outside the bounds
+			//because once something is marked outside the bounds, it won't get rendered until the next mesh.Clear()
 			//TODO: test if the high z actually gives better performance or not
-			_vertices[vertexIndex + 0].Set(0,0,1000000);	
-			_vertices[vertexIndex + 1].Set(0,0,1000000);	
-			_vertices[vertexIndex + 2].Set(0,0,1000000);	
+			_vertices[vertexIndex + 0].Set(50,0,1000000);	
+			_vertices[vertexIndex + 1].Set(50,0,1000000);	
+			_vertices[vertexIndex + 2].Set(50,0,1000000);
 		}
 		
 		_lowestZeroIndex = _nextAvailableFacetIndex;
@@ -431,9 +436,11 @@ public class FRenderTriLayer : FRenderLayer
 		//fill the triangles with the correct values
 		for(int i = firstNewFacetIndex; i<_maxFacetCount; ++i)
 		{
-			_triangles[i*6 + 0] = i * 4 + 0;	
-			_triangles[i*6 + 1] = i * 4 + 1;
-			_triangles[i*6 + 2] = i * 4 + 2;
+			int threei = i*3;
+			
+			_triangles[threei] = threei;	
+			_triangles[threei + 1] = threei + 1;
+			_triangles[threei + 2] = threei + 2;
 		}
 		
 		_didVertCountChange = true;
