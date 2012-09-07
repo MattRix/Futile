@@ -14,8 +14,8 @@ public class FLabel : FFacetNode
 	protected string _fontName;
 	protected string _text;
 	
-	protected Color _color = Color.white;
-	protected Color _alphaColor = Color.white;
+	protected Color _color = Futile.white;
+	protected Color _alphaColor = Futile.white;
 	
 	protected FLetterQuadLine[] _letterQuadLines;
 	

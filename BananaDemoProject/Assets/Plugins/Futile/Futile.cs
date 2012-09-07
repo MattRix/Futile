@@ -35,6 +35,9 @@ public class Futile : MonoBehaviour
 	
 	static public string resourceSuffix; //set based on the resLevel
 	
+	//default element, a 16x16 white texture
+	static public FAtlasElement whiteElement;
+	static public Color white = Color.white; //unlike Futile.white, it doesn't create a new color every time
 	
 	static internal int nextRenderLayerDepth = 0;
 	
@@ -54,6 +57,7 @@ public class Futile : MonoBehaviour
 	
 
 	private FutileParams _futileParams;
+	
 	
 	
 	
@@ -106,11 +110,48 @@ public class Futile : MonoBehaviour
 		
 		atlasManager = new FAtlasManager();
 		
+		CreateDefaultAtlases();
+		
+		
 		_stages = new List<FStage>();
 		
 		stage = new FStage("Futile.stage");
 		
 		AddStage (stage);
+	}
+
+	public void CreateDefaultAtlases()
+	{
+		//atlas of plain white
+		
+		Texture2D plainWhiteTex = new Texture2D(16,16);
+		plainWhiteTex.filterMode = FilterMode.Bilinear;
+		plainWhiteTex.wrapMode = TextureWrapMode.Clamp;
+		
+		Color white = Futile.white;
+		//Color clear = new Color(1,1,1,0);
+		
+		for(int r = 0; r<16; r++)
+		{
+			for(int c = 0; c<16; c++)
+			{
+//				if(c == 0 || r  == 0) //clear the 0 edges
+//				{
+//					plainWhiteTex.SetPixel(c,r,clear);
+//				}
+//				else 
+//				{
+					plainWhiteTex.SetPixel(c,r,white);
+//				}
+			}
+		}
+		
+		
+		plainWhiteTex.Apply();
+		
+		atlasManager.LoadAtlasFromTexture("Futile_White",plainWhiteTex);
+		
+		whiteElement = atlasManager.GetElementWithName("Futile_White");
 	}
 	
 	static public void AddStage(FStage stageToAdd)
@@ -201,9 +242,10 @@ public class Futile : MonoBehaviour
 	private void Update()
 	{
 		screen.Update();
-		touchManager.Update();
 		
 		if(SignalUpdate != null) SignalUpdate();
+		
+		touchManager.Update();
 		
 		for(int s = 0; s<_stages.Count; s++)
 		{

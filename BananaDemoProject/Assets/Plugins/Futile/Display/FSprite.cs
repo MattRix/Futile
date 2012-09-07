@@ -6,8 +6,8 @@ public class FSprite : FFacetNode
 	public static float defaultAnchorX = 0.5f;
 	public static float defaultAnchorY = 0.5f;
 	
-	protected Color _color = Color.white;
-	protected Color _alphaColor = Color.white;
+	protected Color _color = Futile.white;
+	protected Color _alphaColor = Futile.white;
 	
 	protected Vector2[] _localVertices = new Vector2[4];
 	
@@ -33,7 +33,6 @@ public class FSprite : FFacetNode
 		
 		UpdateLocalVertices();
 	}
-	
 	
 	override public void HandleElementChanged()
 	{
