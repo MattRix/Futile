@@ -64,8 +64,11 @@ public class FNode
 		
 	}
 	
+	//TODO: create LocalToScreen()
 	public Vector2 ScreenToLocal(Vector2 screenVector) //for transforming mouse or touch directly
 	{
+		UpdateMatrix();
+		
 		float touchScale = 1.0f/Futile.displayScale;
 		
 		//the offsets account for the camera's 0,0 point (eg, center, bottom left, etc.)
@@ -79,23 +82,27 @@ public class FNode
 	
 	public Vector2 LocalToStage(Vector2 localVector)
 	{
+		UpdateMatrix();
 		return _concatenatedMatrix.GetNewTransformedVector(localVector);
 	}
 	
 	public Vector2 StageToLocal(Vector2 globalVector) 
 	{
+		UpdateMatrix();
 		//using "this" so the getter is called (because it checks if the matrix exists and lazy inits it if it doesn't)
 		return this.inverseConcatenatedMatrix.GetNewTransformedVector(globalVector);
 	}
 	
 	public Vector2 LocalToGlobal(Vector2 localVector)
 	{
+		UpdateMatrix();
 		//using "this" so the getter is called (because it checks if the matrix exists and lazy inits it if it doesn't)
 		return this.screenConcatenatedMatrix.GetNewTransformedVector(localVector);
 	}
 	
 	public Vector2 GlobalToLocal(Vector2 globalVector)
 	{
+		UpdateMatrix();
 		//using "this" so the getter is called (because it checks if the matrix exists and lazy inits it if it doesn't)
 		return this.screenInverseConcatenatedMatrix.GetNewTransformedVector(globalVector);
 	}
