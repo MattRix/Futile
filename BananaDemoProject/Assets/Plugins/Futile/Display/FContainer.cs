@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class FContainer : FNode
 {
-	protected List<FNode> _childNodes = new List<FNode>();
+	protected List<FNode> _childNodes = new List<FNode>(5);
 	
 	private int _oldChildNodesHash = 0;
 	
