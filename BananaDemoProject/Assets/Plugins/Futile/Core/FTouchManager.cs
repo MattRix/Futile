@@ -23,7 +23,7 @@ public interface FSingleTouchableInterface
 
 	void HandleSingleTouchCanceled(FTouch touch);
 	
-	int touchPriority
+	int touchPriority //FNodes have this defined by default
 	{
 		get;	
 	}
