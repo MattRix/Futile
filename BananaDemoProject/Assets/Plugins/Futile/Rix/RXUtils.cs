@@ -139,6 +139,11 @@ public class RXRandom
 		return (float)_randomSource.NextDouble();
 	}
 	
+	public static double Double()
+	{
+		return _randomSource.NextDouble();
+	}
+	
 	public static float Float(float max)
 	{
 		return (float)_randomSource.NextDouble() * max;
