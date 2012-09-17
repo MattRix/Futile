@@ -77,7 +77,7 @@ public class FContainer : FNode
 	{
 		if(SortByZ()) //sort the order, and then if the child order was changed, rearrange the quads
 		{
-			_stage.HandleFacetsChanged();	
+			if(_isOnStage) _stage.HandleFacetsChanged();	
 		}
 	}
 	
