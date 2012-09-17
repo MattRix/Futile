@@ -44,7 +44,10 @@ public class FContainer : FNode
 				childNode.HandleAddedToStage();	
 			}
 			
-			if(_shouldSortByZ) Futile.instance.SignalUpdate += HandleUpdate;
+			if(_shouldSortByZ) 
+			{
+				Futile.instance.SignalUpdate += HandleUpdateAndSort;
+			}
 		}
 		
 	}
@@ -62,14 +65,17 @@ public class FContainer : FNode
 				childNode.HandleRemovedFromStage();	
 				childNode.stage = null;
 			}
+			
+			if(_shouldSortByZ)
+			{
+				Futile.instance.SignalUpdate -= HandleUpdateAndSort;
+			}
 		}
-		
-		Futile.instance.SignalUpdate -= HandleUpdate;
 	}
 	
-	private void HandleUpdate()
+	private void HandleUpdateAndSort()
 	{
-		if(SortByZ()) //if the child order was changed, rearrange the quads
+		if(SortByZ()) //sort the order, and then if the child order was changed, rearrange the quads
 		{
 			_stage.HandleFacetsChanged();	
 		}
@@ -172,11 +178,17 @@ public class FContainer : FNode
 				
 				if(_shouldSortByZ)
 				{
-					if(_isOnStage) Futile.instance.SignalUpdate += HandleUpdate;
+					if(_isOnStage) 
+					{
+						Futile.instance.SignalUpdate += HandleUpdateAndSort;
+					}
 				}
 				else 
 				{
-					if(_isOnStage) Futile.instance.SignalUpdate -= HandleUpdate;
+					if(_isOnStage) 
+					{
+						Futile.instance.SignalUpdate -= HandleUpdateAndSort;
+					}
 				}
 			}
 		}
