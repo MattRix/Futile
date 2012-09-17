@@ -296,41 +296,21 @@ public class FFont
 					}
 				}
 
-				if(element.isRotated)
-				{
-					Rect uvRect = new Rect 	
-					(
-						_element.uvRect.x + _element.uvRect.width - ((charInfo.y+charInfo.height+0.5f)/textureSize.x*resourceScale),
-						_element.uvRect.y + _element.uvRect.height - ((charInfo.x+charInfo.width+0.5f)/textureSize.y*resourceScale),
-						charInfo.height/textureSize.x*resourceScale,
-						charInfo.width/textureSize.y*resourceScale
-					);
-					
-					charInfo.uvRect = uvRect;
-					
-					charInfo.uvBottomLeft.Set(uvRect.xMin,uvRect.yMax);
-					charInfo.uvTopLeft.Set(uvRect.xMax,uvRect.yMax);
-					charInfo.uvTopRight.Set(uvRect.xMax,uvRect.yMin);
-					charInfo.uvBottomRight.Set(uvRect.xMin,uvRect.yMin);
-				}
-				else
-				{
-					Rect uvRect = new Rect 	
-					(
-						_element.uvRect.x + charInfo.x/textureSize.x*resourceScale,
-						(textureSize.y-charInfo.y-charInfo.height)/textureSize.y*resourceScale - (1.0f - _element.uvRect.yMax),
-						charInfo.width/textureSize.x*resourceScale,
-						charInfo.height/textureSize.y*resourceScale
-					);
+				Rect uvRect = new Rect 	
+				(
+					_element.uvRect.x + charInfo.x/textureSize.x*resourceScale,
+					(textureSize.y-charInfo.y-charInfo.height)/textureSize.y*resourceScale - (1.0f - _element.uvRect.yMax),
+					charInfo.width/textureSize.x*resourceScale,
+					charInfo.height/textureSize.y*resourceScale
+				);
+			
+				charInfo.uvRect = uvRect;
 				
-					charInfo.uvRect = uvRect;
-					
-					charInfo.uvTopLeft.Set(uvRect.xMin,uvRect.yMax);
-					charInfo.uvTopRight.Set(uvRect.xMax,uvRect.yMax);
-					charInfo.uvBottomRight.Set(uvRect.xMax,uvRect.yMin);
-					charInfo.uvBottomLeft.Set(uvRect.xMin,uvRect.yMin);
-				}
-				
+				charInfo.uvTopLeft.Set(uvRect.xMin,uvRect.yMax);
+				charInfo.uvTopRight.Set(uvRect.xMax,uvRect.yMax);
+				charInfo.uvBottomRight.Set(uvRect.xMax,uvRect.yMin);
+				charInfo.uvBottomLeft.Set(uvRect.xMin,uvRect.yMin);
+
 				_charInfosByID[charInfo.charID] = charInfo;
 				_charInfos[c] = charInfo;
 				
