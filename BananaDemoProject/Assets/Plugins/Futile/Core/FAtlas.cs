@@ -164,7 +164,12 @@ public class FAtlas
 			IDictionary itemDict = (IDictionary)item.Value;
 			
 			element.isTrimmed = (bool)itemDict["trimmed"];
-			element.isRotated = (bool)itemDict["rotated"];			
+			element.isRotated = (bool)itemDict["rotated"];		
+			
+			if(element.isRotated)
+			{
+				throw new NotSupportedException("Futile no longer supports TexturePacker's \"rotated\" flag. Please disable it when creating your atlases.");
+			}
 			
 			IDictionary frame = (IDictionary)itemDict["frame"];
 			
