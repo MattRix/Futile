@@ -2,8 +2,8 @@
 
 "JungleBlurryBG.png":
 {
-	"frame": {"x":537,"y":254,"w":530,"h":390},
-	"rotated": true,
+	"frame": {"x":3,"y":397,"w":530,"h":390},
+	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":530,"h":390},
 	"sourceSize": {"w":530,"h":390}
@@ -31,6 +31,6 @@
 	"format": "RGBA8888",
 	"size": {"w":1024,"h":1024},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:adf2f7419188e0525fba3f2e5b62deb6$"
+	"smartupdate": "$TexturePacker:SmartUpdate:94fff9891b0b5b4ac9755a90ae40a410$"
 }
 }

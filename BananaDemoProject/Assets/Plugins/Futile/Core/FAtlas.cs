@@ -45,7 +45,6 @@ public class FAtlasElement
 		element.sourceRect = sourceRect;
 		element.sourceSize = sourceSize;
 		element.isTrimmed = isTrimmed;
-		element.isRotated = isRotated;
 		
 		return element;
 	}
@@ -164,11 +163,10 @@ public class FAtlas
 			IDictionary itemDict = (IDictionary)item.Value;
 			
 			element.isTrimmed = (bool)itemDict["trimmed"];
-			element.isRotated = (bool)itemDict["rotated"];		
 			
-			if(element.isRotated)
+			if((bool)itemDict["rotated"])
 			{
-				throw new NotSupportedException("Futile no longer supports TexturePacker's \"rotated\" flag. Please disable it when creating your atlases.");
+				throw new NotSupportedException("Futile no longer supports TexturePacker's \"rotated\" flag. Please disable it when creating the "+_dataPath+" atlas.");
 			}
 			
 			IDictionary frame = (IDictionary)itemDict["frame"];
@@ -252,7 +250,6 @@ public class FAtlas
 		
 		element.sourceSize = new Vector2(_textureSize.x*scaleInverse,_textureSize.y*scaleInverse);
 		element.isTrimmed = false;
-		element.isRotated = false;
 		
 		_elements.Add (element);
 		_elementsByName.Add (element.name, element);
