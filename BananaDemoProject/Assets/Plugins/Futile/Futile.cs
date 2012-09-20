@@ -58,6 +58,8 @@ public class Futile : MonoBehaviour
 
 	private FutileParams _futileParams;
 	
+	public bool shouldRunGCNextUpdate = false;
+	
 	
 	
 	
@@ -253,6 +255,12 @@ public class Futile : MonoBehaviour
 		}
 		
 		_isDepthChangeNeeded = false;
+		
+		if(shouldRunGCNextUpdate)
+		{
+			shouldRunGCNextUpdate = false;	
+			GC.Collect();
+		}
 	}
 	
 	private void LateUpdate()
