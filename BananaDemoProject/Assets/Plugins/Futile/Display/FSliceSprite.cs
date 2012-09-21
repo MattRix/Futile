@@ -29,13 +29,16 @@ public class FSliceSprite : FSprite
 		_insetBottom = insetBottom;
 		_insetLeft = insetLeft;
 		
-		Init(FFacetType.Quad, element,1);
+		Init(FFacetType.Quad, element,0); //this will call HandleElementChanged(), which will call SetupSlices();
 		
 		_isAlphaDirty = true;
 		
-		SetupSlices();
-		
 		UpdateLocalVertices();
+	}
+	
+	override public void HandleElementChanged()
+	{
+		SetupSlices();
 	}
 
 	public void SetupSlices ()
@@ -64,7 +67,11 @@ public class FSliceSprite : FSprite
 		
 		_areLocalVerticesDirty = true;
 		
-		if(_isOnStage) _stage.HandleFacetsChanged();
+		if(_numberOfFacetsNeeded != _sliceCount)
+		{
+			_numberOfFacetsNeeded = _sliceCount;
+			if(_isOnStage) _stage.HandleFacetsChanged();
+		}
 	}
 	
 	override public void UpdateLocalVertices()
