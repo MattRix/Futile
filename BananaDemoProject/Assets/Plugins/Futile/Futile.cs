@@ -122,6 +122,15 @@ public class Futile : MonoBehaviour
 		AddStage (stage);
 	}
 	
+	static public Vector2 MousePosition() {
+		float touchScale = 1.0f/Futile.displayScale;
+		
+		float offsetX = -Futile.screen.originX * Futile.screen.pixelWidth;
+		float offsetY = -Futile.screen.originY * Futile.screen.pixelHeight;
+		
+		return new Vector2((Input.mousePosition.x+offsetX)*touchScale, (Input.mousePosition.y+offsetY)*touchScale);	
+	}
+	
 	static public void AddStage(FStage stageToAdd)
 	{
 		int stageIndex = _stages.IndexOf(stageToAdd);

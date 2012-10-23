@@ -85,15 +85,6 @@ public class FButton : FContainer, FSingleTouchableInterface
 	{
 		get {return _label;}
 	}
-	
-	protected Vector2 MousePosition() {
-		float touchScale = 1.0f/Futile.displayScale;
-		
-		float offsetX = -Futile.screen.originX * Futile.screen.pixelWidth;
-		float offsetY = -Futile.screen.originY * Futile.screen.pixelHeight;
-		
-		return new Vector2((Input.mousePosition.x+offsetX)*touchScale, (Input.mousePosition.y+offsetY)*touchScale);	
-	}
 
 	override public void HandleAddedToStage()
 	{
@@ -116,7 +107,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 	protected void UpdateHoverState() {
 		if (_hoverElement == null || !_shouldCheckForHoverState) return;
 		
-		Vector2 touchPos = _bg.GlobalToLocal(MousePosition());
+		Vector2 touchPos = _bg.GlobalToLocal(Futile.MousePosition());
 		
 		Rect expandedRect = _bg.textureRect.CloneWithExpansion(expansionAmount);
 		
