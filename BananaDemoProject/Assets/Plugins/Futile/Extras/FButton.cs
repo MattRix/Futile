@@ -6,10 +6,13 @@ public class FButton : FContainer, FSingleTouchableInterface
 {
 	protected FAtlasElement _upElement;
 	protected FAtlasElement _downElement;
+	protected FAtlasElement _hoverElement;
 	protected FSprite _bg;
 	protected string _soundName;
 	protected FLabel _label;
-
+	protected bool _shouldCheckForHoverState = true;
+	
+	public bool shouldReturnToUpElementAfterTouch = true;
 	public event Action<FButton> SignalPress;
 	public event Action<FButton> SignalRelease;
 	public event Action<FButton> SignalReleaseOutside;
@@ -19,10 +22,11 @@ public class FButton : FContainer, FSingleTouchableInterface
 	
 	public float expansionAmount = 10;
 
-	public FButton (string upElementName, string downElementName, string soundName)
+	public FButton (string upElementName, string downElementName, string hoverElementName, string soundName)
 	{
 		_upElement = Futile.atlasManager.GetElementWithName(upElementName);
 		_downElement = Futile.atlasManager.GetElementWithName(downElementName);
+		_hoverElement = Futile.atlasManager.GetElementWithName(hoverElementName);
 		_bg = new FSprite(_upElement.name);
 		_bg.anchorX = _anchorX;
 		_bg.anchorY = _anchorY;
@@ -31,8 +35,8 @@ public class FButton : FContainer, FSingleTouchableInterface
 		_soundName = soundName;
 	}
 	// Simpler constructors
-	public FButton (string upImage, string downImage) : this(upImage, downImage, null) {}
-	public FButton (string upImage) : this(upImage, upImage, null) {}
+	public FButton (string upImage, string downImage) : this(upImage, downImage, null, null) {}
+	public FButton (string upImage) : this(upImage, upImage, null, null) {}
 
 	public FSprite sprite
 	{
@@ -85,17 +89,42 @@ public class FButton : FContainer, FSingleTouchableInterface
 	override public void HandleAddedToStage()
 	{
 		base.HandleAddedToStage();	
+		Futile.instance.SignalUpdate += HandleUpdate;
 		Futile.touchManager.AddSingleTouchTarget(this);
 	}
 	
 	override public void HandleRemovedFromStage()
 	{
-		base.HandleRemovedFromStage();	
+		base.HandleRemovedFromStage();
+		Futile.instance.SignalUpdate -= HandleUpdate;
 		Futile.touchManager.RemoveSingleTouchTarget(this);
+	}
+	
+	public void HandleUpdate() {
+		UpdateHoverState();
+	}
+	
+	protected void UpdateHoverState() {
+		if (_hoverElement == null || !_shouldCheckForHoverState) return;
+		
+		Vector2 touchPos = _bg.GlobalToLocal(Futile.MousePosition());
+		
+		Rect expandedRect = _bg.textureRect.CloneWithExpansion(expansionAmount);
+		
+		if(expandedRect.Contains(touchPos))
+		{
+			_bg.element = _hoverElement;	
+		}
+		else
+		{
+			_bg.element = _upElement;	
+		}
 	}
 	
 	public bool HandleSingleTouchBegan(FTouch touch)
 	{
+		_shouldCheckForHoverState = false;
+		
 		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
 		
 		if(_bg.textureRect.Contains(touchPos))
@@ -132,7 +161,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 	
 	public void HandleSingleTouchEnded(FTouch touch)
 	{
-		_bg.element = _upElement;
+		if (shouldReturnToUpElementAfterTouch) _bg.element = _upElement;
 		
 		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
 		
@@ -147,6 +176,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 		else
 		{
 			if(SignalReleaseOutside != null) SignalReleaseOutside(this);	
+			_shouldCheckForHoverState = true;
 		}
 	}
 	
@@ -154,6 +184,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 	{
 		_bg.element = _upElement;
 		if(SignalReleaseOutside != null) SignalReleaseOutside(this);
+		_shouldCheckForHoverState = true;
 	}
 	
 	
