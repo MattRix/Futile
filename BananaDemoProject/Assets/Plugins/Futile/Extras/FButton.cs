@@ -63,7 +63,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 		get {return _anchorY;}
 	}
 
-	public void AddLabel (string fontName, string text, Color color)
+	public FLabel AddLabel (string fontName, string text, Color color)
 	{
 		if(_label != null) 
 		{
@@ -76,7 +76,8 @@ public class FButton : FContainer, FSingleTouchableInterface
 		_label.anchorX = _label.anchorY = 0.5f;
 		_label.x = -_anchorX*_bg.width+_bg.width/2;
 		_label.y = -_anchorY*_bg.height+_bg.height/2;
-		//Debug.Log("Label height:"+_label.
+		
+		return _label;
 	}
 
 	public FLabel label
