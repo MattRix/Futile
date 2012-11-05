@@ -22,7 +22,7 @@ public class FSprite : FFacetNode
 	
 	protected FSprite() : base() //for overriding
 	{
-		
+		_localVertices = new Vector2[4];
 	}
 	
 	public FSprite (string elementName) : this(Futile.atlasManager.GetElementWithName(elementName))
