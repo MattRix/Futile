@@ -6,8 +6,11 @@ public class FButton : FContainer, FSingleTouchableInterface
 {
 	protected FAtlasElement _upElement;
 	protected FAtlasElement _downElement;
+	protected FAtlasElement _overElement;
+	
 	protected FSprite _bg;
-	protected string _soundName;
+	protected string _clickSoundName;
+	protected string _overSoundName;
 	protected FLabel _label;
 
 	public event Action<FButton> SignalPress;
@@ -20,21 +23,44 @@ public class FButton : FContainer, FSingleTouchableInterface
 	public float expansionAmount = 10;
 	
 	private bool _isEnabled = true;
-
-	public FButton (string upElementName, string downElementName, string soundName)
+	
+	private bool _supportsOver = false;
+	
+	private bool _isTouchDown = false;
+	
+	public FButton (string upElementName, string downElementName, string overElementName, string clickSoundName, string overSoundName)
 	{
 		_upElement = Futile.atlasManager.GetElementWithName(upElementName);
 		_downElement = Futile.atlasManager.GetElementWithName(downElementName);
+		
+		if(overElementName != null)
+		{
+			_overElement = Futile.atlasManager.GetElementWithName(overElementName);
+			_supportsOver = true;
+			
+			_overSoundName = overSoundName;
+		}
+		
 		_bg = new FSprite(_upElement.name);
 		_bg.anchorX = _anchorX;
 		_bg.anchorY = _anchorY;
 		AddChild(_bg);
 
-		_soundName = soundName;
+		_clickSoundName = clickSoundName;
 	}
+	
 	// Simpler constructors
-	public FButton (string upImage, string downImage) : this(upImage, downImage, null) {}
-	public FButton (string upImage) : this(upImage, upImage, null) {}
+	public FButton (string upImage) : 
+		this(upImage, upImage, null, null) {}
+	
+	public FButton (string upImage, string downImage) : 
+		this(upImage, downImage, null, null) {}
+	
+	public FButton (string upImage, string downImage, string clickSoundName) : 
+		this(upImage, downImage, null, clickSoundName) {}
+	
+	public FButton (string upImage, string downImage, string overImage, string clickSoundName) : 
+		this(upImage,downImage,overImage,clickSoundName,null) {}
 
 	public FSprite sprite
 	{
@@ -89,16 +115,53 @@ public class FButton : FContainer, FSingleTouchableInterface
 	{
 		base.HandleAddedToStage();	
 		Futile.touchManager.AddSingleTouchTarget(this);
+		
+		if(_supportsOver)
+		{
+			Futile.instance.SignalUpdate += HandleUpdate;
+		}
 	}
 	
 	override public void HandleRemovedFromStage()
 	{
 		base.HandleRemovedFromStage();	
 		Futile.touchManager.RemoveSingleTouchTarget(this);
+		
+		if(_supportsOver)
+		{
+			Futile.instance.SignalUpdate -= HandleUpdate;
+		}
+	}
+	
+	private void HandleUpdate()
+	{
+		UpdateOverState();
+	}
+	
+	private void UpdateOverState()
+	{
+		if(_isTouchDown) return; //if the touch is down then we don't have to worry about over states
+		
+		Vector2 mousePos = GetLocalMousePosition();
+		
+		if(_bg.textureRect.Contains(mousePos))
+		{
+			if(_bg.element != _overElement)
+			{
+				_bg.element = _overElement;
+				if(_overSoundName != null) FSoundManager.PlaySound(_overSoundName);	
+			}
+		}
+		else 
+		{
+			_bg.element = _upElement;
+		}
 	}
 	
 	public bool HandleSingleTouchBegan(FTouch touch)
 	{
+		_isTouchDown = false;
+		
 		if(!_isEnabled) return false;
 		
 		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
@@ -107,9 +170,11 @@ public class FButton : FContainer, FSingleTouchableInterface
 		{
 			_bg.element = _downElement;
 			
-			if(_soundName != null) FSoundManager.PlaySound(_soundName);
+			if(_clickSoundName != null) FSoundManager.PlaySound(_clickSoundName);
 			
 			if(SignalPress != null) SignalPress(this);
+			
+			_isTouchDown = true;
 			
 			return true;	
 		}
@@ -128,15 +193,19 @@ public class FButton : FContainer, FSingleTouchableInterface
 		if(expandedRect.Contains(touchPos))
 		{
 			_bg.element = _downElement;	
+			_isTouchDown = true;
 		}
 		else
 		{
 			_bg.element = _upElement;	
+			_isTouchDown = false;
 		}
 	}
 	
 	public void HandleSingleTouchEnded(FTouch touch)
 	{
+		_isTouchDown = false;
+		
 		_bg.element = _upElement;
 		
 		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
@@ -148,6 +217,11 @@ public class FButton : FContainer, FSingleTouchableInterface
 		if(expandedRect.Contains(touchPos))
 		{
 			if(SignalRelease != null) SignalRelease(this);
+			
+			if(_supportsOver && _bg.textureRect.Contains(touchPos)) //go back to the over image if we're over the button
+			{
+				_bg.element = _overElement;	
+			}
 		}
 		else
 		{
@@ -157,6 +231,8 @@ public class FButton : FContainer, FSingleTouchableInterface
 	
 	public void HandleSingleTouchCanceled(FTouch touch)
 	{
+		_isTouchDown = false;
+		
 		_bg.element = _upElement;
 		if(SignalReleaseOutside != null) SignalReleaseOutside(this);
 	}
@@ -169,13 +245,6 @@ public class FButton : FContainer, FSingleTouchableInterface
 			if(_isEnabled != value)
 			{
 				_isEnabled = value;
-				
-				if(_isEnabled)
-				{
-				}
-				else
-				{
-				}
 			}
 		}
 	}
