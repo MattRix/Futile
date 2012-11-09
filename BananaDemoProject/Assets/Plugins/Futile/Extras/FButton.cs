@@ -4,6 +4,8 @@ using System;
 
 public class FButton : FContainer, FSingleTouchableInterface
 {
+	private Rect _hitRect;
+	
 	protected FAtlasElement _upElement;
 	protected FAtlasElement _downElement;
 	protected FAtlasElement _overElement;
@@ -22,9 +24,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 	public float expansionAmount = 10;
 	
 	private bool _isEnabled = true;
-	
 	private bool _supportsOver = false;
-	
 	private bool _isTouchDown = false;
 	
 	public FButton (string upElementName, string downElementName, string overElementName, string clickSoundName)
@@ -42,6 +42,8 @@ public class FButton : FContainer, FSingleTouchableInterface
 		_bg.anchorX = _anchorX;
 		_bg.anchorY = _anchorY;
 		AddChild(_bg);
+		
+		_hitRect = _bg.textureRect;
 
 		_clickSoundName = clickSoundName;
 	}
@@ -138,7 +140,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 		
 		Vector2 mousePos = GetLocalMousePosition();
 		
-		if(_bg.textureRect.Contains(mousePos))
+		if(_hitRect.Contains(mousePos))
 		{
 			_bg.element = _overElement;
 		}
@@ -156,7 +158,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 		
 		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
 		
-		if(_bg.textureRect.Contains(touchPos))
+		if(_hitRect.Contains(touchPos))
 		{
 			_bg.element = _downElement;
 			
@@ -178,7 +180,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 		
 		//expand the hitrect so that it has more error room around the edges
 		//this is what Apple does on iOS and it makes for better usability
-		Rect expandedRect = _bg.textureRect.CloneWithExpansion(expansionAmount);
+		Rect expandedRect = _hitRect.CloneWithExpansion(expansionAmount);
 		
 		if(expandedRect.Contains(touchPos))
 		{
@@ -202,13 +204,13 @@ public class FButton : FContainer, FSingleTouchableInterface
 		
 		//expand the hitrect so that it has more error room around the edges
 		//this is what Apple does on iOS and it makes for better usability
-		Rect expandedRect = _bg.textureRect.CloneWithExpansion(expansionAmount);
+		Rect expandedRect = _hitRect.CloneWithExpansion(expansionAmount);
 		
 		if(expandedRect.Contains(touchPos))
 		{
 			if(SignalRelease != null) SignalRelease(this);
 			
-			if(_supportsOver && _bg.textureRect.Contains(touchPos)) //go back to the over image if we're over the button
+			if(_supportsOver && _hitRect.Contains(touchPos)) //go back to the over image if we're over the button
 			{
 				_bg.element = _overElement;	
 			}
@@ -236,6 +238,18 @@ public class FButton : FContainer, FSingleTouchableInterface
 			{
 				_isEnabled = value;
 			}
+		}
+	}
+	
+	
+	//you can set a custom hitRect to be used instead of the upElement's rect
+	//it's important to remember that the hitRect is in local coordinates
+	public Rect hitRect
+	{
+		get {return _hitRect;}
+		set 
+		{
+			_hitRect = value; 
 		}
 	}
 	
