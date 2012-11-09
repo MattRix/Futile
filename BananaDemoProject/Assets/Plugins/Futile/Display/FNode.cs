@@ -64,18 +64,36 @@ public class FNode
 		
 	}
 	
-	//TODO: create LocalToScreen()
-	public Vector2 ScreenToLocal(Vector2 screenVector) //for transforming mouse or touch directly
+	public Vector2 LocalToScreen(Vector2 localVector) //for sending local points back to screen coords
 	{
 		UpdateMatrix();
-		
-		float touchScale = 1.0f/Futile.displayScale;
 		
 		//the offsets account for the camera's 0,0 point (eg, center, bottom left, etc.)
 		float offsetX = -Futile.screen.originX * Futile.screen.pixelWidth;
 		float offsetY = -Futile.screen.originY * Futile.screen.pixelHeight;
 		
-		screenVector = new Vector2((screenVector.x+offsetX)*touchScale, (screenVector.y+offsetY)*touchScale);
+		localVector = this.screenConcatenatedMatrix.GetNewTransformedVector(localVector);
+		
+		return new Vector2
+		(
+			(localVector.x/Futile.displayScaleInverse) - offsetX, 
+			(localVector.y/Futile.displayScaleInverse) - offsetY
+		);
+	}
+	
+	public Vector2 ScreenToLocal(Vector2 screenVector) //for transforming mouse or touch points to local coords
+	{
+		UpdateMatrix();
+		
+		//the offsets account for the camera's 0,0 point (eg, center, bottom left, etc.)
+		float offsetX = -Futile.screen.originX * Futile.screen.pixelWidth;
+		float offsetY = -Futile.screen.originY * Futile.screen.pixelHeight;
+		
+		screenVector = new Vector2
+		(
+			(screenVector.x+offsetX)*Futile.displayScaleInverse, 
+			(screenVector.y+offsetY)*Futile.displayScaleInverse
+		);
 		
 		return this.screenInverseConcatenatedMatrix.GetNewTransformedVector(screenVector);
 	}
