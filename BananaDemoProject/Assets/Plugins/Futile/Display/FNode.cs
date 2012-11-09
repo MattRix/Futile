@@ -61,7 +61,6 @@ public class FNode
 		_matrix = new FMatrix();
 		_concatenatedMatrix = new FMatrix();
 		_isMatrixDirty = false;
-		
 	}
 	
 	public Vector2 LocalToScreen(Vector2 localVector) //for sending local points back to screen coords
@@ -128,6 +127,11 @@ public class FNode
 	public Vector2 LocalToLocal(FNode otherNode, Vector2 otherVector) //returns the position in THIS node of a point in the OTHER node 
 	{
 		return GlobalToLocal(otherNode.LocalToGlobal(otherVector));
+	}
+	
+	public Vector2 GetLocalMousePosition()
+	{
+		return ScreenToLocal(Input.mousePosition);	
 	}
 	
 	public void UpdateMatrix()
