@@ -44,7 +44,7 @@ public class BScorePage : BPage
 		_monkey.x = -5.0f;
 		_monkey.y = -2.0f;
 		
-		_againButton = new FButton("YellowButton_normal.png", "YellowButton_over.png", "ClickSound");
+		_againButton = new FButton("YellowButton_normal.png", "YellowButton_down.png", "YellowButton_over.png", "ClickSound");
 		_againButton.AddLabel("Franchise","AGAIN?",new Color(0.45f,0.25f,0.0f,1.0f));
 		
 		AddChild(_againButton);

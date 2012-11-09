@@ -58,7 +58,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		AddChild(_bananaContainer); 
 		
 		
-		_closeButton = new FButton("CloseButton_normal.png", "CloseButton_over.png", "ClickSound");
+		_closeButton = new FButton("CloseButton_normal.png", "CloseButton_down.png","CloseButton_over.png", "ClickSound");
 		AddChild(_closeButton);
 		
 		

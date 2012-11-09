@@ -46,7 +46,7 @@ public class BTitlePage : BPage
 		
 		_logoHolder.AddChild(_logo);
 		
-		_startButton = new FButton("YellowButton_normal.png", "YellowButton_over.png", "ClickSound");
+		_startButton = new FButton("YellowButton_normal.png", "YellowButton_down.png", "YellowButton_over.png", "ClickSound");
 		_startButton.AddLabel("Franchise","START",new Color(0.45f,0.25f,0.0f,1.0f));
 		
 		AddChild(_startButton);
