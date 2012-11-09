@@ -10,7 +10,6 @@ public class FButton : FContainer, FSingleTouchableInterface
 	
 	protected FSprite _bg;
 	protected string _clickSoundName;
-	protected string _overSoundName;
 	protected FLabel _label;
 
 	public event Action<FButton> SignalPress;
@@ -28,7 +27,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 	
 	private bool _isTouchDown = false;
 	
-	public FButton (string upElementName, string downElementName, string overElementName, string clickSoundName, string overSoundName)
+	public FButton (string upElementName, string downElementName, string overElementName, string clickSoundName)
 	{
 		_upElement = Futile.atlasManager.GetElementWithName(upElementName);
 		_downElement = Futile.atlasManager.GetElementWithName(downElementName);
@@ -37,8 +36,6 @@ public class FButton : FContainer, FSingleTouchableInterface
 		{
 			_overElement = Futile.atlasManager.GetElementWithName(overElementName);
 			_supportsOver = true;
-			
-			_overSoundName = overSoundName;
 		}
 		
 		_bg = new FSprite(_upElement.name);
@@ -58,9 +55,6 @@ public class FButton : FContainer, FSingleTouchableInterface
 	
 	public FButton (string upImage, string downImage, string clickSoundName) : 
 		this(upImage, downImage, null, clickSoundName) {}
-	
-	public FButton (string upImage, string downImage, string overImage, string clickSoundName) : 
-		this(upImage,downImage,overImage,clickSoundName,null) {}
 
 	public FSprite sprite
 	{
@@ -146,11 +140,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 		
 		if(_bg.textureRect.Contains(mousePos))
 		{
-			if(_bg.element != _overElement)
-			{
-				_bg.element = _overElement;
-				if(_overSoundName != null) FSoundManager.PlaySound(_overSoundName);	
-			}
+			_bg.element = _overElement;
 		}
 		else 
 		{
