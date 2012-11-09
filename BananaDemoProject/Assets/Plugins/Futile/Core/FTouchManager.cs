@@ -59,6 +59,7 @@ public class FTouchManager
 		Input.multiTouchEnabled = true;
 	
 		//this just makes sure mouse emulation is off on iOS and Android
+		//this may eventually cause problems on devices that support both mouse and touch
 		
 		#if UNITY_ANDROID
 			shouldMouseEmulateTouch = false;
