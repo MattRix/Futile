@@ -75,7 +75,11 @@ public class FRenderLayer
 		
 		_meshRenderer.renderer.material = _material;
 		
-		_gameObject.active = false;
+		#if UNITY_3_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
+			_gameObject.active = false;
+		#else
+			_gameObject.activeSelf = false;
+		#endif
 		
 		ExpandMaxFacetLimit(_facetType.initialAmount);
 		
@@ -102,12 +106,20 @@ public class FRenderLayer
 	
 	public void AddToWorld () //add to the transform etc
 	{
-		_gameObject.active = true;
+		#if UNITY_3_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
+			_gameObject.active = true;
+		#else
+			_gameObject.activeSelf = true;
+		#endif
 	}
 	
 	public void RemoveFromWorld() //remove it from the root transform etc
 	{
-		_gameObject.active = false;
+		#if UNITY_3_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
+			_gameObject.active = false;
+		#else
+			_gameObject.activeSelf = false;
+		#endif
 		#if UNITY_EDITOR
 			//some debug code so that layers are sorted by depth properly
 			_gameObject.name = "FRenderLayer X ("+_stage.name+") (" + _atlas.name + " " + _shader.name+" "+_facetType.name+ ")";
