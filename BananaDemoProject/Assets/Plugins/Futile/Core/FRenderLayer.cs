@@ -78,7 +78,7 @@ public class FRenderLayer
 		#if UNITY_3_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
 			_gameObject.active = false;
 		#else
-			_gameObject.activeSelf = false;
+			_gameObject.SetActive(false);
 		#endif
 		
 		ExpandMaxFacetLimit(_facetType.initialAmount);
@@ -109,7 +109,7 @@ public class FRenderLayer
 		#if UNITY_3_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
 			_gameObject.active = true;
 		#else
-			_gameObject.activeSelf = true;
+			_gameObject.SetActive(true);
 		#endif
 	}
 	
@@ -118,7 +118,7 @@ public class FRenderLayer
 		#if UNITY_3_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
 			_gameObject.active = false;
 		#else
-			_gameObject.activeSelf = false;
+			_gameObject.SetActive(false);
 		#endif
 		#if UNITY_EDITOR
 			//some debug code so that layers are sorted by depth properly
