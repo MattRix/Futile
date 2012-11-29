@@ -165,6 +165,9 @@ public class FAtlas
 			element.indexInAtlas = index++;
 			
 			string name = (string) item.Key;
+						
+//			int extensionPosition = name.LastIndexOf(".");
+//			if (extensionPosition >= 0) name = name.Substring(0, extensionPosition);
 
 			element.name = name;
 			
@@ -172,7 +175,7 @@ public class FAtlas
 			
 			element.isTrimmed = (bool)itemDict["trimmed"];
 			
-			if((bool)itemDict["rotated"])
+			if((bool)itemDict["rotated"]) 
 			{
 				throw new NotSupportedException("Futile no longer supports TexturePacker's \"rotated\" flag. Please disable it when creating the "+_dataPath+" atlas.");
 			}
