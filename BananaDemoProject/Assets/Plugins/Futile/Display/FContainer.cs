@@ -157,6 +157,26 @@ public class FContainer : FNode
 		_childNodes.Remove(node);
 	}
 	
+	public void RemoveAllChildren()
+	{
+		int childCount = _childNodes.Count;
+		
+		for(int c = 0; c<childCount; c++)
+		{
+			FNode node = _childNodes[c];
+			
+			node.HandleRemovedFromContainer();
+			
+			if(_isOnStage)
+			{
+				node.HandleRemovedFromStage();
+				node.stage = null;
+			}
+		}
+	
+		_childNodes.Clear();	
+	}
+	
 	public int GetChildCount()
 	{
 		return _childNodes.Count;
