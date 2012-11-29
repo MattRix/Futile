@@ -109,9 +109,9 @@ public class FAtlas
 	{
 		_texture = (Texture) Resources.Load (_imagePath, typeof(Texture));
 		 
-		if(!_texture)
+		if(_texture == null)
 		{
-			Debug.Log ("Futile: Couldn't load the atlas texture from: " + _imagePath);	
+			throw new Exception("Futile: Couldn't load the atlas texture from: " + _imagePath);	
 		}
 		
 		_isTextureAnAsset = true;
@@ -123,12 +123,17 @@ public class FAtlas
 	{
 		TextAsset dataAsset = (TextAsset) Resources.Load (_dataPath, typeof(TextAsset));
 		
-		if(!dataAsset)
+		if(dataAsset == null)
 		{
-			Debug.Log ("Futile: Couldn't load the atlas data from: " + _dataPath);
+			throw new Exception("Futile: Couldn't load the atlas data from: " + _dataPath);
 		}
 		
 		Dictionary<string,object> dict = dataAsset.text.dictionaryFromJson();
+		
+		if(dict == null)
+		{
+			throw new Exception("Futile: The atlas at " + _dataPath + " was not a proper JSON file. Make sure to select \"Unity3D\" in TexturePacker.");
+		}
 		
 		Dictionary<string,object> frames = (Dictionary<string,object>) dict["frames"];
 		
@@ -158,7 +163,10 @@ public class FAtlas
 			FAtlasElement element = new FAtlasElement();
 			 
 			element.indexInAtlas = index++;
-			element.name = (string) item.Key;
+			
+			string name = (string) item.Key;
+
+			element.name = name;
 			
 			IDictionary itemDict = (IDictionary)item.Value;
 			
