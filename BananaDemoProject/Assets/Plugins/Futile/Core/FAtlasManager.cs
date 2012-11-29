@@ -90,6 +90,8 @@ public class FAtlasManager
 	
 	public void ActuallyUnloadAtlasOrImage(string name)
 	{
+		bool wasAtlasRemoved = false;
+		
 		int atlasCount = _atlases.Count;
 		for(int a = 0; a<atlasCount; ++a)
 		{
@@ -110,8 +112,13 @@ public class FAtlasManager
 				
 				atlas.Unload();
 				_atlases.RemoveAt(a);
+				
+				wasAtlasRemoved = true;
 			}
 		}
+		
+		Futile.stage.renderer.Clear();
+		Resources.UnloadUnusedAssets();
 	}
 	
 	
