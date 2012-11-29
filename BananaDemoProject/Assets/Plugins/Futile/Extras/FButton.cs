@@ -154,19 +154,22 @@ public class FButton : FContainer, FSingleTouchableInterface
 	{
 		_isTouchDown = false;
 		
-		if(!_isEnabled) return false;
+		if(!_isVisible) return;
 		
 		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
 		
 		if(_hitRect.Contains(touchPos))
 		{
-			_bg.element = _downElement;
-			
-			if(_clickSoundName != null) FSoundManager.PlaySound(_clickSoundName);
-			
-			if(SignalPress != null) SignalPress(this);
-			
-			_isTouchDown = true;
+			if(_isEnabled) //swallow touches all the time, but only listen to them when enabled
+			{
+				_bg.element = _downElement;
+				
+				if(_clickSoundName != null) FSoundManager.PlaySound(_clickSoundName);
+				
+				if(SignalPress != null) SignalPress(this);
+				
+				_isTouchDown = true;
+			}
 			
 			return true;	
 		}
