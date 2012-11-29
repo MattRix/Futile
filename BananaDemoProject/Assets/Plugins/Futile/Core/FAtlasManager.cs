@@ -9,8 +9,6 @@ public class FAtlasManager
 	
 	private List<FAtlas> _atlases = new List<FAtlas>();
 	
-	private List<FAtlasElement> _allElements = new List<FAtlasElement>();
-	
 	private Dictionary<string, FAtlasElement> _allElementsByName = new Dictionary<string, FAtlasElement>();
 	
 	private List<FFont> _fonts = new List<FFont>();
@@ -59,11 +57,8 @@ public class FAtlasManager
 		{
 			FAtlasElement element = atlas.elements[e];
 			
-			element.indexInManager = _allElements.Count;
 			element.atlas = atlas;
 			element.atlasIndex = atlas.index;
-			
-			_allElements.Add(element);
 			
 			if(_allElementsByName.ContainsKey(element.name))
 			{
@@ -93,21 +88,18 @@ public class FAtlasManager
 		bool wasAtlasRemoved = false;
 		
 		int atlasCount = _atlases.Count;
-		for(int a = 0; a<atlasCount; ++a)
+		
+		for(int a = atlasCount-1; a>=0; a--) //reverse order so deletions ain't no thang
 		{
 			FAtlas atlas = _atlases[a];
 			
 			if(atlas.name == name)
 			{
-				for(int e = _allElements.Count-1; e>=0; e--)
+				int elementCount = atlas.elements.Count;
+				
+				for(int e = 0; e<elementCount; e++)
 				{
-					FAtlasElement element = _allElements[e];
-					
-					if(element.atlas == atlas)
-					{
-						_allElements.RemoveAt(e);	
-						_allElementsByName.Remove(element.name);
-					}
+					_allElementsByName.Remove(atlas.elements[e].name);	
 				}
 				
 				atlas.Unload();
@@ -117,8 +109,11 @@ public class FAtlasManager
 			}
 		}
 		
-		Futile.stage.renderer.Clear();
-		Resources.UnloadUnusedAssets();
+		if(wasAtlasRemoved)
+		{
+			Futile.stage.renderer.Clear();
+			Resources.UnloadUnusedAssets();
+		}
 	}
 	
 	

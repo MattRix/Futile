@@ -8,7 +8,6 @@ public class FAtlasElement
 	public string name;
 	
 	public int indexInAtlas;
-	public int indexInManager;
 
 	public FAtlas atlas;
 	public int atlasIndex;
@@ -31,7 +30,6 @@ public class FAtlasElement
 		element.name = name;
 		
 		element.indexInAtlas = indexInAtlas;
-		element.indexInManager = indexInManager;
 		
 		element.atlas = atlas;
 		element.atlasIndex = atlasIndex;
@@ -272,8 +270,6 @@ public class FAtlas
 		{
 			Resources.UnloadAsset(_texture);
 		}
-		
-		UnityEngine.Object.Destroy(_texture);
 	}
 	
 	public List<FAtlasElement> elements
