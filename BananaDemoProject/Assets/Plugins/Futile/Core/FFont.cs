@@ -506,10 +506,21 @@ public class FFont
 				
 				lines[lineCount].quads[letterCount] = letterQuad;	
 				
+				
+				
 				minX = Math.Min (minX, quadRect.xMin);
 				maxX = Math.Max (maxX, quadRect.xMax);
-				minY = Math.Min (minY, nextY);
-				maxY = Math.Max (maxY, nextY - usableLineHeight);
+				maxY = Math.Max (maxY, nextY);
+				
+				if(_textParams.shouldVerticallyAlignUsingBase)
+				{
+					minY = Math.Min (minY, nextY - _lineBase);
+				}
+				else 
+				{
+					minY = Math.Min (minY, nextY - usableLineHeight);
+				}
+				
 //				minY = Math.Min (minY, quadRect.yMin);
 //				maxY = Math.Max (maxY, quadRect.yMax);
 				
@@ -521,10 +532,7 @@ public class FFont
 			previousLetter = letter; 
 		}
 		
-		if(_textParams.shouldVerticallyAlignUsingBase)
-		{
-			minY += usableLineHeight-_lineBase;
-		}
+		
 		
 		lines[lineCount].bounds = new Rect(minX,minY,maxX-minX,maxY-minY);
 		
