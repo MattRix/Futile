@@ -137,7 +137,7 @@ public class FFont
 	private string _configPath;
 	
 	private FCharInfo[] _charInfos;
-	private FCharInfo[] _charInfosByID; //chars with the index of array being the char id
+	private Dictionary<uint,FCharInfo> _charInfosByID; //chars with the index of array being the char id
 	private FKerningInfo[] _kerningInfos;
 	private int _kerningCount;
 	
@@ -196,7 +196,7 @@ public class FFont
 		int c = 0;
 		int k = 0;
 		
-		_charInfosByID = new FCharInfo[255];
+		_charInfosByID = new Dictionary<uint, FCharInfo>(127);
 		
 		//insert an empty char to be used when a character isn't in the font data file
 		FCharInfo emptyChar = new FCharInfo();
@@ -321,7 +321,7 @@ public class FFont
 				charInfo.uvBottomRight.Set(uvRect.xMax,uvRect.yMin);
 				charInfo.uvBottomLeft.Set(uvRect.xMin,uvRect.yMin);
 
-				_charInfosByID[charInfo.charID] = charInfo;
+				_charInfosByID[(uint)charInfo.charID] = charInfo;
 				_charInfos[c] = charInfo;
 				
 				c++;
@@ -484,12 +484,14 @@ public class FFont
 				//TODO: Reuse letterquads with pooling!
 				FLetterQuad letterQuad = new FLetterQuad();
 				
-				charInfo = _charInfosByID[letter];
-				
-				if(charInfo == null) //we don't have that character in the font
+				if(_charInfosByID.ContainsKey(letter))
 				{
-					charInfo = _charInfosByID[0]; //blank,  character (could consider using the "char not found square")
-					//throw new Exception("Futile: the " +_name+ " font doesn't contain the character: '" + letter+"'");
+					charInfo = _charInfosByID[letter];
+				}
+				else //we don't have that character in the font
+				{
+					//blank,  character (could consider using the "char not found square")
+					charInfo = _charInfosByID[0];
 				}
 				
 				float totalKern = foundKerning.amount + textParams.scaledKerningOffset + _textParams.scaledKerningOffset;
