@@ -154,7 +154,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 	{
 		_isTouchDown = false;
 		
-		if(!_isVisible) return;
+		if(!_isVisible) return false;
 		
 		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
 		
