@@ -50,8 +50,12 @@ public class BMain : MonoBehaviour
 		
 		Futile.atlasManager.LoadAtlas("Atlases/BananaLargeAtlas");
 		Futile.atlasManager.LoadAtlas("Atlases/BananaGameAtlas");
+		Futile.atlasManager.LoadImage("Atlases/Cubano");
 		
-		Futile.atlasManager.LoadFont("Franchise","FranchiseFont"+Futile.resourceSuffix+".png", "Atlases/FranchiseFont"+Futile.resourceSuffix);
+		FTextParams franchiseParams = new FTextParams();
+		franchiseParams.shouldVerticallyAlignUsingBase = true;
+		
+		Futile.atlasManager.LoadFont("Franchise","FranchiseFont"+Futile.resourceSuffix+".png", "Atlases/FranchiseFont"+Futile.resourceSuffix,franchiseParams);
 		
 		_stage = Futile.stage;
 		
