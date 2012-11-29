@@ -123,7 +123,9 @@ public class FLabel : FFacetNode
 			int quadCount = line.quads.Length;
 			for(int q = 0; q< quadCount; q++)
 			{
-				line.quads[q].CalculateVectors(offsetX, offsetY);
+				//todo: figure out where this magic 1.0f comes from
+				//it's needed for everything to be perfectly positioned, but I'm not sure why...
+				line.quads[q].CalculateVectors(offsetX+_textParams.offsetX+_font.textParams.offsetX+1.0f, offsetY+_textParams.offsetY+_font.textParams.offsetY+1.0f);
 			}
 		}
 		

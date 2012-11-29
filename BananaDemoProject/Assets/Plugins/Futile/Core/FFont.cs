@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 //parts of this were inspired by https://github.com/prime31/UIToolkit/blob/master/Assets/Plugins/UIToolkit/UIElements/UIText.cs
 
+//how to interpret BMFont files: http://www.gamedev.net/topic/284560-bmfont-and-how-to-interpret-the-fnt-file/
+
 public class FCharInfo
 {
 	public int charID;
@@ -86,6 +88,11 @@ public class FTextParams
 	public float scaledLineHeightOffset = 0;
 	public float scaledKerningOffset = 0;
 	
+	public float offsetX = 0.0f;
+	public float offsetY = 0.0f;
+	
+	public bool shouldVerticallyAlignUsingBase = false;
+	
 	private float _lineHeightOffset = 0;
 	private float _kerningOffset = 0;
 	
@@ -137,19 +144,19 @@ public class FFont
 	private FKerningInfo _nullKerning = new FKerningInfo();
 	
 	private float _lineHeight;
-	private int _lineBase;
+	private float _lineBase;
 	private int _configWidth;
 	//private int _configHeight;
 	private float _configRatio;
 	
-	private FTextParams _fontTextParams;
+	private FTextParams _textParams;
 	
-	public FFont (string name, FAtlasElement element, string configPath, FTextParams fontTextParams)
+	public FFont (string name, FAtlasElement element, string configPath, FTextParams textParams)
 	{
 		_name = name;
 		_element = element;
 		_configPath = configPath;
-		_fontTextParams = fontTextParams;
+		_textParams = textParams;
 		
 		LoadAndParseConfigFile();
 	}
@@ -191,20 +198,22 @@ public class FFont
 		
 		_charInfosByID = new FCharInfo[255];
 		
+		//insert an empty char to be used when a character isn't in the font data file
+		FCharInfo emptyChar = new FCharInfo();
+		_charInfosByID[0] = emptyChar;
+		
 		float resourceScale = Futile.resourceScale;
 		
 		Vector2 textureSize = _element.atlas.textureSize;
 		
 		bool wasKerningFound = false;
 		
-		int lint = -1;
-		
 		int lineCount = lines.Length;
+		
 		for(int n = 0; n<lineCount; ++n)
 		{
 			string line = lines[n];
 			
-			lint++;
 			string [] words = line.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 			
 			/* we don't care about these, or else they could be in the elseif
@@ -227,7 +236,8 @@ public class FFont
 				//this is the ratio of the config vs the size of the actual texture element
 				_configRatio = _element.sourceSize.x/_configWidth;
 				
-				_lineHeight = int.Parse(words[1].Split('=')[1]) * _configRatio;		
+				_lineHeight = int.Parse(words[1].Split('=')[1]) * _configRatio;	
+				_lineBase = int.Parse(words[2].Split('=')[1]) * _configRatio;	
 			}
 			else if(words[0] == "chars") //chars count=92
 			{
@@ -387,6 +397,7 @@ public class FFont
 		
 		char[] letters = text.ToCharArray();
 		
+		//at some point these should probably be pooled and reused so we're not allocing new ones all the time
 		FLetterQuadLine[] lines = new FLetterQuadLine[10];
 		
 		int lettersLength = letters.Length;
@@ -436,6 +447,8 @@ public class FFont
 		float minY = 100000;
 		float maxY = -100000;
 		
+		float usableLineHeight = _lineHeight + textParams.scaledLineHeightOffset + _textParams.scaledLineHeightOffset;
+		
 		for(int c = 0; c<lettersLength; ++c)
 		{
 			char letter = letters[c];
@@ -450,7 +463,7 @@ public class FFont
 				maxY = -100000;
 				
 				nextX = 0;
-				nextY -= _lineHeight + textParams.scaledLineHeightOffset + _fontTextParams.scaledLineHeightOffset;
+				nextY -= usableLineHeight;
 				
 				lineCount++;
 				letterCount = 0;
@@ -473,12 +486,18 @@ public class FFont
 				
 				charInfo = _charInfosByID[letter];
 				
-				float totalKern = foundKerning.amount + textParams.scaledKerningOffset + _fontTextParams.scaledKerningOffset;
+				if(charInfo == null) //we don't have that character in the font
+				{
+					charInfo = _charInfosByID[0]; //blank,  character (could consider using the "char not found square")
+					//throw new Exception("Futile: the " +_name+ " font doesn't contain the character: '" + letter+"'");
+				}
+				
+				float totalKern = foundKerning.amount + textParams.scaledKerningOffset + _textParams.scaledKerningOffset;
 
 				nextX += totalKern; 
 				
 				letterQuad.charInfo = charInfo;
-				//
+				
 				Rect quadRect = new Rect(nextX + charInfo.offsetX, nextY - charInfo.offsetY - charInfo.height, charInfo.width, charInfo.height);
 			
 				letterQuad.rect = quadRect;
@@ -487,8 +506,10 @@ public class FFont
 				
 				minX = Math.Min (minX, quadRect.xMin);
 				maxX = Math.Max (maxX, quadRect.xMax);
-				minY = Math.Min (minY, quadRect.yMin);
-				maxY = Math.Max (maxY, quadRect.yMax);
+				minY = Math.Min (minY, nextY);
+				maxY = Math.Max (maxY, nextY - usableLineHeight);
+//				minY = Math.Min (minY, quadRect.yMin);
+//				maxY = Math.Max (maxY, quadRect.yMax);
 				
 				nextX += charInfo.xadvance;
 
@@ -496,6 +517,11 @@ public class FFont
 			}
 						
 			previousLetter = letter; 
+		}
+		
+		if(_textParams.shouldVerticallyAlignUsingBase)
+		{
+			minY += usableLineHeight-_lineBase;
 		}
 		
 		lines[lineCount].bounds = new Rect(minX,minY,maxX-minX,maxY-minY);
@@ -511,6 +537,11 @@ public class FFont
 	public FAtlasElement element
 	{
 		get { return _element;}	
+	}
+	
+	public FTextParams textParams
+	{
+		get { return _textParams;}	
 	}
 
 //  Not gonna deal with this stuff unless it's actually needed
