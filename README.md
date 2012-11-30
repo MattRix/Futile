@@ -36,6 +36,7 @@ Notes:
 ##Third Party add-ons for Futile
 
 - https://github.com/ManaOrb/FSceneManager (Futile Scene Manager and Parallax Scrolling Layer)
+- https://github.com/mattfox12/FutileAdditionalClasses (FutileAdditionalClasses including FAnimatedSprite)
 
 
 ##Legal stuff##
