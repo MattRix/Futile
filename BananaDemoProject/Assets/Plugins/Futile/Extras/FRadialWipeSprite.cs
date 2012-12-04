@@ -6,7 +6,8 @@ public class FRadialWipeSprite : FSprite
 	protected float _baseAngle;
 	protected float _percentage;
 	protected bool _isClockwise;
-	protected Vector2[] _vertices = new Vector2[7];
+	protected Vector2[] _meshVertices = new Vector2[7];
+	protected Vector2[] _uvVertices = new Vector2[7];
 	
 	public FRadialWipeSprite (string elementName, bool isClockwise, float baseAngle, float percentage) : base()
 	{
@@ -24,11 +25,20 @@ public class FRadialWipeSprite : FSprite
 	private void CalculateTheRadialVertices ()
 	{
 		//TODO: A lot of these calculations could be offloaded to when the element (and maybe anchor?) changes. 
-		float startAngle = _baseAngle * RXMath.DTOR;
-		float endAngle = startAngle + _percentage * RXMath.DOUBLE_PI;
 		
-//		Debug.Log ("width " + _localRect.width);
-//		Debug.Log ("height " + _localRect.height);
+		float baseAngleToUse;
+		
+		if(_isClockwise)
+		{
+			baseAngleToUse = _baseAngle;
+		}
+		else 
+		{
+			baseAngleToUse = 360.0f-_baseAngle;
+		}
+		
+		float startAngle = baseAngleToUse * RXMath.DTOR;
+		float endAngle = startAngle + _percentage * RXMath.DOUBLE_PI;
 		
 		float halfWidth = _localRect.width*0.5f;
 		float halfHeight = _localRect.height*0.5f;
@@ -91,35 +101,7 @@ public class FRadialWipeSprite : FSprite
 			cornerAngle3 = cornerAngleTL + RXMath.DOUBLE_PI;
 		}
 		
-		float hugeRadius = 128.0f;
-		
-		//_vertices[0] = new Vector2(0,halfHeight);
-		
-		//Debug.Log(Math.Atan2(1,2)*RXMath.RTOD);
-		
-//		Debug.Log ("CORNER 0 " + cornerAngle0*RXMath.RTOD);
-//		Debug.Log ("CORNER 1 " + cornerAngle1*RXMath.RTOD);
-//		Debug.Log ("CORNER 2 " + cornerAngle2*RXMath.RTOD);
-//		Debug.Log ("CORNER 3 " + cornerAngle3*RXMath.RTOD);
-////		
-//		Debug.Log ("START: " + startAngle*RXMath.RTOD);
-//		Debug.Log ("END: " + endAngle*RXMath.RTOD);
-//		
-//		cornerAngle0 -= baseAngle;
-//		cornerAngle1 -= baseAngle;
-//		cornerAngle2 -= baseAngle;
-//		cornerAngle3 -= baseAngle;
-//		
-//		cornerAngle0 = (cornerAngle0 + RXMath.DOUBLE_PI*10000.0f) % RXMath.DOUBLE_PI; 
-//		cornerAngle1 = (cornerAngle1 + RXMath.DOUBLE_PI*10000.0f) % RXMath.DOUBLE_PI; 
-//		cornerAngle2 = (cornerAngle2 + RXMath.DOUBLE_PI*10000.0f) % RXMath.DOUBLE_PI; 
-//		cornerAngle3 = (cornerAngle3 + RXMath.DOUBLE_PI*10000.0f) % RXMath.DOUBLE_PI; 
-//		
-//		startAngle -= baseAngle;
-//		endAngle -= baseAngle;
-//		
-//		startAngle = (startAngle + RXMath.DOUBLE_PI*10000.0f) % RXMath.DOUBLE_PI; 
-//		endAngle = (endAngle + RXMath.DOUBLE_PI*10000.0f) % RXMath.DOUBLE_PI; 
+		float hugeRadius = 1000000.0f;
 		 
 		for(int v = 0; v<6; v++)
 		{
@@ -128,12 +110,6 @@ public class FRadialWipeSprite : FSprite
 			if(v<5)
 			{
 				angle = startAngle + ((endAngle - startAngle)/5.0f * v);
-				
-				//angle -= baseAngle;
-				
-				//angle = (angle + RXMath.DOUBLE_PI*10000.0f) % RXMath.DOUBLE_PI; 
-				
-//				Debug.Log (v + " is " + (angle*RXMath.RTOD));
 				
 				if(v == 0)
 				{
@@ -179,16 +155,15 @@ public class FRadialWipeSprite : FSprite
 				angle = endAngle;		
 			}
 			
+			angle = (angle + RXMath.DOUBLE_PI*10000.0f) % RXMath.DOUBLE_PI; 
+			
 			float compX = Mathf.Cos(-angle + RXMath.HALF_PI) * hugeRadius;
 			float compY = Mathf.Sin(-angle + RXMath.HALF_PI) * hugeRadius;
 			
-			angle = (angle + RXMath.DOUBLE_PI*10000.0f) % RXMath.DOUBLE_PI; 
-			
 			//snap the verts to the edge of the rect
 			
-			if(angle < cornerAngleTR) //top
+			if(angle < cornerAngleTR) //top right
 			{
-//				if(v == 1) Debug.Log (v + ": " + compX +","+compY);
 				compX = compX * (halfHeight / compY);
 				compY = halfHeight;
 			}
@@ -207,18 +182,42 @@ public class FRadialWipeSprite : FSprite
 				compY = compY * (-halfWidth / compX);
 				compX = -halfWidth;	
 			}
-			else if(angle >= cornerAngleTL) //top
+			else if(angle >= cornerAngleTL) //top left
 			{
 				compX = compX * (halfHeight / compY);
 				compY = halfHeight;
 			} 
 			
-			_vertices[v] = new Vector2(compX, compY);
+			if(!_isClockwise)
+			{
+				compX = -compX;
+			}
 			
-//			Debug.Log ("" + v + ": point " + compX + "," + compY);
+			_meshVertices[v] = new Vector2(compX, compY);
 		}
 		
-		_vertices[6] = new Vector2(0,0); //THE LAST VERT HAS TO BE THE CENTER
+		_meshVertices[6] = new Vector2(0,0); //this last vert is actually the center vert
+		
+		//create uv vertices
+		
+		Rect uvRect = _element.uvRect;
+		Vector2 uvCenter = uvRect.center;
+		
+		for(int v = 0; v<7; v++)
+		{
+			_uvVertices[v].x = uvCenter.x + _meshVertices[v].x / _localRect.width * uvRect.width;
+			_uvVertices[v].y = uvCenter.y + _meshVertices[v].y / _localRect.height * uvRect.height;
+		}
+		
+		//put mesh vertices in the correct position
+		float offsetX = _localRect.center.x; 
+		float offsetY = _localRect.center.y;
+		
+		for(int v = 0; v<7; v++)
+		{
+			_meshVertices[v].x += offsetX;
+			_meshVertices[v].y += offsetY;			
+		}
 	}
 		
 	override public void PopulateRenderLayer()
@@ -233,92 +232,59 @@ public class FRadialWipeSprite : FSprite
 			
 			Vector3[] vertices = _renderLayer.vertices;
 			Vector2[] uvs = _renderLayer.uvs;
-			Color[] colors = _renderLayer.colors;		
-			
-			for(int i = 0; i<15; i++) //temporarily just use the top left as the UV
-			{
-				uvs[i] = _element.uvTopLeft;
-				if(i/3 == 0)
-				{
-					colors[i] = new Color(1.0f,1.0f,0.0f,1.0f);
-				}
-				else if(i/3 == 1)
-				{
-					colors[i] = new Color(0.0f,0.8f,0.2f,1.0f);
-				}
-				else if(i/3 == 2)
-				{
-					colors[i] = new Color(1.0f,0.6f,0.4f,1.0f);
-				}
-				else if(i/3 == 3)
-				{
-					colors[i] = new Color(0.0f,0.4f,0.6f,1.0f);
-				}
-				else if(i/3 == 4)
-				{
-					colors[i] = new Color(1.0f,0.2f,0.8f,1.0f);
-				}
-				else if(i/3 == 5)
-				{
-					colors[i] = new Color(0.0f,1.0f,0.0f,1.0f);
-				}
-				
-//				if(i%3 == 0)
-//				{ 
-//					colors[i] = Color.black;
-//				}
-				
-				colors[i] = new Color(colors[i].r,colors[i].g,colors[i].b,0.8f);
-			}
+			Color[] colors = _renderLayer.colors;	
 			
 			int vertexIndex0 = _firstFacetIndex*3;
 			
-			Vector2 centerVectex = _vertices[6];
+			//set the colors
+			for(int c = 0; c<15; c++)
+			{
+				colors[vertexIndex0 + c] = _alphaColor;	
+			}
 			
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0], centerVectex,0);
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 1], _vertices[0],0);
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 2], _vertices[1],0);
+			//vertex 6 is the center vertex
 			
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 3], centerVectex,0);
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 4], _vertices[1],0);
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 5], _vertices[2],0);
+			//set the uvs
+			uvs[vertexIndex0] = _uvVertices[6];	
+			uvs[vertexIndex0 + 1] = _uvVertices[0];	
+			uvs[vertexIndex0 + 2] = _uvVertices[1];	
 			
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 6], centerVectex,0);
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 7], _vertices[2],0);
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 8], _vertices[3],0);
+			uvs[vertexIndex0 + 3] = _uvVertices[6];	
+			uvs[vertexIndex0 + 4] = _uvVertices[1];	
+			uvs[vertexIndex0 + 5] = _uvVertices[2];	
 			
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 9], centerVectex,0);
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 10], _vertices[3],0);
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 11], _vertices[4],0);
+			uvs[vertexIndex0 + 6] = _uvVertices[6];	
+			uvs[vertexIndex0 + 7] = _uvVertices[2];	
+			uvs[vertexIndex0 + 8] = _uvVertices[3];	
 			
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 12], centerVectex,0);
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 13], _vertices[4],0);
-			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 14], _vertices[5],0);
+			uvs[vertexIndex0 + 9] = _uvVertices[6];	
+			uvs[vertexIndex0 + 10] = _uvVertices[3];	
+			uvs[vertexIndex0 + 11] = _uvVertices[4];	
 			
+			uvs[vertexIndex0 + 12] = _uvVertices[6];	
+			uvs[vertexIndex0 + 13] = _uvVertices[4];	
+			uvs[vertexIndex0 + 14] = _uvVertices[5];
 			
-//			int vertexIndex0 = _firstFacetIndex*4;
-//			int vertexIndex1 = vertexIndex0 + 1;
-//			int vertexIndex2 = vertexIndex0 + 2;
-//			int vertexIndex3 = vertexIndex0 + 3;
-//			
-//			Vector3[] vertices = _renderLayer.vertices;
-//			Vector2[] uvs = _renderLayer.uvs;
-//			Color[] colors = _renderLayer.colors;
-//			
-//			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0], _localVertices[0],0);
-//			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex1], _localVertices[1],0);
-//			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex2], _localVertices[2],0);
-//			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex3], _localVertices[3],0);
-//			
-//			uvs[vertexIndex0] = _element.uvTopLeft;
-//			uvs[vertexIndex1] = _element.uvTopRight;
-//			uvs[vertexIndex2] = _element.uvBottomRight;
-//			uvs[vertexIndex3] = _element.uvBottomLeft;
-//			
-//			colors[vertexIndex0] = _alphaColor;
-//			colors[vertexIndex1] = _alphaColor;
-//			colors[vertexIndex2] = _alphaColor;
-//			colors[vertexIndex3] = _alphaColor;
+			//set the mesh
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0], _meshVertices[6],0);
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 1], _meshVertices[0],0);
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 2], _meshVertices[1],0);
+			
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 3], _meshVertices[6],0);
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 4], _meshVertices[1],0);
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 5], _meshVertices[2],0);
+			
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 6], _meshVertices[6],0);
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 7], _meshVertices[2],0);
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 8], _meshVertices[3],0);
+			
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 9], _meshVertices[6],0);
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 10], _meshVertices[3],0);
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 11], _meshVertices[4],0);
+			
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 12], _meshVertices[6],0);
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 13], _meshVertices[4],0);
+			_concatenatedMatrix.ApplyVector3FromLocalVector2(ref vertices[vertexIndex0 + 14], _meshVertices[5],0);
 			
 			_renderLayer.HandleVertsChange();
 		}
