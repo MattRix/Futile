@@ -24,7 +24,7 @@ public class FRadialWipeSprite : FSprite
 	private void CalculateTheRadialVertices ()
 	{
 		//TODO: A lot of these calculations could be offloaded to when the element (and maybe anchor?) changes. 
-		float startAngle = baseAngle * RXMath.DTOR;
+		float startAngle = _baseAngle * RXMath.DTOR;
 		float endAngle = startAngle + _percentage * RXMath.DOUBLE_PI;
 		
 //		Debug.Log ("width " + _localRect.width);
@@ -54,50 +54,73 @@ public class FRadialWipeSprite : FSprite
 		float cornerAngle2;
 		float cornerAngle3;
 		
-		if(startAngle < cornerAngleTR || startAngle >= cornerAngleTL)
+		if(startAngle < cornerAngleTR) //top right
 		{
 			cornerAngle0 = cornerAngleTR;	
 			cornerAngle1 = cornerAngleBR;
 			cornerAngle2 = cornerAngleBL;
 			cornerAngle3 = cornerAngleTL;
 		}
-		else if(startAngle >= cornerAngleTR && startAngle < cornerAngleBR)
+		else if(startAngle >= cornerAngleTR && startAngle < cornerAngleBR) //right
 		{
 			cornerAngle0 = cornerAngleBR;	
 			cornerAngle1 = cornerAngleBL;
 			cornerAngle2 = cornerAngleTL;
-			cornerAngle3 = cornerAngleTR;
+			cornerAngle3 = cornerAngleTR + RXMath.DOUBLE_PI;
 		}
-		else if(startAngle >= cornerAngleBR && startAngle < cornerAngleBL)
+		else if(startAngle >= cornerAngleBR && startAngle < cornerAngleBL) //left
 		{
 			cornerAngle0 = cornerAngleBL;	
 			cornerAngle1 = cornerAngleTL;
-			cornerAngle2 = cornerAngleTR;
-			cornerAngle3 = cornerAngleBR;
+			cornerAngle2 = cornerAngleTR + RXMath.DOUBLE_PI;
+			cornerAngle3 = cornerAngleBR + RXMath.DOUBLE_PI;
 		}
-		//else if(startAngle >= cornerAngleBL && startAngle < cornerAngleTL)
-		else
+		else if(startAngle >= cornerAngleBL && startAngle < cornerAngleTL)
 		{
 			cornerAngle0 = cornerAngleTL;	
-			cornerAngle1 = cornerAngleTR;
-			cornerAngle2 = cornerAngleBR;
-			cornerAngle3 = cornerAngleBL;
+			cornerAngle1 = cornerAngleTR + RXMath.DOUBLE_PI;
+			cornerAngle2 = cornerAngleBR + RXMath.DOUBLE_PI;
+			cornerAngle3 = cornerAngleBL + RXMath.DOUBLE_PI;
+		}
+		//else if(startAngle >= cornerAngleTL) 
+		else //top left
+		{
+			cornerAngle0 = cornerAngleTR + RXMath.DOUBLE_PI;	
+			cornerAngle1 = cornerAngleBR + RXMath.DOUBLE_PI;
+			cornerAngle2 = cornerAngleBL + RXMath.DOUBLE_PI;
+			cornerAngle3 = cornerAngleTL + RXMath.DOUBLE_PI;
 		}
 		
-		float hugeRadius = 100000.0f;
+		float hugeRadius = 128.0f;
 		
 		//_vertices[0] = new Vector2(0,halfHeight);
 		
-		Debug.Log(Math.Atan2(1,2)*RXMath.RTOD);
+		//Debug.Log(Math.Atan2(1,2)*RXMath.RTOD);
 		
 //		Debug.Log ("CORNER 0 " + cornerAngle0*RXMath.RTOD);
 //		Debug.Log ("CORNER 1 " + cornerAngle1*RXMath.RTOD);
 //		Debug.Log ("CORNER 2 " + cornerAngle2*RXMath.RTOD);
 //		Debug.Log ("CORNER 3 " + cornerAngle3*RXMath.RTOD);
-//		
+////		
 //		Debug.Log ("START: " + startAngle*RXMath.RTOD);
 //		Debug.Log ("END: " + endAngle*RXMath.RTOD);
 //		
+//		cornerAngle0 -= baseAngle;
+//		cornerAngle1 -= baseAngle;
+//		cornerAngle2 -= baseAngle;
+//		cornerAngle3 -= baseAngle;
+//		
+//		cornerAngle0 = (cornerAngle0 + RXMath.DOUBLE_PI*10000.0f) % RXMath.DOUBLE_PI; 
+//		cornerAngle1 = (cornerAngle1 + RXMath.DOUBLE_PI*10000.0f) % RXMath.DOUBLE_PI; 
+//		cornerAngle2 = (cornerAngle2 + RXMath.DOUBLE_PI*10000.0f) % RXMath.DOUBLE_PI; 
+//		cornerAngle3 = (cornerAngle3 + RXMath.DOUBLE_PI*10000.0f) % RXMath.DOUBLE_PI; 
+//		
+//		startAngle -= baseAngle;
+//		endAngle -= baseAngle;
+//		
+//		startAngle = (startAngle + RXMath.DOUBLE_PI*10000.0f) % RXMath.DOUBLE_PI; 
+//		endAngle = (endAngle + RXMath.DOUBLE_PI*10000.0f) % RXMath.DOUBLE_PI; 
+		 
 		for(int v = 0; v<6; v++)
 		{
 			float angle = 0;
@@ -105,6 +128,10 @@ public class FRadialWipeSprite : FSprite
 			if(v<5)
 			{
 				angle = startAngle + ((endAngle - startAngle)/5.0f * v);
+				
+				//angle -= baseAngle;
+				
+				//angle = (angle + RXMath.DOUBLE_PI*10000.0f) % RXMath.DOUBLE_PI; 
 				
 //				Debug.Log (v + " is " + (angle*RXMath.RTOD));
 				
@@ -145,15 +172,17 @@ public class FRadialWipeSprite : FSprite
 					angle = Mathf.Max (angle, cornerAngle0);
 				}
 				
-//				Debug.Log ("after: " + v + " is " + (angle*RXMath.RTOD));
+				
 			}
 			else 
 			{
 				angle = endAngle;		
 			}
 			
-			float compX = Mathf.Cos(-angle - RXMath.HALF_PI) * hugeRadius;
-			float compY = Mathf.Sin(-angle - RXMath.HALF_PI) * hugeRadius;
+			float compX = Mathf.Cos(-angle + RXMath.HALF_PI) * hugeRadius;
+			float compY = Mathf.Sin(-angle + RXMath.HALF_PI) * hugeRadius;
+			
+			angle = (angle + RXMath.DOUBLE_PI*10000.0f) % RXMath.DOUBLE_PI; 
 			
 			//snap the verts to the edge of the rect
 			
@@ -182,7 +211,7 @@ public class FRadialWipeSprite : FSprite
 			{
 				compX = compX * (halfHeight / compY);
 				compY = halfHeight;
-			}
+			} 
 			
 			_vertices[v] = new Vector2(compX, compY);
 			
@@ -209,7 +238,37 @@ public class FRadialWipeSprite : FSprite
 			for(int i = 0; i<15; i++) //temporarily just use the top left as the UV
 			{
 				uvs[i] = _element.uvTopLeft;
-				colors[i] = _alphaColor;
+				if(i/3 == 0)
+				{
+					colors[i] = new Color(1.0f,1.0f,0.0f,1.0f);
+				}
+				else if(i/3 == 1)
+				{
+					colors[i] = new Color(0.0f,0.8f,0.2f,1.0f);
+				}
+				else if(i/3 == 2)
+				{
+					colors[i] = new Color(1.0f,0.6f,0.4f,1.0f);
+				}
+				else if(i/3 == 3)
+				{
+					colors[i] = new Color(0.0f,0.4f,0.6f,1.0f);
+				}
+				else if(i/3 == 4)
+				{
+					colors[i] = new Color(1.0f,0.2f,0.8f,1.0f);
+				}
+				else if(i/3 == 5)
+				{
+					colors[i] = new Color(0.0f,1.0f,0.0f,1.0f);
+				}
+				
+//				if(i%3 == 0)
+//				{ 
+//					colors[i] = Color.black;
+//				}
+				
+				colors[i] = new Color(colors[i].r,colors[i].g,colors[i].b,0.8f);
 			}
 			
 			int vertexIndex0 = _firstFacetIndex*3;
