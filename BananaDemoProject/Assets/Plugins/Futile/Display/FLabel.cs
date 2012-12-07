@@ -125,7 +125,7 @@ public class FLabel : FFacetNode
 			{
 				//todo: figure out where this magic 1.0f comes from
 				//it's needed for everything to be perfectly positioned, but I'm not sure why...
-				line.quads[q].CalculateVectors(offsetX+_textParams.offsetX+_font.textParams.offsetX+1.0f, offsetY+_textParams.offsetY+_font.textParams.offsetY+1.0f);
+				line.quads[q].CalculateVectors(offsetX+_font.offsetX+1.0f, offsetY+_font.offsetY+1.0f);
 			}
 		}
 		

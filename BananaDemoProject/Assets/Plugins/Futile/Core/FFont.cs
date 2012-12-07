@@ -88,11 +88,6 @@ public class FTextParams
 	public float scaledLineHeightOffset = 0;
 	public float scaledKerningOffset = 0;
 	
-	public float offsetX = 0.0f;
-	public float offsetY = 0.0f;
-	
-	public bool shouldVerticallyAlignUsingBase = false;
-	
 	private float _lineHeightOffset = 0;
 	private float _kerningOffset = 0;
 	
@@ -144,19 +139,24 @@ public class FFont
 	private FKerningInfo _nullKerning = new FKerningInfo();
 	
 	private float _lineHeight;
-	private float _lineBase;
+	//private float _lineBase;
 	private int _configWidth;
 	//private int _configHeight;
 	private float _configRatio;
 	
 	private FTextParams _textParams;
 	
-	public FFont (string name, FAtlasElement element, string configPath, FTextParams textParams)
+	private float _offsetX;
+	private float _offsetY;
+	
+	public FFont (string name, FAtlasElement element, string configPath, float offsetX, float offsetY, FTextParams textParams)
 	{
 		_name = name;
 		_element = element;
 		_configPath = configPath;
 		_textParams = textParams;
+		_offsetX = offsetX;
+		_offsetY = offsetY;
 		
 		LoadAndParseConfigFile();
 	}
@@ -237,7 +237,7 @@ public class FFont
 				_configRatio = _element.sourceSize.x/_configWidth;
 				
 				_lineHeight = int.Parse(words[1].Split('=')[1]) * _configRatio;	
-				_lineBase = int.Parse(words[2].Split('=')[1]) * _configRatio;	
+				//_lineBase = int.Parse(words[2].Split('=')[1]) * _configRatio;	
 			}
 			else if(words[0] == "chars") //chars count=92
 			{
@@ -512,15 +512,8 @@ public class FFont
 				maxX = Math.Max (maxX, quadRect.xMax);
 				maxY = Math.Max (maxY, nextY);
 				
-				if(_textParams.shouldVerticallyAlignUsingBase)
-				{
-					minY = Math.Min (minY, nextY - _lineBase);
-				}
-				else 
-				{
-					minY = Math.Min (minY, nextY - usableLineHeight);
-				}
-				
+				minY = Math.Min (minY, nextY - usableLineHeight);
+
 //				minY = Math.Min (minY, quadRect.yMin);
 //				maxY = Math.Max (maxY, quadRect.yMax);
 				
@@ -552,6 +545,16 @@ public class FFont
 	public FTextParams textParams
 	{
 		get { return _textParams;}	
+	}
+	
+	public float offsetX
+	{
+		get { return _offsetX;}	
+	}
+	
+	public float offsetY
+	{
+		get { return _offsetY;}	
 	}
 
 //  Not gonna deal with this stuff unless it's actually needed

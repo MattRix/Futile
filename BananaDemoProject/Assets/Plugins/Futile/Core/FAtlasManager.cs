@@ -145,15 +145,15 @@ public class FAtlasManager
 		return _fontsByName[fontName];	
 	}
 
-	public void LoadFont (string name, string elementName, string configPath)
+	public void LoadFont (string name, string elementName, string configPath, float offsetX, float offsetY)
 	{
-		LoadFont (name,elementName,configPath,new FTextParams());
+		LoadFont (name,elementName,configPath, offsetX, offsetY, new FTextParams());
 	}
 	
-	public void LoadFont (string name, string elementName, string configPath, FTextParams textParams)
+	public void LoadFont (string name, string elementName, string configPath, float offsetX, float offsetY, FTextParams textParams)
 	{
 		FAtlasElement element = GetElementWithName(elementName);
-		FFont font = new FFont(name,element,configPath, textParams);
+		FFont font = new FFont(name,element,configPath, offsetX, offsetY, textParams);
 	
 		_fonts.Add(font);
 		_fontsByName.Add (name, font);
