@@ -133,11 +133,15 @@ public class FAtlasManager
 		{
 			return _allElementsByName[elementName];
 		}
-		throw new Exception("Couldn't find element named '"+elementName+"'");
+		throw new Exception("Futile: Couldn't find element named '"+elementName+"'");
 	}
 	
 	public FFont GetFontWithName(string fontName)
 	{
+		if(!_fontsByName.ContainsKey(fontName))
+		{
+			throw new Exception("Futile: Couldn't find font named '"+fontName+"'");
+		}
 		return _fontsByName[fontName];	
 	}
 
