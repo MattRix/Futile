@@ -457,4 +457,11 @@ public class FNode
 	{
 		ScaleAroundPointRelative(localPoint, absoluteScaleX/_scaleX, absoluteScaleX/_scaleY);
 	}
+	
+	//for convenience
+	public void SetPosition(float newX, float newY)
+	{
+		this.x = newX;
+		this.y = newY;
+	}
 }

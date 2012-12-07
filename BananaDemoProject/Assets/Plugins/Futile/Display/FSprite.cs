@@ -212,5 +212,12 @@ public class FSprite : FFacetNode
 			}
 		}
 	}
+	
+	//for convenience
+	public void SetAnchor(float newX, float newY)
+	{
+		this.anchorX = newX;
+		this.anchorY = newY;
+	}
 }
 
