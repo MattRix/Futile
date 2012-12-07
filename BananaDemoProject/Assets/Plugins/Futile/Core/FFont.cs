@@ -167,7 +167,7 @@ public class FFont
 		
 		if(asset == null)
 		{
-			throw new Exception("Couldn't find font config file " + _configPath);	
+			throw new FutileException("Couldn't find font config file " + _configPath);	
 		}
 		
 		string[] separators = new string[1]; 
@@ -189,7 +189,7 @@ public class FFont
 		
 		if(lines.Length <= 1) //WHAT
 		{
-			throw new Exception("Your font file is messed up");
+			throw new FutileException("Your font file is messed up");
 		}
 		
 		int wordCount = 0;

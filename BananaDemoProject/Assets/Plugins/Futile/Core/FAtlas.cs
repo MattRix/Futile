@@ -109,7 +109,7 @@ public class FAtlas
 		 
 		if(_texture == null)
 		{
-			throw new Exception("Futile: Couldn't load the atlas texture from: " + _imagePath);	
+			throw new FutileException("Couldn't load the atlas texture from: " + _imagePath);	
 		}
 		
 		_isTextureAnAsset = true;
@@ -123,14 +123,14 @@ public class FAtlas
 		
 		if(dataAsset == null)
 		{
-			throw new Exception("Futile: Couldn't load the atlas data from: " + _dataPath);
+			throw new FutileException("Couldn't load the atlas data from: " + _dataPath);
 		}
 		
 		Dictionary<string,object> dict = dataAsset.text.dictionaryFromJson();
 		
 		if(dict == null)
 		{
-			throw new Exception("Futile: The atlas at " + _dataPath + " was not a proper JSON file. Make sure to select \"Unity3D\" in TexturePacker.");
+			throw new FutileException("The atlas at " + _dataPath + " was not a proper JSON file. Make sure to select \"Unity3D\" in TexturePacker.");
 		}
 		
 		Dictionary<string,object> frames = (Dictionary<string,object>) dict["frames"];

@@ -62,7 +62,7 @@ public class FAtlasManager
 			
 			if(_allElementsByName.ContainsKey(element.name))
 			{
-				throw new Exception("Duplicate element name found! All element names must be unique!");	
+				throw new FutileException("Duplicate element name found! All element names must be unique!");	
 			}
 			else 
 			{
@@ -133,14 +133,14 @@ public class FAtlasManager
 		{
 			return _allElementsByName[elementName];
 		}
-		throw new Exception("Futile: Couldn't find element named '"+elementName+"'");
+		throw new FutileException("Couldn't find element named '"+elementName+"'");
 	}
 	
 	public FFont GetFontWithName(string fontName)
 	{
 		if(!_fontsByName.ContainsKey(fontName))
 		{
-			throw new Exception("Futile: Couldn't find font named '"+fontName+"'");
+			throw new FutileException("Couldn't find font named '"+fontName+"'");
 		}
 		return _fontsByName[fontName];	
 	}

@@ -137,7 +137,7 @@ public class FScreen
 			_resLevel = _futileParams.resLevels.GetLastObject();	
 			if(_resLevel == null)
 			{
-				throw new Exception("You must add at least one FResolutionLevel!");	
+				throw new FutileException("You must add at least one FResolutionLevel!");	
 			}
 		}
 		
