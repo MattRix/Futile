@@ -15,11 +15,11 @@ public class FSliceSprite : FSprite
 	
 	private Vector2[] _uvVertices;
 	
-	public FSliceSprite (float width, float height, float insetTop, float insetRight, float insetBottom, float insetLeft, string elementName) : this(width, height, insetTop, insetRight, insetBottom, insetLeft, Futile.atlasManager.GetElementWithName(elementName))
+	public FSliceSprite (string elementName, float width, float height, float insetTop, float insetRight, float insetBottom, float insetLeft) : this(Futile.atlasManager.GetElementWithName(elementName), width, height, insetTop, insetRight, insetBottom, insetLeft)
 	{
 	}
 	
-	public FSliceSprite (float width, float height, float insetTop, float insetRight, float insetBottom, float insetLeft, FAtlasElement element) : base()
+	public FSliceSprite (FAtlasElement element, float width, float height, float insetTop, float insetRight, float insetBottom, float insetLeft) : base()
 	{
 		_width = width;
 		_height = height;
