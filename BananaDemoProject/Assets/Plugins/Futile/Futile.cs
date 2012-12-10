@@ -47,6 +47,7 @@ public class Futile : MonoBehaviour
 	
 	
 	public event Action SignalUpdate;
+	public event Action SignalFixedUpdate;
 	public event Action SignalLateUpdate;
 	
 	
@@ -274,6 +275,11 @@ public class Futile : MonoBehaviour
 		
 		if(SignalLateUpdate != null) SignalLateUpdate();
 	}	
+	
+	private void FixedUpdate()
+	{
+		if(SignalFixedUpdate != null) SignalFixedUpdate();
+	}
 	
 	private void OnApplicationQuit()
 	{
