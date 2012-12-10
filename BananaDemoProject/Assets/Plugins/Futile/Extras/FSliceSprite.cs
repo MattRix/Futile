@@ -108,8 +108,6 @@ public class FSliceSprite : FSprite
 		float uvYMin = uvRect.yMin;
 		float uvYMax = uvRect.yMax;
 		
-		//TODO: Look into why the uvs are screwed up when scaling the slice sprite down
-		
 		int sliceVertIndex = 0;
 		
 		for(int s = 0; s<9; s++)
