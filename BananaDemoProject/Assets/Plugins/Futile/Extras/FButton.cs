@@ -13,10 +13,12 @@ public class FButton : FContainer, FSingleTouchableInterface
 	protected FSprite _bg;
 	protected string _clickSoundName;
 	protected FLabel _label;
-
-	public event Action<FButton> SignalPress;
-	public event Action<FButton> SignalRelease;
-	public event Action<FButton> SignalReleaseOutside;
+	
+	public delegate void ButtonSignalDelegate(FButton button);
+	
+	public event ButtonSignalDelegate SignalPress;
+	public event ButtonSignalDelegate SignalRelease;
+	public event ButtonSignalDelegate SignalReleaseOutside;
 
 	private float _anchorX = 0.5f;
 	private float _anchorY = 0.5f;

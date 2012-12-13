@@ -16,12 +16,13 @@ public class FScreen
 	public float pixelHeight; //in pixels
 	
 	
-	
-	public event Action SignalOrientationChange;
+	public delegate void ScreenOrientationChangeDelegate();
+	public event ScreenOrientationChangeDelegate SignalOrientationChange;
 	
 	//the bool in SignalResize represents wasOrientationChange,
 	//which tells you whether the resize was due to an orientation change or not
-	public event Action<bool> SignalResize; 
+	public delegate void ScreenResizeDelegate(bool wasResizedDueToOrientationChange);
+	public event ScreenResizeDelegate SignalResize; 
 	
 	
 	
