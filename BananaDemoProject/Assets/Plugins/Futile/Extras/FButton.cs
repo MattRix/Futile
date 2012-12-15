@@ -11,7 +11,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 	protected FAtlasElement _downElement;
 	protected FAtlasElement _overElement;
 	
-	protected FSprite _bg;
+	protected FSprite _sprite;
 	protected string _clickSoundName;
 	protected FLabel _label;
 	
@@ -41,12 +41,12 @@ public class FButton : FContainer, FSingleTouchableInterface
 			_supportsOver = true;
 		}
 		
-		_bg = new FSprite(_upElement.name);
-		_bg.anchorX = _anchorX;
-		_bg.anchorY = _anchorY;
-		AddChild(_bg);
+		_sprite = new FSprite(_upElement.name);
+		_sprite.anchorX = _anchorX;
+		_sprite.anchorY = _anchorY;
+		AddChild(_sprite);
 		
-		_hitRect = _bg.textureRect;
+		_hitRect = _sprite.textureRect;
 
 		_clickSoundName = clickSoundName;
 	}
@@ -63,7 +63,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 
 	public FSprite sprite
 	{
-		get { return _bg;}
+		get { return _sprite;}
 	}
 
 	public float anchorX
@@ -71,8 +71,8 @@ public class FButton : FContainer, FSingleTouchableInterface
 		set
 		{
 			_anchorX = value;
-			_bg.anchorX = _anchorX;
-			if (_label != null) _label.x = -_anchorX*_bg.width+_bg.width/2;
+			_sprite.anchorX = _anchorX;
+			if (_label != null) _label.x = -_anchorX*_sprite.width+_sprite.width/2;
 		}
 		get {return _anchorX;}
 	}
@@ -82,8 +82,8 @@ public class FButton : FContainer, FSingleTouchableInterface
 		set
 		{
 			_anchorY = value;
-			_bg.anchorY = _anchorY;
-			if (_label != null) _label.y = -_anchorY*_bg.height+_bg.height/2;
+			_sprite.anchorY = _anchorY;
+			if (_label != null) _label.y = -_anchorY*_sprite.height+_sprite.height/2;
 		}
 		get {return _anchorY;}
 	}
@@ -99,8 +99,8 @@ public class FButton : FContainer, FSingleTouchableInterface
 		AddChild(_label);
 		_label.color = color;
 		_label.anchorX = _label.anchorY = 0.5f;
-		_label.x = -_anchorX*_bg.width+_bg.width/2;
-		_label.y = -_anchorY*_bg.height+_bg.height/2;
+		_label.x = -_anchorX*_sprite.width+_sprite.width/2;
+		_label.y = -_anchorY*_sprite.height+_sprite.height/2;
 		
 		return _label;
 	}
@@ -145,11 +145,11 @@ public class FButton : FContainer, FSingleTouchableInterface
 		
 		if(_hitRect.Contains(mousePos))
 		{
-			_bg.element = _overElement;
+			_sprite.element = _overElement;
 		}
 		else 
 		{
-			_bg.element = _upElement;
+			_sprite.element = _upElement;
 		}
 	}
 	
@@ -161,16 +161,16 @@ public class FButton : FContainer, FSingleTouchableInterface
 		
 		if(!_shouldUseCustomHitRect)
 		{
-			_hitRect = _bg.textureRect;
+			_hitRect = _sprite.textureRect;
 		}
 		
-		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
+		Vector2 touchPos = _sprite.GlobalToLocal(touch.position);
 		
 		if(_hitRect.Contains(touchPos))
 		{
 			if(_isEnabled) //swallow touches all the time, but only listen to them when enabled
 			{
-				_bg.element = _downElement;
+				_sprite.element = _downElement;
 				
 				if(_clickSoundName != null) FSoundManager.PlaySound(_clickSoundName);
 				
@@ -187,7 +187,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 	
 	public void HandleSingleTouchMoved(FTouch touch)
 	{
-		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
+		Vector2 touchPos = _sprite.GlobalToLocal(touch.position);
 		
 		//expand the hitrect so that it has more error room around the edges
 		//this is what Apple does on iOS and it makes for better usability
@@ -195,12 +195,12 @@ public class FButton : FContainer, FSingleTouchableInterface
 		
 		if(expandedRect.Contains(touchPos))
 		{
-			_bg.element = _downElement;	
+			_sprite.element = _downElement;	
 			_isTouchDown = true;
 		}
 		else
 		{
-			_bg.element = _upElement;	
+			_sprite.element = _upElement;	
 			_isTouchDown = false;
 		}
 	}
@@ -209,9 +209,9 @@ public class FButton : FContainer, FSingleTouchableInterface
 	{
 		_isTouchDown = false;
 		
-		_bg.element = _upElement;
+		_sprite.element = _upElement;
 		
-		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
+		Vector2 touchPos = _sprite.GlobalToLocal(touch.position);
 		
 		//expand the hitrect so that it has more error room around the edges
 		//this is what Apple does on iOS and it makes for better usability
@@ -223,7 +223,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 			
 			if(_supportsOver && _hitRect.Contains(touchPos)) //go back to the over image if we're over the button
 			{
-				_bg.element = _overElement;	
+				_sprite.element = _overElement;	
 			}
 		}
 		else
@@ -236,7 +236,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 	{
 		_isTouchDown = false;
 		
-		_bg.element = _upElement;
+		_sprite.element = _upElement;
 		if(SignalReleaseOutside != null) SignalReleaseOutside(this);
 	}
 	
