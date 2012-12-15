@@ -4,7 +4,8 @@ using System;
 
 public class FButton : FContainer, FSingleTouchableInterface
 {
-	private Rect _hitRect;
+	protected Rect _hitRect;
+	protected bool _shouldUseCustomHitRect = false;
 	
 	protected FAtlasElement _upElement;
 	protected FAtlasElement _downElement;
@@ -25,9 +26,9 @@ public class FButton : FContainer, FSingleTouchableInterface
 	
 	public float expansionAmount = 10;
 	
-	private bool _isEnabled = true;
-	private bool _supportsOver = false;
-	private bool _isTouchDown = false;
+	protected bool _isEnabled = true;
+	protected bool _supportsOver = false;
+	protected bool _isTouchDown = false;
 	
 	public FButton (string upElementName, string downElementName, string overElementName, string clickSoundName)
 	{
@@ -158,6 +159,11 @@ public class FButton : FContainer, FSingleTouchableInterface
 		
 		if(!_isVisible) return false;
 		
+		if(!_shouldUseCustomHitRect)
+		{
+			_hitRect = _bg.textureRect;
+		}
+		
 		Vector2 touchPos = _bg.GlobalToLocal(touch.position);
 		
 		if(_hitRect.Contains(touchPos))
@@ -255,6 +261,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 		set 
 		{
 			_hitRect = value; 
+			_shouldUseCustomHitRect = true;
 		}
 	}
 	
