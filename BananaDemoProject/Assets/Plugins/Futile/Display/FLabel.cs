@@ -322,6 +322,13 @@ public class FLabel : FFacetNode
 		get {throw new NotSupportedException("boundsRect is obsolete! Use textRect instead");}
 	}
 	
+	//for convenience
+	public void SetAnchor(float newX, float newY)
+	{
+		this.anchorX = newX;
+		this.anchorY = newY;
+	}
+	
 	
 }
 
