@@ -38,6 +38,15 @@ public class FAtlasManager
 		AddAtlas(atlas);
 	}
 	
+	public void LoadAtlasFromTexture (string name, string dataPath, Texture texture)
+	{
+		if(DoesContainAtlas(name)) return; //we already have it, don't load it again
+		
+		FAtlas atlas = new FAtlas(name, dataPath, texture, _nextAtlasIndex++);
+		
+		AddAtlas(atlas);
+	}
+	
 	public void ActuallyLoadAtlasOrImage(string name, string imagePath, string dataPath)
 	{
 		if(DoesContainAtlas(name)) return; //we already have it, don't load it again
@@ -76,6 +85,19 @@ public class FAtlasManager
 	public void LoadAtlas(string atlasPath)
 	{
 		ActuallyLoadAtlasOrImage(atlasPath, atlasPath+Futile.resourceSuffix, atlasPath+Futile.resourceSuffix);
+	}
+	
+	public void LoadAtlas(string atlasPath, bool isSpecialPNG) //load a special image with the suffix "_image.bytes"
+	{
+		string filePath = atlasPath+Futile.resourceSuffix+"_image";
+		
+		TextAsset text = Resources.Load (filePath, typeof(TextAsset)) as TextAsset;
+		
+		Texture2D texture = new Texture2D(0,0,TextureFormat.ARGB32,false);
+		
+		texture.LoadImage(text.bytes);
+		
+		Futile.atlasManager.LoadAtlasFromTexture(atlasPath,atlasPath+Futile.resourceSuffix, texture);
 	}
 
 	public void LoadImage(string imagePath)

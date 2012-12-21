@@ -68,7 +68,7 @@ public class FAtlas
 	private bool _isTextureAnAsset = false;
 	
 	//TODO: allow users to pass a dictionary of pre-built atlas data if they want
-	public FAtlas (string name, Texture texture, int index)
+	public FAtlas (string name, Texture texture, int index) //single image
 	{
 		_name = name;
 		_imagePath = "";
@@ -79,6 +79,20 @@ public class FAtlas
 		_textureSize = new Vector2(_texture.width,_texture.height);
 		
 		CreateAtlasFromSingleImage();
+	}
+	
+	public FAtlas (string name, string dataPath, Texture texture, int index) //atlas with data path
+	{
+		_name = name;
+		_imagePath = "";
+		_dataPath = dataPath;
+		_index = index;
+		
+		_texture = texture;
+		_textureSize = new Vector2(_texture.width,_texture.height);
+		
+		_isSingleImage = false;
+		LoadAtlasData();
 	}
 	
 	public FAtlas (string name, string imagePath, string dataPath, int index, bool shouldLoadAsSingleImage)
