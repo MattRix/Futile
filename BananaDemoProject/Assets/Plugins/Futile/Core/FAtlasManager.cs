@@ -89,13 +89,17 @@ public class FAtlasManager
 	
 	public void LoadAtlas(string atlasPath, bool isSpecialPNG) //load a special image with the suffix "_image.bytes"
 	{
-		string filePath = atlasPath+Futile.resourceSuffix+"_image";
+		if(DoesContainAtlas(atlasPath)) return; //we already have it, don't load it again
+		
+		string filePath = atlasPath+Futile.resourceSuffix+"_png";
 		
 		TextAsset text = Resources.Load (filePath, typeof(TextAsset)) as TextAsset;
 		
 		Texture2D texture = new Texture2D(0,0,TextureFormat.ARGB32,false);
 		
 		texture.LoadImage(text.bytes);
+		
+		Resources.UnloadAsset(text);
 		
 		Futile.atlasManager.LoadAtlasFromTexture(atlasPath,atlasPath+Futile.resourceSuffix, texture);
 	}
