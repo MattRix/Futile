@@ -7,19 +7,25 @@ public class FSoundManager
 	static private String _resourcePrefix = "Audio/";
 	
 	static private GameObject _gameObject;
-	static private AudioListener _listener;
 	static private AudioSource _soundSource;
 	static private AudioSource _musicSource;
 	
 	static private Dictionary<string, AudioClip> _soundClips = new Dictionary<string, AudioClip>();
-	private static AudioClip _currentMusicClip = null;
-
+	static private AudioClip _currentMusicClip = null;
+	
+	static private float _volume = 1.0f;
+	
 	static public void Init()
 	{
 		_gameObject = new GameObject("FSoundManager");
 		_musicSource = _gameObject.AddComponent<AudioSource>();
 		_soundSource = _gameObject.AddComponent<AudioSource>();
 		_gameObject.AddComponent<AudioListener>(); //we don't need a reference to it, we just need it to exist
+		
+		if(PlayerPrefs.HasKey("FSoundManager_IsAudioMuted"))
+		{
+			FSoundManager.isMuted = (PlayerPrefs.GetInt("FSoundManager_IsAudioMuted") == 1);
+		}
 	}
 	
 	static public void SetResourcePrefix (String prefix)
@@ -103,6 +109,44 @@ public class FSoundManager
 		}
 		
 		_currentMusicClip = null;
+	}
+	
+	static public float volume
+	{
+		set 
+		{ 
+			_volume = value;
+			
+			if(AudioListener.pause)
+			{
+				AudioListener.volume = 0.0f;
+			}
+			else 
+			{
+				AudioListener.volume = _volume; 
+			}
+		
+		}
+		get { return AudioListener.volume; }
+	}
+	
+	static public bool isMuted
+	{
+		set 
+		{ 
+			AudioListener.pause = value; 
+			PlayerPrefs.SetInt("FSoundManager_IsAudioMuted", value ? 1 : 0);
+			
+			if(AudioListener.pause)
+			{
+				AudioListener.volume = 0.0f;
+			}
+			else 
+			{
+				AudioListener.volume = _volume; 
+			}
+		}
+		get { return AudioListener.pause; }
 	}
 }
 
