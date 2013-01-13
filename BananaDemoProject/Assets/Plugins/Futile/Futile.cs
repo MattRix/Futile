@@ -93,6 +93,7 @@ public class Futile : MonoBehaviour
 		_cameraHolder.transform.parent = gameObject.transform;
 		
 		_camera = _cameraHolder.AddComponent<Camera>();
+		_camera.tag = "MainCamera";
 		_camera.name = "Camera";
 		//_camera.clearFlags = CameraClearFlags.Depth; //TODO: check if this is faster or not?
 		_camera.clearFlags = CameraClearFlags.SolidColor;
