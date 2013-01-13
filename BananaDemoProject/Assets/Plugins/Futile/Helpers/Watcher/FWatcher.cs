@@ -269,6 +269,11 @@ public class FWatcher
 	static public void Watch(object target, string targetName, bool shouldUseWeakReference)
 	{
 	}
+	
+	static public void RegisterWatcherType(Type targetType, Type linkType)
+	{
+		
+	}
 }
 
 public class FWatcherLink : MonoBehaviour
