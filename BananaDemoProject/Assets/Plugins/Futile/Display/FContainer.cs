@@ -75,7 +75,9 @@ public class FContainer : FNode
 	
 	private void HandleUpdateAndSort()
 	{
-		if(SortByZ()) //sort the order, and then if the child order was changed, rearrange the quads
+		bool didChildOrderChangeAfterSort = SortByZ();
+		
+		if(didChildOrderChangeAfterSort) //sort the order, and then if the child order was changed, repopulate the renderlayer
 		{
 			if(_isOnStage) _stage.HandleFacetsChanged();	
 		}
