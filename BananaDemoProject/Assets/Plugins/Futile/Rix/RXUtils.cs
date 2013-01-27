@@ -168,6 +168,10 @@ public class RXRandom
 	{
 		return low + _randomSource.Next() % (high-low); 
 	}
+	public static bool Bool()
+	{
+		return _randomSource.NextDouble() < 0.5;	
+	}
 }
 
 
