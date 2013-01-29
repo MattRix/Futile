@@ -19,6 +19,16 @@ public class FAtlasManager
 		
 	}
 	
+	public FAtlas GetAtlasWithName(string name)
+	{
+		int atlasCount = _atlases.Count;
+		for(int a = 0; a<atlasCount; ++a)
+		{
+			if(_atlases[a].name == name) return _atlases[a];
+		}
+		return null;
+	}
+	
 	public bool DoesContainAtlas(string name)
 	{
 		int atlasCount = _atlases.Count;
