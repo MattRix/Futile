@@ -12,8 +12,6 @@ public class FRenderer
 	
 	private FRenderLayer _topLayer;
 	
-	private int _depthToUse;
-	
 	private FStage _stage;
 	
 	public FRenderer (FStage stage)
@@ -52,8 +50,6 @@ public class FRenderer
 		_previousLiveLayers = swapLayers;
 		
 		_topLayer = null;
-		
-		_depthToUse = 0;
 	}
 	
 	public void EndRender()
@@ -82,7 +78,6 @@ public class FRenderer
 			{
 				_previousLiveLayers.RemoveAt(p);
 				_liveLayers.Add (previousLiveLayer);
-				previousLiveLayer.depth = _depthToUse++;
 				return previousLiveLayer;
 			}
 		}
@@ -97,7 +92,6 @@ public class FRenderer
 				_cachedLayers.RemoveAt(c);
 				cachedLayer.AddToWorld();
 				_liveLayers.Add (cachedLayer);
-				cachedLayer.depth = _depthToUse++;
 				return cachedLayer;
 			}
 		}
@@ -108,7 +102,6 @@ public class FRenderer
 		_liveLayers.Add(newLayer);
 		_allLayers.Add(newLayer);
 		newLayer.AddToWorld();
-		newLayer.depth = _depthToUse++;
 		
 		return newLayer;
 	}
@@ -136,6 +129,11 @@ public class FRenderer
 		renderLayer = _topLayer;
 		firstFacetIndex = _topLayer.GetNextFacetIndex(numberOfFacetsNeeded);
 	}
+
+	public void AddGameObject (out int _renderQueueDepth, GameObject gameObject)
+	{
+		_renderQueueDepth = _depthToUse++;
+	}
 	
 	public FShader GetDefaultShader()
 	{
@@ -147,8 +145,7 @@ public class FRenderer
 		int liveLayerCount = _liveLayers.Count;
 		for(int v = 0; v<liveLayerCount; ++v)
 		{
-			_liveLayers[v].depth = Futile.nextRenderLayerDepth++;
-			_liveLayers[v].Update();	
+			_liveLayers[v].Update(Futile.nextRenderLayerDepth++);	
 		} 
 
 	}
