@@ -42,5 +42,10 @@ public class FUnityParticleSystemNode : FGameObjectNode
 		}
 	}
 	
+	public ParticleSystem particleSystem
+	{
+		get { return _particleSystem;}	
+	}
+	
 }
 
