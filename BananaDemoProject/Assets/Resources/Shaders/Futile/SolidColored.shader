@@ -1,5 +1,5 @@
 
-Shader "Unlit Transparent Vertex Colored Additive Color" 
+Shader "Futile/SolidColored" 
 {
 	Properties 
 	{
@@ -29,8 +29,8 @@ Shader "Unlit Transparent Vertex Colored Additive Color"
 			{
 				SetTexture [_MainTex] 
 				{
-					Combine texture + primary, texture * primary
-				}
+					Combine primary, texture * primary
+				} 
 			}
 		} 
 	}

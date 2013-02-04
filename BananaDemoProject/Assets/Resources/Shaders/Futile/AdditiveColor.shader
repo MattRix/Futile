@@ -1,6 +1,5 @@
-//from http://forum.unity3d.com/threads/68402-Making-a-2D-game-for-iPhone-iPad-and-need-better-performance
 
-Shader "Unlit Transparent Vertex Colored" 
+Shader "Futile/AdditiveColor" //Unlit Transparent Vertex Colored Additive Color 
 {
 	Properties 
 	{
@@ -30,13 +29,9 @@ Shader "Unlit Transparent Vertex Colored"
 			{
 				SetTexture [_MainTex] 
 				{
-					Combine texture * primary
+					Combine texture + primary, texture * primary
 				}
 			}
 		} 
 	}
 }
-
-
-
-//Blend SrcAlpha OneMinusSrcAlpha 

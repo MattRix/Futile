@@ -12,6 +12,7 @@ public class FShader
 	public static FShader Additive;
 	public static FShader AdditiveColor;
 	public static FShader Solid;
+	public static FShader SolidColored;
 	
 	private static int _nextShaderIndex = 0;
 	private static List<FShader> _shaders = new List<FShader>();
@@ -34,10 +35,11 @@ public class FShader
 	
 	public static void Init() //called by Futile
 	{
-		Normal = CreateShader("Normal", Shader.Find("Unlit Transparent Vertex Colored"));	
-		Additive = CreateShader("Additive", Shader.Find("Unlit Transparent Vertex Colored Additive"));	
-		AdditiveColor = CreateShader("AdditiveColor", Shader.Find("Unlit Transparent Vertex Colored Additive Color"));	
-		Solid = CreateShader("Solid", Shader.Find("Unlit Transparent Vertex Colored Solid"));	
+		Normal = CreateShader("Normal", Shader.Find("Futile/Normal"));	
+		Additive = CreateShader("Additive", Shader.Find("Futile/Additive"));	
+		AdditiveColor = CreateShader("AdditiveColor", Shader.Find("Futile/AdditiveColor"));	
+		Solid = CreateShader("Solid", Shader.Find("Futile/Solid"));	
+		SolidColored = CreateShader("SolidColored", Shader.Find("Futile/SolidColored"));	
 		
 		defaultShader = Normal;
 	}

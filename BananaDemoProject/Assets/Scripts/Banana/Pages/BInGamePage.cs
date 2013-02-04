@@ -24,6 +24,8 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 	private int _framesTillNextBanana = 0;	
 	
 	private FContainer _effectHolder;
+	
+	private GameObject _particlePrefab;
 
 	public BInGamePage()
 	{
@@ -100,6 +102,19 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 			setEaseType(EaseType.BackOut));
 		
 		HandleResize(true); //force resize to position everything at the start
+		
+		_particlePrefab = Resources.Load("Particles/BananaParticles") as GameObject;
+		//_particleGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
+//		_particleGO = UnityEngine.Object.Instantiate(prefab) as GameObject;
+//		_particleGO.name = "Particules!";
+//		_particleGO.transform.localScale = new Vector3(100,100,100);
+//		
+//		_particleNode = new FGameObjectNode(_particleGO, true, true, true);
+//		_particleNode.scale = 100.0f;
+//		
+//		AddChild (_particleNode);
+		
+//		AddChild (_bananaContainer); 
 	}
 	
 	protected void HandleResize(bool wasOrientationChange)
@@ -141,6 +156,13 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 			_scoreLabel.text = BMain.instance.score+" Bananas";	
 		}
 		
+		FUnityParticleSystemNode particleNode = new FUnityParticleSystemNode(_particlePrefab, true);
+		
+		AddChild (particleNode);
+		
+		particleNode.x = banana.x;
+		particleNode.y = banana.y;
+		
 		BSoundPlayer.PlayBananaSound();
 	}
 
@@ -158,6 +180,9 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 	protected void HandleUpdate ()
 	{
 		_secondsLeft -= Time.deltaTime;
+		
+		this.scale = 1.0f + 0.03f * Mathf.Sin (Time.time);
+		this.rotation = 0 + 2.0f * Mathf.Sin (Time.time * 1.3f);
 		
 		if(_secondsLeft <= 0)
 		{
