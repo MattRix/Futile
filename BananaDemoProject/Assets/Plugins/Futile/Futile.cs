@@ -25,6 +25,8 @@ public class Futile : MonoBehaviour
 	
 	static public int baseRenderQueueDepth = 3000;
 	
+	static public bool shouldRemoveAtlasElementExtensions = true;
+	
 	
 	//These are set in FScreen
 	static public float displayScale; //set based on the resolution setting (the unit to pixel scale)

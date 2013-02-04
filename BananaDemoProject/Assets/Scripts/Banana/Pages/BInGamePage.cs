@@ -52,7 +52,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 	{
 		BMain.instance.score = 0;
 		
-		_background = new FSprite("JungleBlurryBG.png");
+		_background = new FSprite("JungleBlurryBG");
 		AddChild(_background);
 
 		//the banana container will make it easy to keep the bananas at the right depth
@@ -60,7 +60,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		AddChild(_bananaContainer); 
 		
 		
-		_closeButton = new FButton("CloseButton_normal.png", "CloseButton_down.png","CloseButton_over.png", "ClickSound");
+		_closeButton = new FButton("CloseButton_normal", "CloseButton_down","CloseButton_over", "ClickSound");
 		AddChild(_closeButton);
 		
 		
@@ -257,7 +257,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		//we can't just get its x and y, because they might be transformed somehow
 		Vector2 bananaPos = _effectHolder.LocalToLocal(banana,Vector2.zero);
 		
-		FSprite explodeSprite = new FSprite("Banana.png");
+		FSprite explodeSprite = new FSprite("Banana");
 		_effectHolder.AddChild(explodeSprite);
 		explodeSprite.shader = FShader.Additive;
 		explodeSprite.x = bananaPos.x;

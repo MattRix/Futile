@@ -221,7 +221,7 @@ public class FFont
 			{
 				//do nothing
 			}
-			else if(words[0] == "page") //page id=0 file="FranchiseLarge.png"
+			else if(words[0] == "page") //page id=0 file="FranchiseLarge"
 			{
 				//do nothing
 			}

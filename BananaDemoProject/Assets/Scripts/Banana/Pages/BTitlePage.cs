@@ -32,7 +32,7 @@ public class BTitlePage : BPage
 	
 	override public void Start()
 	{
-		_background = new FSprite("JungleClearBG.png");
+		_background = new FSprite("JungleClearBG");
 		AddChild(_background);
 		
 		//this will scale the background up to fit the screen
@@ -42,11 +42,11 @@ public class BTitlePage : BPage
 		
 		AddChild (_logoHolder);
 
-		_logo = new FSprite("MainLogo.png");
+		_logo = new FSprite("MainLogo");
 		
 		_logoHolder.AddChild(_logo);
 		
-		_startButton = new FButton("YellowButton_normal.png", "YellowButton_down.png", "YellowButton_over.png", "ClickSound");
+		_startButton = new FButton("YellowButton_normal", "YellowButton_down", "YellowButton_over", "ClickSound");
 		_startButton.AddLabel("Franchise","START",new Color(0.45f,0.25f,0.0f,1.0f));
 		
 		AddChild(_startButton);

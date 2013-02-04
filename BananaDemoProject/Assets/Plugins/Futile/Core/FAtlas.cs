@@ -177,9 +177,12 @@ public class FAtlas
 			element.indexInAtlas = index++;
 			
 			string name = (string) item.Key;
-						
-//			int extensionPosition = name.LastIndexOf(".");
-//			if (extensionPosition >= 0) name = name.Substring(0, extensionPosition);
+			
+			if(Futile.shouldRemoveAtlasElementExtensions)
+			{
+				int extensionPosition = name.LastIndexOf(".");
+				if (extensionPosition >= 0) name = name.Substring(0, extensionPosition);
+			}
 
 			element.name = name;
 			
