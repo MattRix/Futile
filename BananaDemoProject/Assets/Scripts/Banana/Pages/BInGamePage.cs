@@ -181,9 +181,6 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 	{
 		_secondsLeft -= Time.deltaTime;
 		
-		this.scale = 1.0f + 0.03f * Mathf.Sin (Time.time);
-		this.rotation = 0 + 2.0f * Mathf.Sin (Time.time * 1.3f);
-		
 		if(_secondsLeft <= 0)
 		{
 			BSoundPlayer.PlayVictoryMusic();
