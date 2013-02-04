@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-public class FGameObjectNode : FNode
+public class FGameObjectNode : FNode, FRenderableLayerInterface
 {
 	protected GameObject _gameObject;
 	protected bool _shouldLinkPosition;
@@ -13,6 +13,16 @@ public class FGameObjectNode : FNode
 	
 	public FGameObjectNode (GameObject gameObject, bool shouldLinkPosition, bool shouldLinkRotation, bool shouldLinkScale)
 	{
+		Init (gameObject,shouldLinkPosition,shouldLinkRotation, shouldLinkScale);
+	}
+	
+	protected FGameObjectNode() //for easy overriding
+	{
+		
+	}
+	
+	protected void Init(GameObject gameObject, bool shouldLinkPosition, bool shouldLinkRotation, bool shouldLinkScale)
+	{
 		_gameObject = gameObject;
 		_shouldLinkPosition = shouldLinkPosition;
 		_shouldLinkRotation = shouldLinkRotation;
@@ -21,34 +31,49 @@ public class FGameObjectNode : FNode
 		Setup();
 	}
 	
-	private void Setup()
+	protected void Setup()
 	{
 		if(_isOnStage)
 		{
 			_gameObject.transform.parent = Futile.instance.gameObject.transform;
+			
+			if(_gameObject.renderer != null && _gameObject.renderer.material != null)
+			{
+				_gameObject.renderer.material.renderQueue = _renderQueueDepth;
+			}
 		}
+		
 		UpdateGameObject();
 	}
 	
-	public void Unsetup()
+	protected void Unsetup()
 	{
 		_gameObject.transform.parent = null;
 	}
 	
 	override public void HandleAddedToStage()
 	{
-		base.HandleAddedToStage();
-		_gameObject.transform.parent = Futile.instance.gameObject.transform;
+		if(!_isOnStage)
+		{
+			_isOnStage = true;
+			_stage.HandleFacetsChanged();
+			_gameObject.transform.parent = Futile.instance.gameObject.transform;
+		}
 	}
 	
 	override public void HandleRemovedFromStage()
 	{
-		base.HandleRemovedFromStage();
-		_gameObject.transform.parent = null;
-		
-		if(shouldDestroyOnRemoveFromStage)
+		if(_isOnStage)
 		{
-			UnityEngine.Object.Destroy(_gameObject);	
+			_gameObject.transform.parent = null;
+		
+			if(shouldDestroyOnRemoveFromStage)
+			{
+				UnityEngine.Object.Destroy(_gameObject);	
+			}
+			
+			_isOnStage = false;
+			_stage.HandleFacetsChanged();
 		}
 	}
 	
@@ -85,14 +110,17 @@ public class FGameObjectNode : FNode
 		
 	protected void UpdateDepth()
 	{
-		stage.renderer.AddGameObject(out _renderQueueDepth, _gameObject);
+		stage.renderer.AddRenderableLayer(this);
+	}
+	
+	public void Update(int depth)
+	{
+		_renderQueueDepth = Futile.baseRenderQueueDepth+depth;
 		
 		if(_gameObject.renderer != null && _gameObject.renderer.material != null)
 		{
-			_gameObject.renderer.material.renderQueue = 3000+_renderQueueDepth;
+			_gameObject.renderer.material.renderQueue = _renderQueueDepth;
 		}
-		
-		
 	}
 	
 	public void UpdateGameObject()

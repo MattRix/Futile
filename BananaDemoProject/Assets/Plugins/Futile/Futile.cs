@@ -23,7 +23,7 @@ public class Futile : MonoBehaviour
 	
 	static public bool isOpenGL; //assigned in Awake
 	
-	
+	static public int baseRenderQueueDepth = 3000;
 	
 	
 	//These are set in FScreen

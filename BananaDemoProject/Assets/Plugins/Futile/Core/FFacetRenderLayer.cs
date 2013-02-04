@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class FRenderLayer
+public class FFacetRenderLayer : FRenderableLayerInterface
 {
 	public int batchIndex;
 	
@@ -45,7 +45,7 @@ public class FRenderLayer
 	
 	protected bool _needsRecalculateBoundsIfTransformed = false;
 	
-	public FRenderLayer (FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)
+	public FFacetRenderLayer (FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)
 	{
 		_stage = stage;
 		
@@ -180,8 +180,21 @@ public class FRenderLayer
 	
 	//ACTUAL RENDERING GOES HERE
 	
-	public void Update() //called by the engine
+	public void Update(int depth) //called by the engine
 	{
+		if(_depth != depth)
+		{
+			_depth = depth; 
+	
+			//this will set the render order correctly based on the depth
+			_material.renderQueue = Futile.baseRenderQueueDepth+_depth;
+			
+			#if UNITY_EDITOR
+				//some debug code so that layers are sorted by depth properly
+				_gameObject.name = "FRenderLayer "+_depth+" ("+_stage.name+") ["+_nextAvailableFacetIndex+"/"+_maxFacetCount+"] (" + _atlas.name + " " + _shader.name+" "+_facetType.name+ ")";
+			#endif
+		}
+		
 		if(_isMeshDirty)
 		{
 			UpdateMeshProperties();
@@ -257,26 +270,6 @@ public class FRenderLayer
 		_isMeshDirty = true;
 	}
 	
-	public int depth
-	{
-		get {return _depth;}
-		set 
-		{
-			if(_depth != value)
-			{
-				_depth = value; 
-		
-				//this will set the render order correctly based on the depth
-				_material.renderQueue = 3000+_depth;
-				
-				#if UNITY_EDITOR
-					//some debug code so that layers are sorted by depth properly
-					_gameObject.name = "FRenderLayer "+_depth+" ("+_stage.name+") ["+_nextAvailableFacetIndex+"/"+_maxFacetCount+"] (" + _atlas.name + " " + _shader.name+" "+_facetType.name+ ")";
-				#endif
-			}
-		}
-	}
-	
 	public int expansionAmount
 	{
 		set {_expansionAmount = value;}
@@ -299,10 +292,10 @@ public class FRenderLayer
 	}
 }
 
-public class FRenderQuadLayer : FRenderLayer
+public class FQuadRenderLayer : FFacetRenderLayer
 {
 	
-	public FRenderQuadLayer (FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)  : base (stage,facetType,atlas,shader)
+	public FQuadRenderLayer (FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)  : base (stage,facetType,atlas,shader)
 	{
 		
 	}
@@ -382,10 +375,10 @@ public class FRenderQuadLayer : FRenderLayer
 }
 
 
-public class FRenderTriangleLayer : FRenderLayer
+public class FTriangleRenderLayer : FFacetRenderLayer
 {
 	
-	public FRenderTriangleLayer (FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)  : base (stage,facetType,atlas,shader)
+	public FTriangleRenderLayer (FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)  : base (stage,facetType,atlas,shader)
 	{
 		
 	}

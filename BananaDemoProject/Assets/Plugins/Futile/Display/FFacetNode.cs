@@ -10,7 +10,7 @@ public class FFacetNode : FNode
 	protected int _firstFacetIndex = -1;
 	protected int _numberOfFacetsNeeded;
 	
-	protected FRenderLayer _renderLayer;
+	protected FFacetRenderLayer _renderLayer;
 	
 	protected FFacetType _facetType;
 	
@@ -32,7 +32,7 @@ public class FFacetNode : FNode
 	
 	protected void UpdateFacets()
 	{
-		_stage.renderer.GetRenderLayer(out _renderLayer, out _firstFacetIndex, _facetType, _element.atlas, _shader, _numberOfFacetsNeeded);
+		_stage.renderer.GetFacetRenderLayer(out _renderLayer, out _firstFacetIndex, _facetType, _element.atlas, _shader, _numberOfFacetsNeeded);
 	}
 	
 	virtual public int firstFacetIndex

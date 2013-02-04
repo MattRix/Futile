@@ -21,7 +21,7 @@ public class FFacetType
 	public int expansionAmount;
 	public int maxEmptyAmount;
 	
-	public delegate FRenderLayer CreateRenderLayerDelegate(FStage stage, FFacetType facetType, FAtlas atlas, FShader shader);
+	public delegate FFacetRenderLayer CreateRenderLayerDelegate(FStage stage, FFacetType facetType, FAtlas atlas, FShader shader);
 	
 	public CreateRenderLayerDelegate createRenderLayer;
 	
@@ -59,14 +59,14 @@ public class FFacetType
 		return newFacetType;
 	}
 	
-	static private FRenderLayer CreateQuadLayer(FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)
+	static private FFacetRenderLayer CreateQuadLayer(FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)
 	{
-		return new FRenderQuadLayer(stage,facetType,atlas,shader);
+		return new FQuadRenderLayer(stage,facetType,atlas,shader);
 	}
 	
-	static private FRenderLayer CreateTriLayer(FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)
+	static private FFacetRenderLayer CreateTriLayer(FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)
 	{
-		return new FRenderTriangleLayer(stage,facetType,atlas,shader);
+		return new FTriangleRenderLayer(stage,facetType,atlas,shader);
 	}
 	
 }

@@ -5,12 +5,14 @@ using System.Collections.Generic;
 
 public class FRenderer
 {	
-	private List<FRenderLayer> _allLayers = new List<FRenderLayer>();
-	private List<FRenderLayer> _liveLayers = new List<FRenderLayer>();
-	private List<FRenderLayer> _previousLiveLayers = new List<FRenderLayer>();
-	private List<FRenderLayer> _cachedLayers = new List<FRenderLayer>();
+	private List<FFacetRenderLayer> _allLayers = new List<FFacetRenderLayer>();
+	private List<FFacetRenderLayer> _liveLayers = new List<FFacetRenderLayer>();
+	private List<FFacetRenderLayer> _previousLiveLayers = new List<FFacetRenderLayer>();
+	private List<FFacetRenderLayer> _cachedLayers = new List<FFacetRenderLayer>();
 	
-	private FRenderLayer _topLayer;
+	private List<FRenderableLayerInterface> _allRenderables = new List<FRenderableLayerInterface>();
+	
+	private FFacetRenderLayer _topLayer;
 	
 	private FStage _stage;
 	
@@ -31,6 +33,7 @@ public class FRenderer
 		_liveLayers.Clear();
 		_previousLiveLayers.Clear();
 		_cachedLayers.Clear();
+		_allRenderables.Clear();
 	}
 
 	public void UpdateLayerTransforms()
@@ -45,11 +48,13 @@ public class FRenderer
 	public void StartRender()
 	{
 		//make the livelayers empty, put those layers in _previousLiveLayers
-		List<FRenderLayer> swapLayers = _liveLayers;
+		List<FFacetRenderLayer> swapLayers = _liveLayers;
 		_liveLayers = _previousLiveLayers;
 		_previousLiveLayers = swapLayers;
 		
 		_topLayer = null;
+		
+		_allRenderables.Clear();
 	}
 	
 	public void EndRender()
@@ -67,17 +72,18 @@ public class FRenderer
 		
 	}
 	
-	protected FRenderLayer CreateRenderLayer(FFacetType facetType, int batchIndex, FAtlas atlas, FShader shader)
+	protected FFacetRenderLayer CreateFacetRenderLayer(FFacetType facetType, int batchIndex, FAtlas atlas, FShader shader)
 	{
 		//first, check and see if we already have a layer that matches the batchIndex
 		int previousLiveLayerCount = _previousLiveLayers.Count;
 		for(int p = 0; p<previousLiveLayerCount; ++p)
 		{
-			FRenderLayer previousLiveLayer = _previousLiveLayers[p];
+			FFacetRenderLayer previousLiveLayer = _previousLiveLayers[p];
 			if(previousLiveLayer.batchIndex == batchIndex)
 			{
 				_previousLiveLayers.RemoveAt(p);
 				_liveLayers.Add (previousLiveLayer);
+				_allRenderables.Add(previousLiveLayer);
 				return previousLiveLayer;
 			}
 		}
@@ -86,33 +92,35 @@ public class FRenderer
 		int cachedLayerCount = _cachedLayers.Count;
 		for(int c = 0; c<cachedLayerCount; ++c)
 		{
-			FRenderLayer cachedLayer = _cachedLayers[c];
+			FFacetRenderLayer cachedLayer = _cachedLayers[c];
 			if(cachedLayer.batchIndex == batchIndex)
 			{
 				_cachedLayers.RemoveAt(c);
 				cachedLayer.AddToWorld();
 				_liveLayers.Add (cachedLayer);
+				_allRenderables.Add(cachedLayer);
 				return cachedLayer;
 			}
 		}
 		
 		//still no layer found? create a new one!
 		
-		FRenderLayer newLayer = facetType.createRenderLayer(_stage, facetType,atlas,shader);
+		FFacetRenderLayer newLayer = facetType.createRenderLayer(_stage, facetType,atlas,shader);
 		_liveLayers.Add(newLayer);
 		_allLayers.Add(newLayer);
+		_allRenderables.Add(newLayer);
 		newLayer.AddToWorld();
 		
 		return newLayer;
 	}
 	
-	public void GetRenderLayer (out FRenderLayer renderLayer, out int firstFacetIndex, FFacetType facetType, FAtlas atlas, FShader shader, int numberOfFacetsNeeded)
+	public void GetFacetRenderLayer (out FFacetRenderLayer renderLayer, out int firstFacetIndex, FFacetType facetType, FAtlas atlas, FShader shader, int numberOfFacetsNeeded)
 	{
 		int batchIndex = facetType.index*10000000 + atlas.index*10000 + shader.index;
 		
 		if(_topLayer == null)
 		{
-			_topLayer = CreateRenderLayer(facetType, batchIndex, atlas, shader);
+			_topLayer = CreateFacetRenderLayer(facetType, batchIndex, atlas, shader);
 			_topLayer.Open();
 		}
 		else 
@@ -121,7 +129,7 @@ public class FRenderer
 			{
 				_topLayer.Close(); //close the old layer
 				
-				_topLayer = CreateRenderLayer(facetType, batchIndex, atlas, shader);
+				_topLayer = CreateFacetRenderLayer(facetType, batchIndex, atlas, shader);
 				_topLayer.Open(); //open the new layer
 			}
 		}
@@ -130,9 +138,14 @@ public class FRenderer
 		firstFacetIndex = _topLayer.GetNextFacetIndex(numberOfFacetsNeeded);
 	}
 
-	public void AddGameObject (out int _renderQueueDepth, GameObject gameObject)
+	public void AddRenderableLayer (FRenderableLayerInterface renderableLayer)
 	{
-		_renderQueueDepth = _depthToUse++;
+		_allRenderables.Add(renderableLayer);
+		if(_topLayer != null)
+		{
+			_topLayer.Close();
+			_topLayer = null;
+		}
 	}
 	
 	public FShader GetDefaultShader()
@@ -142,13 +155,19 @@ public class FRenderer
 	
 	public void Update()
 	{
-		int liveLayerCount = _liveLayers.Count;
-		for(int v = 0; v<liveLayerCount; ++v)
+		int allRenderablesCount = _allRenderables.Count;
+		for(int a = 0; a<allRenderablesCount; a++)
 		{
-			_liveLayers[v].Update(Futile.nextRenderLayerDepth++);	
+			_allRenderables[a].Update(Futile.nextRenderLayerDepth++);	
 		} 
-
 	}
 }
+
+public interface FRenderableLayerInterface
+{
+	void Update(int depth);
+}
+
+
 
 
