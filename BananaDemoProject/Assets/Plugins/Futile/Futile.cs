@@ -25,7 +25,7 @@ public class Futile : MonoBehaviour
 	
 	static public int baseRenderQueueDepth = 3000;
 	
-	static public bool shouldRemoveAtlasElementExtensions = true;
+	static public bool shouldRemoveAtlasElementFileExtensions = true;
 	
 	
 	//These are set in FScreen

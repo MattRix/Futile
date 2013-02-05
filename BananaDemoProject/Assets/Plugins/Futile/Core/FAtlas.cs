@@ -178,7 +178,7 @@ public class FAtlas
 			
 			string name = (string) item.Key;
 			
-			if(Futile.shouldRemoveAtlasElementExtensions)
+			if(Futile.shouldRemoveAtlasElementFileExtensions)
 			{
 				int extensionPosition = name.LastIndexOf(".");
 				if (extensionPosition >= 0) name = name.Substring(0, extensionPosition);
