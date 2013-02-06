@@ -163,11 +163,22 @@ public class FTouchManager
 		
 		int singleTouchableCount = _singleTouchables.Count;
 		
+		int lowestFingerId = int.MaxValue;
+			
+		for(int t = 0; t<touchCount; t++)
+		{
+			FTouch touch = touches[t];
+			if(touch.fingerId < lowestFingerId)
+			{
+				lowestFingerId = touch.fingerId;	
+			}
+		}
+		
 		for(int t = 0; t<touchCount; t++)
 		{
 			FTouch touch = touches[t];
 			
-			if(touch.fingerId == 0) // we only care about the first touch for the singleTouchables
+			if(touch.fingerId == lowestFingerId) // we only care about the first touch for the singleTouchables
 			{
 				if(touch.phase == TouchPhase.Began)
 				{
