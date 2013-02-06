@@ -70,6 +70,44 @@ public static class RectExtensions
 		rect.height *= scaleY;
 		return rect;
 	}
+	
+	//general idea from here: http://stackoverflow.com/questions/1343346/calculate-a-vector-from-the-center-of-a-square-to-edge-based-on-radius
+	//(but greatly cleaned up and simplified)
+	//this is different from GetPointLimitedToInterior because it takes the angle into consideration
+	public static Vector2 GetInteriorPointClosestToTargetPoint(this Rect rect, Vector2 targetPoint)
+	{
+		//if it's inside the rect, don't do anything
+		if(	targetPoint.x >= rect.xMin &&
+			targetPoint.x <= rect.xMax &&
+			targetPoint.y >= rect.yMin &&
+			targetPoint.y <= rect.yMax) return targetPoint;
+		
+		targetPoint.Normalize();
+		
+		float absX = Mathf.Abs(targetPoint.x);
+		float absY = Mathf.Abs(targetPoint.y);
+		float halfWidth = rect.width*0.5f;
+		float halfHeight = rect.height*0.5f;
+		
+		if (halfWidth*absY <= halfHeight*absX)
+		{
+			return targetPoint * halfWidth/absX;
+		}
+		else
+		{
+			return targetPoint * halfHeight/absY;
+		}
+	}
+	
+	//this simply ensures that none of the point values are over the max and min
+	public static Vector2 GetPointLimitedToInterior(this Rect rect, Vector2 targetPoint)
+	{
+		return new Vector2
+		(
+				Mathf.Max (rect.xMin, Mathf.Min(rect.xMax,targetPoint.x)),
+				Mathf.Max (rect.yMin, Mathf.Min(rect.yMax,targetPoint.y))
+		);
+	}
 }
 
 public static class GoKitExtensions
