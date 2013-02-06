@@ -219,5 +219,11 @@ public class FSprite : FFacetNode
 		this.anchorX = newX;
 		this.anchorY = newY;
 	}
+	
+	public void SetAnchor(Vector2 newAnchor)
+	{
+		this.anchorX = newAnchor.x;
+		this.anchorY = newAnchor.y;
+	}
 }
 

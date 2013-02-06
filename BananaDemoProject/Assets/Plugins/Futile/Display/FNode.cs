@@ -464,4 +464,10 @@ public class FNode
 		this.x = newX;
 		this.y = newY;
 	}
+	
+	public void SetPosition(Vector2 newPosition)
+	{
+		this.x = newPosition.x;
+		this.y = newPosition.y;
+	}
 }
