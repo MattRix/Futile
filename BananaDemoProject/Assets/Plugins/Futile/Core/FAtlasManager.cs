@@ -94,29 +94,50 @@ public class FAtlasManager
 	
 	public void LoadAtlas(string atlasPath)
 	{
-		ActuallyLoadAtlasOrImage(atlasPath, atlasPath+Futile.resourceSuffix, atlasPath+Futile.resourceSuffix);
-	}
-	
-	public void LoadAtlas(string atlasPath, bool isSpecialPNG) //load a special image with the suffix "_image.bytes"
-	{
 		if(DoesContainAtlas(atlasPath)) return; //we already have it, don't load it again
 		
-		string filePath = atlasPath+Futile.resourceSuffix+"_png";
+		string filePath = atlasPath+Futile.resourceSuffix+"_pnzg";
 		
-		TextAsset text = Resources.Load (filePath, typeof(TextAsset)) as TextAsset;
+		TextAsset imageBytes = Resources.Load (filePath, typeof(TextAsset)) as TextAsset;
 		
-		Texture2D texture = new Texture2D(0,0,TextureFormat.ARGB32,false);
-		
-		texture.LoadImage(text.bytes);
-		
-		Resources.UnloadAsset(text);
-		
-		Futile.atlasManager.LoadAtlasFromTexture(atlasPath,atlasPath+Futile.resourceSuffix, texture);
+		if(imageBytes != null) //do we have png bytes?
+		{
+			Texture2D texture = new Texture2D(0,0,TextureFormat.ARGB32,false);
+			
+			texture.LoadImage(imageBytes.bytes);
+			
+			Resources.UnloadAsset(imageBytes);
+			
+			LoadAtlasFromTexture(atlasPath,atlasPath+Futile.resourceSuffix, texture);
+		}
+		else //load it as a normal Unity image asset
+		{
+			ActuallyLoadAtlasOrImage(atlasPath, atlasPath+Futile.resourceSuffix, atlasPath+Futile.resourceSuffix);
+		}
 	}
-
+	
 	public void LoadImage(string imagePath)
 	{
-		ActuallyLoadAtlasOrImage(imagePath, imagePath+Futile.resourceSuffix,"");
+		if(DoesContainAtlas(imagePath)) return; //we already have it
+		
+		string filePath = imagePath+Futile.resourceSuffix+"_png";
+		
+		TextAsset imageBytes = Resources.Load (filePath, typeof(TextAsset)) as TextAsset;
+		
+		if(imageBytes != null) //do we have png bytes?
+		{
+			Texture2D texture = new Texture2D(0,0,TextureFormat.ARGB32,false);
+			
+			texture.LoadImage(imageBytes.bytes);
+			
+			Resources.UnloadAsset(imageBytes);
+			
+			LoadAtlasFromTexture(imagePath, texture);
+		}
+		else //load it as a normal Unity image asset
+		{
+			ActuallyLoadAtlasOrImage(imagePath, imagePath+Futile.resourceSuffix,"");
+		}
 	}
 	
 	public void ActuallyUnloadAtlasOrImage(string name)
