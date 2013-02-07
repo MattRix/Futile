@@ -335,6 +335,11 @@ public class FLabel : FFacetNode
 		this.anchorY = newAnchor.y;
 	}
 	
+	public Vector2 GetAnchor()
+	{
+		return new Vector2(_anchorX,_anchorY);	
+	}
+	
 	
 }
 

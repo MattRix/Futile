@@ -225,5 +225,10 @@ public class FSprite : FFacetNode
 		this.anchorX = newAnchor.x;
 		this.anchorY = newAnchor.y;
 	}
+	
+	public Vector2 GetAnchor()
+	{
+		return new Vector2(_anchorX,_anchorY);	
+	}
 }
 

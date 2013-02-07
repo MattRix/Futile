@@ -470,4 +470,9 @@ public class FNode
 		this.x = newPosition.x;
 		this.y = newPosition.y;
 	}
+	
+	public Vector2 GetPosition()
+	{
+		return new Vector2(_x,_y);	
+	}
 }
