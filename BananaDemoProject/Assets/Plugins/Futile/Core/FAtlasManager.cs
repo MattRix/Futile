@@ -96,7 +96,7 @@ public class FAtlasManager
 	{
 		if(DoesContainAtlas(atlasPath)) return; //we already have it, don't load it again
 		
-		string filePath = atlasPath+Futile.resourceSuffix+"_pnzg";
+		string filePath = atlasPath+Futile.resourceSuffix+"_png";
 		
 		TextAsset imageBytes = Resources.Load (filePath, typeof(TextAsset)) as TextAsset;
 		
