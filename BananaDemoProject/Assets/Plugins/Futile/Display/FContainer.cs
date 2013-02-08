@@ -148,6 +148,8 @@ public class FContainer : FNode
 	
 	public void RemoveChild(FNode node)
 	{
+		if(node.container != this) return; //I ain't your daddy
+		
 		node.HandleRemovedFromContainer();
 		
 		if(_isOnStage)
