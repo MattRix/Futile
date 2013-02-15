@@ -265,6 +265,24 @@ public class FButton : FContainer, FSingleTouchableInterface
 		}
 	}
 	
+	//for convenience
+	public void SetAnchor(float newX, float newY)
+	{
+		this.anchorX = newX;
+		this.anchorY = newY;
+	}
+	
+	public void SetAnchor(Vector2 newAnchor)
+	{
+		this.anchorX = newAnchor.x;
+		this.anchorY = newAnchor.y;
+	}
+	
+	public Vector2 GetAnchor()
+	{
+		return new Vector2(_anchorX,_anchorY);	
+	}
+	
 	
 }
 
