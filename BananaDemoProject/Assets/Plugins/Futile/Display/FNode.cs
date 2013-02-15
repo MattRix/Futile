@@ -134,6 +134,11 @@ public class FNode
 		return ScreenToLocal(Input.mousePosition);	
 	}
 	
+	public Vector2 GetLocalTouchPosition(FTouch touch)
+	{
+		return GlobalToLocal(touch.position);	
+	}
+	
 	public void UpdateMatrix()
 	{
 		if(!_isMatrixDirty) return;
