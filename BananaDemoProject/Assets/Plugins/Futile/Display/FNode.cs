@@ -124,9 +124,14 @@ public class FNode
 		return this.screenInverseConcatenatedMatrix.GetNewTransformedVector(globalVector);
 	}
 	
-	public Vector2 LocalToLocal(FNode otherNode, Vector2 otherVector) //returns the position in THIS node of a point in the OTHER node 
+	public Vector2 OtherToLocal(FNode otherNode, Vector2 otherVector) //takes a point in another node and converts it to a point in this node
 	{
 		return GlobalToLocal(otherNode.LocalToGlobal(otherVector));
+	}
+	
+	public Vector2 LocalToOther(Vector2 localVector, FNode otherNode) //takes a point in this node and converts it to a point in another node
+	{
+		return otherNode.GlobalToLocal(LocalToGlobal(localVector));
 	}
 	
 	public Vector2 GetLocalMousePosition()
