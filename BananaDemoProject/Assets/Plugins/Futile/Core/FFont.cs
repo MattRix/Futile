@@ -50,8 +50,16 @@ public class FLetterQuad
 		bottomLeft.Set(rect.xMin,rect.yMin);
 	}
 	
-	//this moves the quads by a certain offset
 	public void CalculateVectors(float offsetX, float offsetY)
+	{
+		topLeft.Set(rect.xMin + offsetX,rect.yMax + offsetY);
+		topRight.Set(rect.xMax + offsetX,rect.yMax + offsetY);
+		bottomRight.Set(rect.xMax + offsetX,rect.yMin + offsetY);
+		bottomLeft.Set(rect.xMin + offsetX,rect.yMin + offsetY);
+	}
+	
+	//this moves the quads by a certain offset
+	public void CalculateVectorsToWholePixels(float offsetX, float offsetY)
 	{
 		float scaleInverse = Futile.displayScaleInverse;
 		
