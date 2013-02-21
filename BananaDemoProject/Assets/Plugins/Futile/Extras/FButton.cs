@@ -52,40 +52,34 @@ public class FButton : FContainer, FSingleTouchableInterface
 	}
 	
 	// Simpler constructors
-	public FButton (string upImage) : 
-		this(upImage, upImage, null, null) {}
+	public FButton (string upElementName) : 
+		this(upElementName, upElementName, null, null) {}
 	
-	public FButton (string upImage, string downImage) : 
-		this(upImage, downImage, null, null) {}
+	public FButton (string upElementName, string downElementName) : 
+		this(upElementName, downElementName, null, null) {}
 	
-	public FButton (string upImage, string downImage, string clickSoundName) : 
-		this(upImage, downImage, null, clickSoundName) {}
-
-	public FSprite sprite
+	public FButton (string upElementName, string downElementName, string clickSoundName) : 
+		this(upElementName, downElementName, null, clickSoundName) {}
+	
+	public void SetElements(string upElementName, string downElementName, string overElementName)
 	{
-		get { return _sprite;}
-	}
-
-	public float anchorX
-	{
-		set
+		_upElement = Futile.atlasManager.GetElementWithName(upElementName);
+		_downElement = Futile.atlasManager.GetElementWithName(downElementName);
+		
+		if(overElementName != null)
 		{
-			_anchorX = value;
-			_sprite.anchorX = _anchorX;
-			if (_label != null) _label.x = -_anchorX*_sprite.width+_sprite.width/2;
+			_overElement = Futile.atlasManager.GetElementWithName(overElementName);
+			_supportsOver = true;
 		}
-		get {return _anchorX;}
-	}
-
-	public float anchorY
-	{
-		set
+		
+		if(_isTouchDown)
 		{
-			_anchorY = value;
-			_sprite.anchorY = _anchorY;
-			if (_label != null) _label.y = -_anchorY*_sprite.height+_sprite.height/2;
+			_sprite.element = _downElement;	
 		}
-		get {return _anchorY;}
+		else 
+		{
+			_sprite.element = _upElement;
+		}
 	}
 
 	public FLabel AddLabel (string fontName, string text, Color color)
@@ -103,11 +97,6 @@ public class FButton : FContainer, FSingleTouchableInterface
 		_label.y = -_anchorY*_sprite.height+_sprite.height/2;
 		
 		return _label;
-	}
-
-	public FLabel label
-	{
-		get {return _label;}
 	}
 
 	override public void HandleAddedToStage()
@@ -240,6 +229,11 @@ public class FButton : FContainer, FSingleTouchableInterface
 		if(SignalReleaseOutside != null) SignalReleaseOutside(this);
 	}
 	
+	public FLabel label
+	{
+		get {return _label;}
+	}
+	
 	public bool isEnabled
 	{
 		get {return _isEnabled;}
@@ -252,9 +246,36 @@ public class FButton : FContainer, FSingleTouchableInterface
 		}
 	}
 	
+	public FSprite sprite
+	{
+		get { return _sprite;}
+	}
+
+	public float anchorX
+	{
+		set
+		{
+			_anchorX = value;
+			_sprite.anchorX = _anchorX;
+			if (_label != null) _label.x = -_anchorX*_sprite.width+_sprite.width/2;
+		}
+		get {return _anchorX;}
+	}
+
+	public float anchorY
+	{
+		set
+		{
+			_anchorY = value;
+			_sprite.anchorY = _anchorY;
+			if (_label != null) _label.y = -_anchorY*_sprite.height+_sprite.height/2;
+		}
+		get {return _anchorY;}
+	}
+	
 	
 	//you can set a custom hitRect to be used instead of the upElement's rect
-	//it's important to remember that the hitRect is in local coordinates
+	//but it's important to remember that the hitRect is in local coordinates
 	public Rect hitRect
 	{
 		get {return _hitRect;}
