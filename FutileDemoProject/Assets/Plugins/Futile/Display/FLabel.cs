@@ -24,9 +24,6 @@ public class FLabel : FFacetNode
 	protected float _anchorX = defaultAnchorX;
 	protected float _anchorY = defaultAnchorY;
 	
-	protected float _lineHeightDelta;
-	protected float _letterSpacingDelta;
-	
 	protected bool _doesTextNeedUpdate = false;
 	protected bool _doesLocalPositionNeedUpdate = false;
 	protected bool _doQuadsNeedUpdate = false;
@@ -272,32 +269,6 @@ public class FLabel : FFacetNode
 		}
 	}
 
-	public float lineHeightDelta
-	{
-		get {return _lineHeightDelta;}
-		set 
-		{
-			if(_lineHeightDelta != value)
-			{
-				_lineHeightDelta = value;
-				_doesTextNeedUpdate = true;
-			}
-		}
-	}
-
-	public float letterSpacingDelta
-	{
-		get {return _letterSpacingDelta;}
-		set 
-		{
-			if(_letterSpacingDelta != value)
-			{
-				_letterSpacingDelta = value;
-				_doesTextNeedUpdate = true;
-			}
-		}
-	}
-	
 	virtual public Color color 
 	{
 		get { return _color; }
