@@ -124,8 +124,8 @@ public class RXMath
 	public static float PingPong(float input, float range)
 	{
 		float first = ((input + (range*1000000.0f)) % range)/range; //0 to 1
-		if(first < 0.5f) return first/0.5f;
-		else return 1.0f - ((first - 0.5f)/0.5f); 
+		if(first < 0.5f) return first*2.0f;
+		else return 1.0f - ((first - 0.5f)*2.0f); 
 	}
 	
 }
@@ -171,6 +171,11 @@ public class RXRandom
 	public static bool Bool()
 	{
 		return _randomSource.NextDouble() < 0.5;	
+	}
+	
+	public static object Select(params object[] objects)
+	{
+		return objects[_randomSource.Next() % objects.Length];
 	}
 }
 
