@@ -35,6 +35,8 @@ public class Futile : MonoBehaviour
 	static public float resourceScale; //set based on the resolution setting (the scale of assets)
 	static public float resourceScaleInverse; // 1/resourceScale
 	
+	static public float screenPixelOffset; //set based on whether it's openGL or not
+	
 	static public string resourceSuffix; //set based on the resLevel
 	
 	//default element, a 16x16 white texture
@@ -297,8 +299,8 @@ public class Futile : MonoBehaviour
 	{
 		_camera.orthographicSize = screen.pixelHeight/2 * displayScaleInverse;
 		
-		float camXOffset = ((screen.originX - 0.5f) * -screen.pixelWidth)*displayScaleInverse;
-		float camYOffset = ((screen.originY - 0.5f) * -screen.pixelHeight)*displayScaleInverse;
+		float camXOffset = ((screen.originX - 0.5f) * -screen.pixelWidth)*displayScaleInverse + screenPixelOffset;
+		float camYOffset = ((screen.originY - 0.5f) * -screen.pixelHeight)*displayScaleInverse - screenPixelOffset;
 	
 		_camera.transform.position = new Vector3(camXOffset, camYOffset, -10.0f); 	
 	}

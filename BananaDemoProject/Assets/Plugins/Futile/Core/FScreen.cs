@@ -163,6 +163,15 @@ public class FScreen
 		width = pixelWidth*Futile.displayScaleInverse;
 		height = pixelHeight*Futile.displayScaleInverse;
 		
+		if(Futile.isOpenGL)
+		{
+			Futile.screenPixelOffset = 0;
+		}
+		else //directX needs to be offset by half a pixel
+		{
+			Futile.screenPixelOffset = 0.5f * Futile.displayScaleInverse;
+		}
+		
 		halfWidth = width/2.0f;
 		halfHeight = height/2.0f;
 		

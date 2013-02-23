@@ -151,23 +151,6 @@ public class FAtlas
 		
 		float scaleInverse = Futile.resourceScaleInverse;
 		
-		
-		//these offset values make sure everything is crisp on DirectX
-		
-		float uvOffsetX;
-		float uvOffsetY;
-		
-		if(Futile.isOpenGL)
-		{
-			uvOffsetX = 0.0f/_textureSize.x;;
-			uvOffsetY = 0.0f/_textureSize.y;
-		}
-		else
-		{
-			uvOffsetX = 0.5f/_textureSize.x;;
-			uvOffsetY = -0.5f/_textureSize.y;
-		}
-		
 		int index = 0;
 		
 		foreach(KeyValuePair<string,object> item in frames)
@@ -204,8 +187,8 @@ public class FAtlas
 			
 			Rect uvRect = new Rect
 			(
-				rectX/_textureSize.x + uvOffsetX,
-				((_textureSize.y - rectY - rectH)/_textureSize.y)+uvOffsetY,
+				rectX/_textureSize.x,
+				((_textureSize.y - rectY - rectH)/_textureSize.y),
 				rectW/_textureSize.x,
 				rectH/_textureSize.y
 			);
@@ -249,21 +232,7 @@ public class FAtlas
 		//TODO: may have to offset the rect slightly
 		float scaleInverse = Futile.resourceScaleInverse;
 		
-		float uvOffsetX;
-		float uvOffsetY;
-		
-		if(Futile.isOpenGL)
-		{
-			uvOffsetX = 0.0f/_textureSize.x;;
-			uvOffsetY = 0.0f/_textureSize.y;
-		}
-		else
-		{
-			uvOffsetX = 0.5f/_textureSize.x;;
-			uvOffsetY = -0.5f/_textureSize.y;
-		}
-		
-		Rect uvRect = new Rect(0.0f+uvOffsetX,0.0f+uvOffsetY,1.0f,1.0f);
+		Rect uvRect = new Rect(0.0f,0.0f,1.0f,1.0f);
 		
 		element.uvRect = uvRect;
 		
