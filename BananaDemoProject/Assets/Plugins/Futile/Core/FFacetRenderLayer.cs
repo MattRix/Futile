@@ -79,6 +79,7 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 			_gameObject.active = false;
 		#else
 			_gameObject.SetActive(false);
+			_mesh.MarkDynamic();
 		#endif
 		
 		ExpandMaxFacetLimit(_facetType.initialAmount);
