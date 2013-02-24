@@ -3,21 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class FPPolygonCollider : MonoBehaviour 
+public class FPPolygonalCollider : MonoBehaviour 
 {
-	private FPPolygonData _polygonData;
+	private FPPolygonalData _polygonalData;
 	private MeshCollider[] _colliders;
 	
-	public void Init (FPPolygonData polygonData)
+	public void Init (FPPolygonalData polygonalData)
 	{
-		_polygonData = polygonData;
+		_polygonalData = polygonalData;
 		
-		int meshCount = _polygonData.meshes.Length;
+		int meshCount = _polygonalData.meshes.Length;
 		_colliders = new MeshCollider[meshCount];
 		
 		if(meshCount == 1)
 		{
-			_colliders[0] = CreatePolygonMeshCollider(gameObject, _polygonData.meshes[0]);
+			_colliders[0] = CreatePolygonMeshCollider(gameObject, _polygonalData.meshes[0]);
 		}
 		else 
 		{
@@ -27,7 +27,7 @@ public class FPPolygonCollider : MonoBehaviour
 				polygonGameObject.transform.parent = gameObject.transform;
 				polygonGameObject.transform.localPosition = Vector3.zero;
 				
-				_colliders[m] = CreatePolygonMeshCollider(polygonGameObject, _polygonData.meshes[m]);
+				_colliders[m] = CreatePolygonMeshCollider(polygonGameObject, _polygonalData.meshes[m]);
 			}
 		}
 	}
@@ -38,23 +38,23 @@ public class FPPolygonCollider : MonoBehaviour
 		
 		collider.sharedMesh = mesh;
 		
-		if(_polygonData.shouldDecomposeIntoConvexPolygons)
+		if(_polygonalData.shouldDecomposeIntoConvexPolygons)
 		{
 			collider.convex = true; //we're decomposing so we'll always have convex stuff
 		}
 		else 
 		{
-			collider.convex = FPUtils.CheckIfConvex(_polygonData.sourceVertices);
+			collider.convex = FPUtils.CheckIfConvex(_polygonalData.sourceVertices);
 		}
 		
-		collider.smoothSphereCollisions = _polygonData.shouldUseSmoothSphereCollisions;	
+		collider.smoothSphereCollisions = _polygonalData.shouldUseSmoothSphereCollisions;	
 		
 		return collider;
 	}
 	
-	public FPPolygonData polygonData
+	public FPPolygonalData polygonalData
 	{
-		get {return _polygonData;}	
+		get {return _polygonalData;}	
 	}
 	
 	public MeshCollider[] colliders
@@ -75,7 +75,7 @@ public class FPPolygonCollider : MonoBehaviour
 
 public class FPDebugPolygonColliderView : FFacetNode
 {
-	private FPPolygonCollider _mesh2D;
+	private FPPolygonalCollider _mesh2D;
 	private int _triangleCount; 
 	
 	private Color _color = Futile.white;
@@ -89,11 +89,11 @@ public class FPDebugPolygonColliderView : FFacetNode
 	private Vector2 _uvBottomRight;
 	
 	
-	public FPDebugPolygonColliderView (string elementName, FPPolygonCollider mesh2D)
+	public FPDebugPolygonColliderView (string elementName, FPPolygonalCollider mesh2D)
 	{
 		_mesh2D = mesh2D;
 		
-		List<int[]> trianglePolygons = _mesh2D.polygonData.trianglePolygons;
+		List<int[]> trianglePolygons = _mesh2D.polygonalData.trianglePolygons;
 		
 		int polyCount = trianglePolygons.Count;
 		
@@ -158,7 +158,7 @@ public class FPDebugPolygonColliderView : FFacetNode
 		_uvBottomLeft = _element.uvBottomLeft;
 		_uvBottomRight = _element.uvBottomRight;
 		
-		List<int[]> trianglePolygons = _mesh2D.polygonData.trianglePolygons;
+		List<int[]> trianglePolygons = _mesh2D.polygonalData.trianglePolygons;
 		
 		int polyCount = trianglePolygons.Count;
 		
@@ -188,8 +188,8 @@ public class FPDebugPolygonColliderView : FFacetNode
 			Vector2[] uvs = _renderLayer.uvs;
 			Color[] colors = _renderLayer.colors;
 			
-			List<Vector2[]> vertexPolygons = _mesh2D.polygonData.vertexPolygons;
-			List<int[]> trianglePolygons = _mesh2D.polygonData.trianglePolygons;
+			List<Vector2[]> vertexPolygons = _mesh2D.polygonalData.vertexPolygons;
+			List<int[]> trianglePolygons = _mesh2D.polygonalData.trianglePolygons;
 		
 			int polyCount = trianglePolygons.Count;
 			
@@ -249,7 +249,7 @@ public class FPDebugPolygonColliderView : FFacetNode
 	}
 }
 
-public class FPPolygonData
+public class FPPolygonalData
 {
 	public bool shouldDecomposeIntoConvexPolygons;
 	
@@ -262,9 +262,9 @@ public class FPPolygonData
 	
 	public Mesh[] meshes; //meshes made from the polygons, for doing collisions
 	
-	public FPPolygonData (Vector2[] vertices) : this(vertices,true) {}
+	public FPPolygonalData (Vector2[] vertices) : this(vertices,true) {}
 	
-	public FPPolygonData (Vector2[] vertices, bool shouldDecomposeIntoConvexPolygons)
+	public FPPolygonalData (Vector2[] vertices, bool shouldDecomposeIntoConvexPolygons)
 	{
 		this.sourceVertices = vertices;
 		this.shouldDecomposeIntoConvexPolygons = shouldDecomposeIntoConvexPolygons;

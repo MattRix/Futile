@@ -12,12 +12,12 @@ public class BSoundPlayer
 	
 	static public void PlayVictoryMusic() 
 	{
-		FSoundManager.PlayMusic("VictorySound", 0.2f);
+		//FSoundManager.PlayMusic("VictorySound", 0.2f);
 	}
 	
 	static public void PlayRegularMusic()
 	{
-		FSoundManager.PlayMusic("Music", 0.3f);
+		//FSoundManager.PlayMusic("Music", 0.3f);
 	}
 	
 }

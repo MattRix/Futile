@@ -63,14 +63,14 @@ public class BTestLandPage : BPage, FMultiTouchableInterface
 				vertices[v] = new Vector2(Mathf.Cos (angle) * radius, -Mathf.Sin(angle) * radius);
 			}
 			
-			FPPolygonData polygonData = new FPPolygonData(vertices);
+			FPPolygonalData polygonalData = new FPPolygonalData(vertices);
 			
 			if(_testGO != null) UnityEngine.Object.Destroy(_testGO);
 			
 			_testGO = new GameObject("TestGO");
 			
-			FPPolygonCollider mesh2DCollider = _testGO.AddComponent<FPPolygonCollider>() as FPPolygonCollider;
-			mesh2DCollider.Init(polygonData);
+			FPPolygonalCollider mesh2DCollider = _testGO.AddComponent<FPPolygonalCollider>() as FPPolygonalCollider;
+			mesh2DCollider.Init(polygonalData);
 			
 			FPDebugRenderer.Create(_testGO, this, 0xFF0000,false);
 		}
@@ -78,11 +78,6 @@ public class BTestLandPage : BPage, FMultiTouchableInterface
 	
 	public void HandleMultiTouch(FTouch[] touches)
 	{
-	}
-	
-	private void CreateBananaExplodeEffect(BBanana banana)
-	{
-	
 	}
 }
 

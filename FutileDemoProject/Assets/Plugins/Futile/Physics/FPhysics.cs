@@ -9,8 +9,8 @@ using System.Collections.Generic;
 public class FPhysics
 {
 	public const float DEFAULT_Z_THICKNESS = 1.0f;
-	public const float METERS_TO_POINTS = 64.0f;
-	public const float POINTS_TO_METERS = 1.0f/METERS_TO_POINTS;
+	static public float METERS_TO_POINTS;
+	static public float POINTS_TO_METERS;
 	
 	public FPhysics ()
 	{

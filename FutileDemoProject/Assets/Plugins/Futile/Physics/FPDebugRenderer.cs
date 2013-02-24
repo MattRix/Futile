@@ -67,7 +67,7 @@ public class FPDebugRenderer : MonoBehaviour
 			}
 		}
 		
-		FPPolygonCollider mesh2D = gameObject.GetComponent<FPPolygonCollider>();
+		FPPolygonalCollider mesh2D = gameObject.GetComponent<FPPolygonalCollider>();
 		
 		if(mesh2D != null)
 		{
