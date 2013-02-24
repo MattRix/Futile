@@ -117,6 +117,17 @@ public static class GoKitExtensions
 	{
 		return config.floatProp(propName,propValue,false); 
 	}
+	
+	public static TweenConfig removeWhenComplete(this TweenConfig config)
+	{
+		config.onComplete(HandleRemoveWhenDoneTweenComplete);	
+		return config;
+	}
+	
+	private static void HandleRemoveWhenDoneTweenComplete (AbstractTween tween)
+	{
+		((tween as Tween).target as FNode).RemoveFromContainer();
+	}
 }
 
 public static class ArrayExtensions
