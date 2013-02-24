@@ -15,9 +15,9 @@ public static class FPDecomposer
 {
 	public static int MAX_POLYGON_VERTICES = 50;
 	
-    public static List<List<Vector2>> Decompose(List<Vector2> vertices)
+    public static List<Vector2[]> Decompose(List<Vector2> vertices)
     {
-        List<List<Vector2>> list = new List<List<Vector2>>(MAX_POLYGON_VERTICES);
+        List<Vector2[]> list = new List<Vector2[]>(MAX_POLYGON_VERTICES);
         float d, lowerDist, upperDist;
         Vector2 p;
         Vector2 lowerInt = new Vector2();
@@ -131,7 +131,7 @@ public static class FPDecomposer
             list.AddRange(Decompose(upperPoly));
         }
         else
-            list.Add(vertices);
+            list.Add(vertices.ToArray());
 
         //The polygons are not guaranteed to be without collinear points. We remove
         //them to be sure.
@@ -143,7 +143,7 @@ public static class FPDecomposer
         //Remove empty vertice collections
         for (int i = list.Count - 1; i >= 0; i--)
         {
-            if (list[i].Count == 0)
+            if (list[i].Length == 0)
                 list.RemoveAt(i);
         }
 
@@ -333,20 +333,22 @@ public static class FPDecomposer
         return LineTools_LineIntersect(ref point1, ref point2, ref point3, ref point4, true, true, out intersectionPoint);
     }
 	
-	public static List<Vector2> CollinearSimplify(List<Vector2> vertices, float collinearityTolerance)
+	public static Vector2[] CollinearSimplify(Vector2[] vertices, float collinearityTolerance)
     {
+		int vertexCount = vertices.Length;
+		
         //We can't simplify polygons under 3 vertices
-        if (vertices.Count < 3)
+        if (vertexCount < 3)
             return vertices;
 
-        List<Vector2> simplified = new List<Vector2>(MAX_POLYGON_VERTICES);
+        List<Vector2> simplified = new List<Vector2>(vertexCount);
 
-        for (int i = 0; i < vertices.Count; i++)
+        for (int i = 0; i < vertexCount; i++)
         {
             int prevId = i-1;
-			if(prevId == -1) prevId = vertices.Count-1;
+			if(prevId == -1) prevId = vertexCount-1;
             int nextId = i+1;
-			if(nextId == vertices.Count) nextId = 0;
+			if(nextId == vertexCount) nextId = 0;
 
             Vector2 prev = vertices[prevId];
             Vector2 current = vertices[i];
@@ -359,7 +361,7 @@ public static class FPDecomposer
             simplified.Add(current);
         }
 
-        return simplified;
+        return simplified.ToArray();
     }
 	
 	public static float MathUtils_Area(Vector2 a, Vector2 b, Vector2 c)

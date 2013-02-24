@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 //
 //public static class EventExtensions
 //{
@@ -151,6 +152,19 @@ public static class ArrayExtensions
 		}	
 		
 		if(wasFound) count--;
+	}
+	
+	public static List<T> ToList<T>(this T[] items)
+	{
+		int itemCount = items.Length;
+		List<T> itemList = new List<T>(itemCount);
+		
+		for(int i = 0; i<itemCount; i++)
+		{
+			itemList.Add(items[i]);
+		}
+		
+		return itemList;
 	}
 }
 

@@ -1,0 +1,36 @@
+{"frames": {
+
+"Debug/Circle.png":
+{
+	"frame": {"x":3,"y":75,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"Debug/Square.png":
+{
+	"frame": {"x":3,"y":39,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"Debug/Triangle.png":
+{
+	"frame": {"x":3,"y":3,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+}},
+"meta": {
+	"app": "http://www.texturepacker.com",
+	"version": "1.0",
+	"image": "GameAtlas_Scale1.png",
+	"format": "RGBA8888",
+	"size": {"w":64,"h":128},
+	"scale": "0.25",
+	"smartupdate": "$TexturePacker:SmartUpdate:40d28864ff9590af79bf1163a16d117d$"
+}
+}

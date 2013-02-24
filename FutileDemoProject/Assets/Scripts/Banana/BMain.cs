@@ -57,7 +57,7 @@ public class BMain : MonoBehaviour
 		
 		BSoundPlayer.PlayRegularMusic();
 		
-		GoToPage(BPageType.TitlePage);
+		GoToPage(BPageType.InGamePage);
 	}
 
 	public void GoToPage (BPageType pageType)
@@ -72,7 +72,7 @@ public class BMain : MonoBehaviour
 		}
 		else if (pageType == BPageType.InGamePage)
 		{
-			pageToCreate = new BInGamePage();
+			pageToCreate = new BTestLandPage();
 		}  
 		else if (pageType == BPageType.ScorePage)
 		{

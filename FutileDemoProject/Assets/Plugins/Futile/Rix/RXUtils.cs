@@ -75,6 +75,95 @@ public class RXUtils
 	
 }
 
+public class RXColor
+{
+	public const float HUE_RED = 0.0f;
+	public const float HUE_ORANGE = 0.1f;
+	public const float HUE_YELLOW = 0.16f;
+	public const float HUE_GREEN = 0.25f;
+	public const float HUE_CYAN = 0.5f;
+	public const float HUE_BLUE = 0.6f;
+	public const float HUE_PURPLE = 0.8f;
+	public const float HUE_PINK = 0.9f;
+	
+	public static Color ColorFromHSL(float hue, float sat, float lum)
+	{
+		return ColorFromHSL(hue,sat,lum,1.0f);	
+	}
+	
+	//hue goes from 0 to 1
+	public static Color ColorFromHSL(float hue, float sat, float lum, float alpha) //default - sat:1, lum:0.5
+	{
+		hue = (100000.0f+hue)%1f; //hue wraps around
+		
+		float r = lum;
+		float g = lum;
+		float b = lum;
+
+        float v = (lum <= 0.5f) ? (lum * (1.0f + sat)) : (lum + sat - lum * sat);
+		 
+        if (v > 0)
+        {
+			float m = lum + lum - v;
+			float sv = (v - m ) / v;
+			
+			hue *= 6.0f;
+			
+			int sextant = (int) hue;
+			float fract = hue - sextant;
+			float vsf = v * sv * fract;
+			float mid1 = m + vsf;
+			float mid2 = v - vsf;
+			
+			switch (sextant)
+			{
+				case 0:
+				      r = v;
+				      g = mid1;
+				      b = m;
+				      break;
+				case 1:
+				      r = mid2;
+				      g = v;
+				      b = m;
+				      break;
+				case 2:
+				      r = m;
+				      g = v;
+				      b = mid1;
+				      break;
+				case 3:
+				      r = m;
+				      g = mid2;
+				      b = v;
+				      break;
+				case 4:
+				      r = mid1;
+				      g = m;
+				      b = v;
+				      break;
+				case 5:
+				      r = v;
+				      g = m;
+				      b = mid2;
+				      break;
+              }
+        }
+		
+		return new Color(r,g,b,alpha);
+	}
+	
+	public static Color GetColorFromHex(uint hex)
+	{
+		uint red = hex >> 16;
+		uint greenBlue = hex - (red<<16);
+		uint green = greenBlue >> 8;
+		uint blue = greenBlue - (green << 8);
+		
+		return new Color(red/255.0f, green/255.0f, blue/255.0f);
+	}
+}
+
 public class RXMath
 {
 	public const float RTOD = 180.0f/Mathf.PI;
@@ -137,6 +226,11 @@ public class RXRandom
 	public static float Float()
 	{
 		return (float)_randomSource.NextDouble();
+	}
+	
+	public static float Float(int seed)
+	{
+		return (float)new System.Random(seed).NextDouble();
 	}
 	
 	public static double Double()

@@ -5,7 +5,7 @@ using System;
 
 public class FPDebugRenderer : MonoBehaviour
 {
-	public static bool IS_ENABLED = false;
+	public static bool IS_ENABLED = true;
 	
 	public static FPDebugRenderer Create(GameObject targetGameObject, FContainer container, uint color, bool shouldUpdateColliders)
 	{
@@ -67,11 +67,11 @@ public class FPDebugRenderer : MonoBehaviour
 			}
 		}
 		
-		FPMesh2DCollider mesh2D = gameObject.GetComponent<FPMesh2DCollider>();
+		FPPolygonCollider mesh2D = gameObject.GetComponent<FPPolygonCollider>();
 		
 		if(mesh2D != null)
 		{
-			FPDebugMesh2DColliderView debugView = new FPDebugMesh2DColliderView("Debug/Triangle", mesh2D);
+			FPDebugPolygonColliderView debugView = new FPDebugPolygonColliderView("Debug/Triangle", mesh2D);
 			debugView.color = _color;
 			
 			_drawHolder.AddChild(debugView);	

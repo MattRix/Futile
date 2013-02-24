@@ -9,9 +9,9 @@ public class FPUtils
 	
 	//based on http://debian.fmi.uni-sofia.bg/~sergei/cgsr/docs/clockwise.htm
 	
-	public static bool CheckIfConvex (Vector2[] _sourceVertices) //returns true if the verts make a complex polygon
+	public static bool CheckIfConvex (Vector2[] sourceVertices) //returns true if the verts make a complex polygon
 	{
-		int vertCount = _sourceVertices.Length;
+		int vertCount = sourceVertices.Length;
 		int i,j,k;
 		int flag = 0;
 		double z;
@@ -22,8 +22,8 @@ public class FPUtils
 		{
 			j = (i + 1) % vertCount;
 			k = (i + 2) % vertCount;
-			z  = (_sourceVertices[j].x - _sourceVertices[i].x) * (_sourceVertices[k].y - _sourceVertices[j].y);
-			z -= (_sourceVertices[j].y - _sourceVertices[i].y) * (_sourceVertices[k].x - _sourceVertices[j].x);
+			z  = (sourceVertices[j].x - sourceVertices[i].x) * (sourceVertices[k].y - sourceVertices[j].y);
+			z -= (sourceVertices[j].y - sourceVertices[i].y) * (sourceVertices[k].x - sourceVertices[j].x);
 			
 			if (z < 0) flag |= 1;
 			else if (z > 0) flag |= 2;
