@@ -8,7 +8,7 @@ public class FShader
 	static public FShader defaultShader;
 	
 	//shader types
-	public static FShader Normal;
+	public static FShader Basic;
 	public static FShader Additive;
 	public static FShader AdditiveColor;
 	public static FShader Solid;
@@ -35,13 +35,13 @@ public class FShader
 	
 	public static void Init() //called by Futile
 	{
-		Normal = CreateShader("Normal", Shader.Find("Futile/Normal"));	
+		Basic = CreateShader("Basic", Shader.Find("Futile/Basic"));	
 		Additive = CreateShader("Additive", Shader.Find("Futile/Additive"));	
 		AdditiveColor = CreateShader("AdditiveColor", Shader.Find("Futile/AdditiveColor"));	
 		Solid = CreateShader("Solid", Shader.Find("Futile/Solid"));	
 		SolidColored = CreateShader("SolidColored", Shader.Find("Futile/SolidColored"));	
 		
-		defaultShader = Normal;
+		defaultShader = Basic;
 	}
 	
 	//create your own FShaders by creating them here

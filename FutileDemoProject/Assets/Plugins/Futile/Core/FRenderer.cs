@@ -148,11 +148,6 @@ public class FRenderer
 		}
 	}
 	
-	public FShader GetDefaultShader()
-	{
-		return FShader.Normal;
-	}
-	
 	public void Update()
 	{
 		int allRenderablesCount = _allRenderables.Count;
