@@ -42,6 +42,8 @@ public class FNode
 	
 	public object data = null; //the user can put whatever data they want here
 	
+	protected Futile.FutileUpdateDelegate _handleUpdateCallback;
+	
 	public FNode () 
 	{
 		_depth = 0;
@@ -62,6 +64,46 @@ public class FNode
 		_concatenatedMatrix = new FMatrix();
 		_isMatrixDirty = false;
 	}
+	
+	public void ListenForUpdate(Futile.FutileUpdateDelegate handleUpdateCallback)
+	{
+		_handleUpdateCallback = handleUpdateCallback;
+		
+		if(_isOnStage)
+		{
+			Futile.instance.SignalUpdate += _handleUpdateCallback;
+		}
+	}
+	
+	public void RemoveListenForUpdate()
+	{	
+		if(_isOnStage && _handleUpdateCallback != null)
+		{
+			Futile.instance.SignalUpdate -= _handleUpdateCallback;
+		}
+		
+		_handleUpdateCallback = null;
+	}
+	
+	virtual public void HandleAddedToStage()
+	{
+		_isOnStage = true;
+		
+		if(_handleUpdateCallback != null)
+		{
+			Futile.instance.SignalUpdate += _handleUpdateCallback;
+		}
+	}
+
+	virtual public void HandleRemovedFromStage()
+	{
+		_isOnStage = false;
+		
+		if(_handleUpdateCallback != null)
+		{
+			Futile.instance.SignalUpdate -= _handleUpdateCallback;
+		}
+	} 
 	
 	public Vector2 LocalToScreen(Vector2 localVector) //for sending local points back to screen coords
 	{
@@ -218,16 +260,6 @@ public class FNode
 	{	
 		UpdateDepthMatrixAlpha(shouldForceDirty, shouldUpdateDepth);
 	}
-	
-	virtual public void HandleAddedToStage()
-	{
-		_isOnStage = true;
-	}
-
-	virtual public void HandleRemovedFromStage()
-	{
-		_isOnStage = false;
-	} 
 	
 	virtual public void HandleAddedToContainer(FContainer container)
 	{

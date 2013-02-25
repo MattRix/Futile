@@ -34,7 +34,7 @@ public class FContainer : FNode
 	{
 		if(!_isOnStage)
 		{
-			_isOnStage = true;
+			base.HandleAddedToStage();
 			
 			int childCount = _childNodes.Count;
 			for(int c = 0; c<childCount; c++)
@@ -56,7 +56,7 @@ public class FContainer : FNode
 	{
 		if(_isOnStage)
 		{
-			_isOnStage = false;
+			base.HandleRemovedFromStage();
 			
 			int childCount = _childNodes.Count;
 			for(int c = 0; c<childCount; c++)
