@@ -13,7 +13,7 @@ public class FRadialWipeSprite : FSprite
 	{
 		_isClockwise = isClockwise;
 		_baseAngle = (baseAngle + 36000000.0f) % 360.0f;
-		_percentage = Mathf.Max (0.0f, Mathf.Min(1.0f, percentage));
+		_percentage = Mathf.Clamp01(percentage);
 		
 		Init(FFacetType.Triangle, Futile.atlasManager.GetElementWithName(elementName),5);
 		

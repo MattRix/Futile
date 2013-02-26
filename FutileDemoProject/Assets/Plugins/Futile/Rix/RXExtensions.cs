@@ -74,7 +74,7 @@ public static class RectExtensions
 	//general idea from here: http://stackoverflow.com/questions/1343346/calculate-a-vector-from-the-center-of-a-square-to-edge-based-on-radius
 	//(but greatly cleaned up and simplified)
 	//this is different from GetPointLimitedToInterior because it takes the angle into consideration
-	public static Vector2 GetInteriorPointClosestToTargetPoint(this Rect rect, Vector2 targetPoint)
+	public static Vector2 GetClosestInteriorPointAlongDeltaVector(this Rect rect, Vector2 targetPoint)
 	{
 		//if it's inside the rect, don't do anything
 		if(	targetPoint.x >= rect.xMin &&
@@ -100,7 +100,7 @@ public static class RectExtensions
 	}
 	
 	//this simply ensures that none of the point values are over the max and min
-	public static Vector2 GetPointLimitedToInterior(this Rect rect, Vector2 targetPoint)
+	public static Vector2 GetClosestInteriorPoint(this Rect rect, Vector2 targetPoint)
 	{
 		return new Vector2
 		(

@@ -114,7 +114,7 @@ public class FWipeSprite : FSprite
 		get { return _wipeTopAmount;}
 		set 
 		{ 
-			value = Mathf.Max (0.0f, Mathf.Min(1.0f, value));
+			value = Mathf.Clamp01(value);
 			if(_wipeTopAmount != value)
 			{
 				_wipeTopAmount = value; 
@@ -128,7 +128,7 @@ public class FWipeSprite : FSprite
 		get { return _wipeRightAmount;}
 		set 
 		{ 
-			value = Mathf.Max (0.0f, Mathf.Min(1.0f, value));
+			value = Mathf.Clamp01(value);
 			if(_wipeRightAmount != value)
 			{
 				_wipeRightAmount = value; 
@@ -142,7 +142,7 @@ public class FWipeSprite : FSprite
 		get { return _wipeBottomAmount;}
 		set 
 		{ 
-			value = Mathf.Max (0.0f, Mathf.Min(1.0f, value));
+			value = Mathf.Clamp01(value);
 			if(_wipeBottomAmount != value)
 			{
 				_wipeBottomAmount = value; 
@@ -156,7 +156,7 @@ public class FWipeSprite : FSprite
 		get { return _wipeLeftAmount;}
 		set 
 		{ 
-			value = Mathf.Max (0.0f, Mathf.Min(1.0f, value));
+			value = Mathf.Clamp01(value);
 			if(_wipeLeftAmount != value)
 			{
 				_wipeLeftAmount = value; 
