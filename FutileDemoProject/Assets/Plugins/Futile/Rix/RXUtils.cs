@@ -262,6 +262,7 @@ public class RXRandom
 	{
 		return low + _randomSource.Next() % (high-low); 
 	}
+	
 	public static bool Bool()
 	{
 		return _randomSource.NextDouble() < 0.5;	
@@ -271,9 +272,44 @@ public class RXRandom
 	{
 		return objects[_randomSource.Next() % objects.Length];
 	}
+	
+	//this isn't really perfectly randomized, but good enough for most purposes
+	public static Vector2 Vector2Normalized()
+	{
+		return new Vector2(RXRandom.Range(-1.0f,1.0f),RXRandom.Range(-1.0f,1.0f)).normalized;
+	}
+	
+	public static Vector3 Vector3Normalized()
+	{
+		return new Vector3(RXRandom.Range(-1.0f,1.0f),RXRandom.Range(-1.0f,1.0f),RXRandom.Range(-1.0f,1.0f)).normalized;
+	}
 }
 
-
+public class RXCircle
+{
+	public Vector2 center;
+	public float radius;
+	public float radiusSquared;
+	
+	public RXCircle(Vector2 center, float radius)
+	{
+		this.center = center;
+		this.radius = radius;
+		this.radiusSquared = radius * radius;
+	}
+	
+	public bool CheckIntersectWithRect(Rect rect)
+	{
+		return rect.CheckIntersectWithCircle(this);
+	}
+	
+	public bool CheckIntersectWithCircle(RXCircle circle)
+	{
+		Vector2 delta = circle.center - this.center;
+		float radiusSumSquared = (circle.radius + this.radius) * (circle.radius + this.radius);
+		return (delta.sqrMagnitude <= radiusSumSquared);
+	}
+}
 
 
 //public static class ArrayExtensions
