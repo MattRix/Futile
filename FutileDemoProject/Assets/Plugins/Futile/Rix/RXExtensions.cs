@@ -104,9 +104,23 @@ public static class RectExtensions
 	{
 		return new Vector2
 		(
-				Mathf.Max (rect.xMin, Mathf.Min(rect.xMax,targetPoint.x)),
-				Mathf.Max (rect.yMin, Mathf.Min(rect.yMax,targetPoint.y))
+				Mathf.Clamp(targetPoint.x, rect.xMin, rect.xMax),
+				Mathf.Clamp(targetPoint.y, rect.yMin, rect.yMax)
 		);
+	}
+	
+	// NOTE: Rect MUST be axis-aligned for this check
+	public static bool CheckIntersectWithCircle(this Rect rect, RXCircle circle)
+	{
+		// Find the closest point to the circle center that's within the rectangle
+		Vector2 closest = GetClosestInteriorPoint(rect, circle.center);
+		
+		// Calculate the distance between the circle's center and this closest point
+		Vector2 deltaToClosest = circle.center - closest;
+		
+		// If the distance is less than the circle's radius, an intersection occurs
+		bool intersection = (deltaToClosest.sqrMagnitude <= circle.radiusSquared);
+		return intersection;
 	}
 }
 
