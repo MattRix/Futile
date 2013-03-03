@@ -15,7 +15,7 @@ Shader "Futile/Additive" //Unlit Transparent Vertex Colored Additive
 		Blend SrcAlpha One    //this is the line that makes it additive
 		Fog { Color(0,0,0,0) }
 		Lighting Off
-		Cull Off
+		Cull Off //we can turn backface culling off because we know nothing will be facing backwards
 
 		BindChannels 
 		{
