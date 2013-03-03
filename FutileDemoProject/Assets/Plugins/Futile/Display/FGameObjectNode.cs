@@ -55,9 +55,11 @@ public class FGameObjectNode : FNode, FRenderableLayerInterface
 	{
 		if(!_isOnStage)
 		{
-			_isOnStage = true;
+			base.HandleAddedToStage();
+			
 			_stage.HandleFacetsChanged();
 			_gameObject.transform.parent = Futile.instance.gameObject.transform;
+			UpdateGameObject();
 		}
 	}
 	
@@ -65,6 +67,8 @@ public class FGameObjectNode : FNode, FRenderableLayerInterface
 	{
 		if(_isOnStage)
 		{
+			base.HandleRemovedFromStage();
+			
 			_gameObject.transform.parent = null;
 		
 			if(shouldDestroyOnRemoveFromStage)
@@ -72,7 +76,6 @@ public class FGameObjectNode : FNode, FRenderableLayerInterface
 				UnityEngine.Object.Destroy(_gameObject);	
 			}
 			
-			_isOnStage = false;
 			_stage.HandleFacetsChanged();
 		}
 	}
@@ -113,7 +116,7 @@ public class FGameObjectNode : FNode, FRenderableLayerInterface
 		stage.renderer.AddRenderableLayer(this);
 	}
 	
-	public void Update(int depth)
+	virtual public void Update(int depth)
 	{
 		_renderQueueDepth = Futile.baseRenderQueueDepth+depth;
 		

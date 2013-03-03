@@ -49,6 +49,13 @@ public class FButton : FContainer, FSingleTouchableInterface
 		_hitRect = _sprite.textureRect;
 
 		_clickSoundName = clickSoundName;
+		
+		EnableSingleTouch();
+		
+		if(_supportsOver)
+		{
+			ListenForUpdate(HandleUpdate);
+		}
 	}
 	
 	// Simpler constructors
@@ -99,28 +106,6 @@ public class FButton : FContainer, FSingleTouchableInterface
 		return _label;
 	}
 
-	override public void HandleAddedToStage()
-	{
-		base.HandleAddedToStage();	
-		Futile.touchManager.AddSingleTouchTarget(this);
-		
-		if(_supportsOver)
-		{
-			Futile.instance.SignalUpdate += HandleUpdate;
-		}
-	}
-	
-	override public void HandleRemovedFromStage()
-	{
-		base.HandleRemovedFromStage();	
-		Futile.touchManager.RemoveSingleTouchTarget(this);
-		
-		if(_supportsOver)
-		{
-			Futile.instance.SignalUpdate -= HandleUpdate;
-		}
-	}
-	
 	private void HandleUpdate()
 	{
 		UpdateOverState();

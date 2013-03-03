@@ -26,7 +26,6 @@ public class FNode
 	
 	protected bool _needsSpecialMatrices = false;
 	
-	
 	protected float _alpha;
 	protected float _concatenatedAlpha;
 	protected bool _isAlphaDirty;
@@ -42,7 +41,7 @@ public class FNode
 	
 	public object data = null; //the user can put whatever data they want here
 	
-	protected Futile.FutileUpdateDelegate _handleUpdateCallback;
+	private List<FNodeEnabler> _enablers = null;
 	
 	public FNode () 
 	{
@@ -65,33 +64,137 @@ public class FNode
 		_isMatrixDirty = false;
 	}
 	
-	public void ListenForUpdate(Futile.FutileUpdateDelegate handleUpdateCallback)
+	protected void AddEnabler(FNodeEnabler enabler)
 	{
-		_handleUpdateCallback = handleUpdateCallback;
+		if(_enablers == null) _enablers = new List<FNodeEnabler>();
+		
+		_enablers.Add(enabler);
 		
 		if(_isOnStage)
 		{
-			Futile.instance.SignalUpdate += _handleUpdateCallback;
+			enabler.Connect();	
 		}
+	}
+	
+	protected void RemoveEnabler(FNodeEnabler enabler)
+	{
+		if(_enablers == null) return;
+		
+		if(_isOnStage)
+		{
+			enabler.Disconnect();	
+		}
+		
+		_enablers.Remove(enabler);
+	}
+	
+	protected void RemoveEnablerOfType(Type enablerType)
+	{
+		if(_enablers == null) return;
+		
+		for(int e = _enablers.Count-1; e>= 0; e--) //reverse order for easy removal
+		{
+			if(_enablers[e].GetType() == enablerType)
+			{
+				if(_isOnStage)
+				{
+					_enablers[e].Disconnect();
+				}
+				
+				_enablers.RemoveAt(e);
+			}
+		}
+	}
+	
+	public void ListenForResize(FScreen.ScreenResizeDelegate handleResizeCallback)
+	{
+		RemoveEnablerOfType(typeof(FNodeEnablerForResize));
+		AddEnabler(new FNodeEnablerForResize(handleResizeCallback));
+	}
+	
+	public void RemoveListenForResize()
+	{	
+		RemoveEnablerOfType(typeof(FNodeEnablerForResize));
+	}
+	
+	public void ListenForOrientationChange(FScreen.ScreenOrientationChangeDelegate handleOrientationChangeCallback)
+	{
+		RemoveEnablerOfType(typeof(FNodeEnablerForOrientationChange));;
+		AddEnabler(new FNodeEnablerForOrientationChange(handleOrientationChangeCallback));
+	}
+	
+	public void RemoveListenForOrientationChange()
+	{	
+		RemoveEnablerOfType(typeof(FNodeEnablerForOrientationChange));
+	}
+	
+	public void ListenForUpdate(Futile.FutileUpdateDelegate handleUpdateCallback)
+	{
+		RemoveEnablerOfType(typeof(FNodeEnablerForUpdate));
+		AddEnabler(new FNodeEnablerForUpdate(handleUpdateCallback));
 	}
 	
 	public void RemoveListenForUpdate()
 	{	
-		if(_isOnStage && _handleUpdateCallback != null)
-		{
-			Futile.instance.SignalUpdate -= _handleUpdateCallback;
-		}
-		
-		_handleUpdateCallback = null;
+		RemoveEnablerOfType(typeof(FNodeEnablerForUpdate));
 	}
+	
+	public void ListenForLateUpdate(Futile.FutileUpdateDelegate handleUpdateCallback)
+	{
+		RemoveEnablerOfType(typeof(FNodeEnablerForLateUpdate));
+		AddEnabler(new FNodeEnablerForLateUpdate(handleUpdateCallback));
+	}
+	
+	public void RemoveListenForLateUpdate()
+	{	
+		RemoveEnablerOfType(typeof(FNodeEnablerForLateUpdate));
+	}
+	
+	public void ListenForFixedUpdate(Futile.FutileUpdateDelegate handleUpdateCallback)
+	{
+		RemoveEnablerOfType(typeof(FNodeEnablerForFixedUpdate));
+		AddEnabler(new FNodeEnablerForFixedUpdate(handleUpdateCallback));
+	}
+	
+	public void RemoveListenForFixedUpdate()
+	{	
+		RemoveEnablerOfType(typeof(FNodeEnablerForFixedUpdate));
+	}
+	
+	public void EnableSingleTouch()
+	{
+		DisableSingleTouch(); //clear any old ones first
+		AddEnabler(new FNodeEnablerForSingleTouch(this));
+	}
+	
+	public void DisableSingleTouch()
+	{
+		RemoveEnablerOfType(typeof(FNodeEnablerForSingleTouch));
+	}
+	
+	public void EnableMultiTouch()
+	{
+		DisableSingleTouch(); //clear any old ones first
+		AddEnabler(new FNodeEnablerForSingleTouch(this));
+	}
+	
+	public void DisableMultiTouch()
+	{
+		RemoveEnablerOfType(typeof(FNodeEnablerForSingleTouch));
+	}
+
 	
 	virtual public void HandleAddedToStage()
 	{
 		_isOnStage = true;
 		
-		if(_handleUpdateCallback != null)
+		if(_enablers != null)
 		{
-			Futile.instance.SignalUpdate += _handleUpdateCallback;
+			int count = _enablers.Count;
+			for(int e = 0; e< count; e++)
+			{
+				_enablers[e].Connect();
+			}
 		}
 	}
 
@@ -99,9 +202,13 @@ public class FNode
 	{
 		_isOnStage = false;
 		
-		if(_handleUpdateCallback != null)
+		if(_enablers != null)
 		{
-			Futile.instance.SignalUpdate -= _handleUpdateCallback;
+			int count = _enablers.Count;
+			for(int e = 0; e< count; e++)
+			{
+				_enablers[e].Disconnect();
+			}
 		}
 	} 
 	
