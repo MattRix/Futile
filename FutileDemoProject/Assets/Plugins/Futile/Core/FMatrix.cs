@@ -232,6 +232,11 @@ public class FMatrix
 		); 
 	}
 	
+	public Vector2 GetTransformedUnitVector()
+	{
+		return new Vector2(a+c+tx, b+d+ty);
+	}
+	
 	public Vector3 GetVector3FromLocalVector2(Vector2 localVector, float z)
 	{
 		return new Vector3
