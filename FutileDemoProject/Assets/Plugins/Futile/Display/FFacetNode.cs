@@ -1,10 +1,9 @@
 using UnityEngine;
 using System;
 
-public class FFacetNode : FNode
+public class FFacetNodeBase : FNode
 {
-	protected FAtlasElement _element;
-	
+	protected FAtlas _atlas = null;
 	protected FShader _shader = null;
 	
 	protected int _firstFacetIndex = -1;
@@ -14,35 +13,34 @@ public class FFacetNode : FNode
 	
 	protected FFacetType _facetType;
 	
-	public FFacetNode ()
+	private bool _hasInited = false;
+	
+	public FFacetNodeBase ()
 	{
 		
 	}
 	
-	protected void Init(FFacetType facetType, FAtlasElement element, int numberOfFacetsNeeded)
+	virtual protected void Init(FFacetType facetType, FAtlas atlas, int numberOfFacetsNeeded)
 	{
 		_facetType = facetType;
 		
-		_element = element;
+		_atlas = atlas;
 		if(_shader == null) _shader = FShader.defaultShader;
 		_numberOfFacetsNeeded = numberOfFacetsNeeded; 
 		
-		HandleElementChanged();
+		_hasInited = true;
 	}
 	
 	protected void UpdateFacets()
 	{
-		_stage.renderer.GetFacetRenderLayer(out _renderLayer, out _firstFacetIndex, _facetType, _element.atlas, _shader, _numberOfFacetsNeeded);
+		if(!_hasInited) return;
+		
+		_stage.renderer.GetFacetRenderLayer(out _renderLayer, out _firstFacetIndex, _facetType, _atlas, _shader, _numberOfFacetsNeeded);
 	}
 	
 	virtual public int firstFacetIndex
 	{
 		get {return _firstFacetIndex;}	
-	}
-	
-	virtual public void HandleElementChanged()
-	{
-		//override by parent things
 	}
 	
 	virtual public void PopulateRenderLayer()
@@ -54,7 +52,7 @@ public class FFacetNode : FNode
 	{
 		if(!_isOnStage)
 		{
-			_isOnStage = true;
+			base.HandleAddedToStage();
 			_stage.HandleFacetsChanged();
 		}
 	}
@@ -63,34 +61,8 @@ public class FFacetNode : FNode
 	{
 		if(_isOnStage)
 		{
-			_isOnStage = false;
+			base.HandleRemovedFromStage();
 			_stage.HandleFacetsChanged();
-		}
-	}
-	
-	public void SetElementByName(string elementName)
-	{
-		this.element = Futile.atlasManager.GetElementWithName(elementName);
-	}
-	
-	public FAtlasElement element
-	{
-		get { return _element;}
-		set
-		{
-			if(_element != value)
-			{
-				bool isAtlasDifferent = (_element.atlasIndex != value.atlasIndex);
-	
-				_element = value;	
-				
-				if(isAtlasDifferent)
-				{
-					if(_isOnStage) _stage.HandleFacetsChanged();	
-				}
-				
-				HandleElementChanged();
-			}
 		}
 	}
 	
@@ -111,9 +83,53 @@ public class FFacetNode : FNode
 	{
 		get {return _facetType;}	
 	}
+}
+
+//FFacetNode handles only a single element
+public class FFacetNode : FFacetNodeBase
+{
+	protected FAtlasElement _element;
 	
+	protected void Init(FFacetType facetType, FAtlasElement element, int numberOfFacetsNeeded)
+	{
+		_element = element;
+		
+		base.Init(facetType,_element.atlas,numberOfFacetsNeeded);
+		
+		HandleElementChanged();
+	}
 	
+	public void SetElementByName(string elementName)
+	{
+		this.element = Futile.atlasManager.GetElementWithName(elementName);
+	}
 	
+	public FAtlasElement element
+	{
+		get { return _element;}
+		set
+		{
+			if(_element != value)
+			{
+				bool isAtlasDifferent = (_element.atlas != value.atlas);
+	
+				_element = value;	
+				
+				if(isAtlasDifferent)
+				{
+					_atlas = _element.atlas;
+					if(_isOnStage) _stage.HandleFacetsChanged();	
+				}
+				
+				HandleElementChanged();
+			}
+		}
+	}
+	
+	virtual public void HandleElementChanged()
+	{
+		//override by parent things
+	}
 }
 
 
