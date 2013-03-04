@@ -174,8 +174,8 @@ public class FNode
 	
 	public void EnableMultiTouch()
 	{
-		DisableSingleTouch(); //clear any old ones first
-		AddEnabler(new FNodeEnablerForSingleTouch(this));
+		DisableMultiTouch(); //clear any old ones first
+		AddEnabler(new FNodeEnablerForMultiTouch(this));
 	}
 	
 	public void DisableMultiTouch()
