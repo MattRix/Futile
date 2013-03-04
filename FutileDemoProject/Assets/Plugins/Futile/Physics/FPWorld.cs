@@ -5,6 +5,11 @@ public class FPWorld : MonoBehaviour
 {
 	public static FPWorld instance;
 	
+	private FPWorld() //Don't use new FPWorld(), use FPWorld.Create() instead!"
+	{
+	
+	}
+	
 	public static FPWorld Create(float metersToPointsRatio)
 	{
 		GameObject gameObject = new GameObject("FPWorld Root");	
