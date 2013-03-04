@@ -96,8 +96,6 @@ public class FStage : FContainer
 	
 	override public void Redraw(bool shouldForceDirty, bool shouldUpdateDepth)
 	{
-		UpdateFollow();
-		
 		bool didNeedDepthUpdate = _needsDepthUpdate || shouldUpdateDepth;
 		
 		_needsDepthUpdate = false;
@@ -120,6 +118,8 @@ public class FStage : FContainer
 			//key difference between Stage and Container: Stage doesn't force dirty if matrix is dirty
 			_childNodes[c].Redraw(shouldForceDirty || wasAlphaDirty, shouldUpdateDepth); //if the alpha is dirty or we're supposed to force it, do it!
 		}
+		
+		UpdateFollow();
 		
 		if(didNeedDepthUpdate)
 		{
