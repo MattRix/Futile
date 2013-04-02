@@ -13,7 +13,7 @@ ___
 
 ##Ask questions on http://reddit.com/r/futile
 
-##How to try the demo project##
+##How to try the demo project:##
 
 ####How to open the project
 
