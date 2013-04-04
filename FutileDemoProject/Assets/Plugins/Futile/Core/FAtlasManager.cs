@@ -215,6 +215,15 @@ public class FAtlasManager
 		_fonts.Add(font);
 		_fontsByName.Add (name, font);
 	}
+	public void LogAllElementNames()
+	{
+		Debug.Log("Logging all element names:");
+
+		foreach(KeyValuePair<String,FAtlasElement> pair in _allElementsByName)
+		{
+			Debug.Log("'"+pair.Value.name+"'");
+		}
+	}
 }
 
 
