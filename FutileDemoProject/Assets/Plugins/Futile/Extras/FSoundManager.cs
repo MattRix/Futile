@@ -49,6 +49,7 @@ public class FSoundManager
 		{
 			soundClip = Resources.Load(fullPath) as AudioClip;	
 			_soundClips[fullPath] = soundClip;
+
 			if(soundClip == null)
 			{
 				Debug.Log("Couldn't find sound at: " + fullPath);
