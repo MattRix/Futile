@@ -22,7 +22,7 @@ public class FPPolygonalData
 		
 		if(shouldDecomposeIntoConvexPolygons)
 		{
-			List<Vector2> sourceVerticesList = sourceVertices.ToList();
+			List<Vector2> sourceVerticesList = new List<Vector2>(sourceVertices);
 			
 			sourceVerticesList.Reverse(); //the algorithm needs them in reverse order
 			
