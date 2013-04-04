@@ -119,7 +119,7 @@ public class FAtlas
 	
 	private void LoadTexture()
 	{
-		_texture = (Texture) Resources.Load (_imagePath, typeof(Texture));
+		_texture = Resources.Load (_imagePath, typeof(Texture)) as Texture;
 		 
 		if(_texture == null)
 		{
@@ -133,7 +133,7 @@ public class FAtlas
 	
 	private void LoadAtlasData()
 	{
-		TextAsset dataAsset = (TextAsset) Resources.Load (_dataPath, typeof(TextAsset));
+		TextAsset dataAsset = Resources.Load (_dataPath, typeof(TextAsset)) as TextAsset;
 		
 		if(dataAsset == null)
 		{
