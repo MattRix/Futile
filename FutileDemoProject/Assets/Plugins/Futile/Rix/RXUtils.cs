@@ -1,8 +1,9 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 
-public class RXUtils
+public static class RXUtils
 {
 	public RXUtils ()
 	{
@@ -185,7 +186,7 @@ public class RXMath
 	}
 	
 	
-	public static float getDegreeDelta(float startAngle, float endAngle) //chooses the shortest angular distance
+	public static float GetDegreeDelta(float startAngle, float endAngle) //chooses the shortest angular distance
 	{
 		float delta = (endAngle - startAngle) % 360.0f;
 		
@@ -197,7 +198,7 @@ public class RXMath
 		return delta;
 	}
 	
-	public static float getRadianDelta(float startAngle, float endAngle) //chooses the shortest angular distance
+	public static float GetRadianDelta(float startAngle, float endAngle) //chooses the shortest angular distance
 	{
 		float delta = (endAngle - startAngle) % DOUBLE_PI;
 		
@@ -219,7 +220,7 @@ public class RXMath
 	
 }
 
-public class RXRandom
+public static class RXRandom
 {
 	private static System.Random _randomSource = new System.Random();
 	
