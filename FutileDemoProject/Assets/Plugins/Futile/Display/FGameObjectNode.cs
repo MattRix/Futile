@@ -82,6 +82,11 @@ public class FGameObjectNode : FNode, FRenderableLayerInterface
 	
 	override public void Redraw(bool shouldForceDirty, bool shouldUpdateDepth)
 	{
+		// Game Object Nodes MUST force themselves to update every frame, otherwise
+		// their positions will get out of sync with the stage if the stage moves
+		// and no nodes are being added/removed to cause the dirty flag to be set.
+		shouldForceDirty = true;
+
 		bool wasMatrixDirty = _isMatrixDirty;
 		bool wasAlphaDirty = _isAlphaDirty;
 		
