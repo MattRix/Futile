@@ -271,6 +271,8 @@ public class RXRandom
 	public static object Select(params object[] objects)
 	{
 		return objects[_randomSource.Next() % objects.Length];
+	}
+
 	//random item from an array
 	public static T AnyItem<T>(T[] items)
 	{
@@ -294,6 +296,22 @@ public class RXRandom
 	public static Vector3 Vector3Normalized()
 	{
 		return new Vector3(RXRandom.Range(-1.0f,1.0f),RXRandom.Range(-1.0f,1.0f),RXRandom.Range(-1.0f,1.0f)).normalized;
+	}
+	public static void ShuffleList<T>(List<T> list)
+	{
+		list.Sort(RandomComparison);
+	}
+
+	public static void Shuffle<T>(this List<T> list)
+	{
+		list.Sort(RandomComparison);
+	}
+
+	private static int RandomComparison<T>(T a, T b) 
+	{
+		if(_randomSource.Next() % 2 == 0) return -1;
+
+		return 1;
 	}
 }
 
