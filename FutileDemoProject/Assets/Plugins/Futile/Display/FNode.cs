@@ -180,7 +180,7 @@ public class FNode
 	
 	public void DisableMultiTouch()
 	{
-		RemoveEnablerOfType(typeof(FNodeEnablerForSingleTouch));
+		RemoveEnablerOfType(typeof(FNodeEnablerForMultiTouch));
 	}
 
 	
