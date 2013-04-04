@@ -312,9 +312,12 @@ public class FNode
 		
 		if(_needsSpecialMatrices)
 		{
-			_inverseConcatenatedMatrix.InvertAndCopyValues(_concatenatedMatrix);
-			_screenConcatenatedMatrix.ConcatAndCopyValues(_concatenatedMatrix, _stage.screenConcatenatedMatrix);
-			_screenInverseConcatenatedMatrix.InvertAndCopyValues(_screenConcatenatedMatrix);
+			if(_stage != null)
+			{
+				_inverseConcatenatedMatrix.InvertAndCopyValues(_concatenatedMatrix);
+				_screenConcatenatedMatrix.ConcatAndCopyValues(_concatenatedMatrix, _stage.screenConcatenatedMatrix);
+				_screenInverseConcatenatedMatrix.InvertAndCopyValues(_screenConcatenatedMatrix);
+			}
 		}
 	}
 	
