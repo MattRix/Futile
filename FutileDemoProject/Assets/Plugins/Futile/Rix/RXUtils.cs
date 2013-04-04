@@ -74,6 +74,16 @@ public static class RXUtils
 		return new Color(red/255.0f, green/255.0f, blue/255.0f);
 	}
 	
+	public static Color GetColorFromHex(string hexString)
+	{
+		return GetColorFromHex(Convert.ToUInt32(hexString,16));
+	}
+	
+	public static Vector2 GetVector2FromString(string input)
+	{
+		string[] parts = input.Split(new char[] {','});	
+		return new Vector2(float.Parse(parts[0]), float.Parse(parts[1]));
+	}
 }
 
 public class RXColor
