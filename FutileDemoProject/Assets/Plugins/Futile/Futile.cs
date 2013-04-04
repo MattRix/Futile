@@ -101,8 +101,8 @@ public class Futile : MonoBehaviour
 		_camera.name = "Camera";
 		//_camera.clearFlags = CameraClearFlags.Depth; //TODO: check if this is faster or not?
 		_camera.clearFlags = CameraClearFlags.SolidColor;
-		_camera.nearClipPlane = -50.0f;
-		_camera.farClipPlane = 50.0f;
+		_camera.nearClipPlane = -500.0f;
+		_camera.farClipPlane = 500.0f;
 		_camera.depth = 100;
 		_camera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
 		_camera.backgroundColor = _futileParams.backgroundColor;
