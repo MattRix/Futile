@@ -92,15 +92,13 @@ public class FWatcher
 	{
 		int watcherTypeCount = _watcherTypes.Count;
 		
-		for(int w = 0; w < watcherTypeCount; w++)
+		for(int w = watcherTypeCount - 1; w >= 0; w--)
 		{
 			if(_watcherTypes[w].targetType == targetType) 
 			{
 				//we already have a watcher for this type, so remove the old watcher
 				_watcherTypes.RemoveAt(w);
-				w--;
 			}
-			
 		}
 		
 		FWatcherType newWatcherType = new FWatcherType(targetType, linkType);
