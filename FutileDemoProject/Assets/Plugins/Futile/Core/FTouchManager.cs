@@ -37,6 +37,7 @@ public interface FMultiTouchableInterface
 public class FTouchManager
 {
 	public static bool shouldMouseEmulateTouch = true;
+	public static bool isEnabled = true;
 	
 	private List<FSingleTouchableInterface> _singleTouchables = new List<FSingleTouchableInterface>();
 	private List<FMultiTouchableInterface> _multiTouchables = new List<FMultiTouchableInterface>();
@@ -82,6 +83,8 @@ public class FTouchManager
 	
 	public void Update()
 	{
+		if (!isEnabled) return;
+		
 		_isUpdating = true;
 		
 		if(_needsPrioritySort)
