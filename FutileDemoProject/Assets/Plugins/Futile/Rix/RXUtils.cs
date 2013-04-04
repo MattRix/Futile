@@ -5,11 +5,6 @@ using System.Collections.Generic;
 
 public static class RXUtils
 {
-	public RXUtils ()
-	{
-		
-	}
-	
 	public static Rect ExpandRect(Rect rect, float paddingX, float paddingY)
 	{
 		return new Rect(rect.x - paddingX, rect.y - paddingY, rect.width + paddingX*2, rect.height+paddingY*2);	
@@ -84,6 +79,23 @@ public static class RXUtils
 		string[] parts = input.Split(new char[] {','});	
 		return new Vector2(float.Parse(parts[0]), float.Parse(parts[1]));
 	}
+	
+}
+
+public class RXColorHSL
+{
+	public float h = 0.0f;
+	public float s = 0.0f;
+	public float l = 0.0f;
+	
+	public RXColorHSL(float h, float s, float l)
+	{
+		this.h = h;
+		this.s = s;
+		this.l = l;
+	}
+	
+	public RXColorHSL() : this(0.0f, 0.0f, 0.0f) {}
 }
 
 public class RXColor
@@ -96,6 +108,23 @@ public class RXColor
 	public const float HUE_BLUE = 0.6f;
 	public const float HUE_PURPLE = 0.8f;
 	public const float HUE_PINK = 0.9f;
+	
+	//TODO: IMPLEMENT THIS
+	public static Color ColorFromRGBString(string rgbString)
+	{
+		return Color.red;
+	}
+	
+	//TODO: IMPLEMENT THIS
+	public static Color ColorFromHSLString(string hslString)
+	{
+		return Color.green;
+	}
+	
+	public static Color ColorFromHSL(RXColorHSL hsl)
+	{
+		return ColorFromHSL(hsl.h, hsl.s, hsl.l);
+	}
 	
 	public static Color ColorFromHSL(float hue, float sat, float lum)
 	{
@@ -163,7 +192,55 @@ public class RXColor
 		
 		return new Color(r,g,b,alpha);
 	}
-	
+		
+	// 
+	// Math for the conversion found here: http://www.easyrgb.com/index.php?X=MATH
+	//
+	public static RXColorHSL HSLFromColor(Color rgb)
+	{
+		RXColorHSL c = new RXColorHSL();
+		
+		float r = rgb.r;
+		float g = rgb.g;
+		float b = rgb.b;
+		
+		float minChan = Mathf.Min(r, g, b);			//Min. value of RGB
+		float maxChan = Mathf.Max(r, g, b);			//Max. value of RGB
+		float deltaMax = maxChan - minChan;         //Delta RGB value
+		
+		c.l = (maxChan + minChan) * 0.5f;
+		
+		if (Mathf.Abs(deltaMax) <= 0.0001f)              //This is a gray, no chroma...
+		{
+			c.h = 0;								//HSL results from 0 to 1
+			c.s = 0;
+		}
+		else										//Chromatic data...
+		{
+			if ( c.l < 0.5f ) 
+				c.s = deltaMax / (maxChan + minChan);
+			else           
+				c.s = deltaMax / (2.0f - maxChan - minChan);
+			
+			float deltaR = (((maxChan - r) / 6.0f) + (deltaMax * 0.5f)) / deltaMax;
+			float deltaG = (((maxChan - g) / 6.0f) + (deltaMax * 0.5f)) / deltaMax;
+			float deltaB = (((maxChan - b) / 6.0f) + (deltaMax * 0.5f)) / deltaMax;
+			
+			if (Mathf.Approximately(r, maxChan)) 
+				c.h = deltaB - deltaG;
+			else if (Mathf.Approximately(g, maxChan)) 
+				c.h = (1.0f / 3.0f) + deltaR - deltaB;
+			else if (Mathf.Approximately(b, maxChan))
+				c.h = (2.0f / 3.0f) + deltaG - deltaR;
+			
+			if (c.h < 0.0f) 
+				c.h += 1.0f;
+			else if (c.h > 1.0f) 
+				c.h -= 1.0f;
+		}
+		return c;
+	}
+
 	public static Color GetColorFromHex(uint hex)
 	{
 		uint red = hex >> 16;
@@ -281,7 +358,8 @@ public static class RXRandom
 	{
 		return _randomSource.NextDouble() < 0.5;	
 	}
-	
+
+	//random item from all passed arguments/params - RXRandom.Select(one, two three);
 	public static object Select(params object[] objects)
 	{
 		return objects[_randomSource.Next() % objects.Length];
@@ -311,6 +389,7 @@ public static class RXRandom
 	{
 		return new Vector3(RXRandom.Range(-1.0f,1.0f),RXRandom.Range(-1.0f,1.0f),RXRandom.Range(-1.0f,1.0f)).normalized;
 	}
+
 	public static void ShuffleList<T>(List<T> list)
 	{
 		list.Sort(RandomComparison);
@@ -327,6 +406,7 @@ public static class RXRandom
 
 		return 1;
 	}
+
 }
 
 public class RXCircle
