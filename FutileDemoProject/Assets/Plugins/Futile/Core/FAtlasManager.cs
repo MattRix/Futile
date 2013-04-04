@@ -215,6 +215,7 @@ public class FAtlasManager
 		_fonts.Add(font);
 		_fontsByName.Add (name, font);
 	}
+
 	public void LogAllElementNames()
 	{
 		Debug.Log("Logging all element names:");
