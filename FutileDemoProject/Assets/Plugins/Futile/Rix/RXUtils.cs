@@ -251,6 +251,7 @@ public static class RXRandom
 	
 	public static int Int(int max)
 	{
+		if(max == 0) return 0;
 		return _randomSource.Next() % max;
 	}
 	
@@ -261,7 +262,9 @@ public static class RXRandom
 	
 	public static int Range(int low, int high)
 	{
-		return low + _randomSource.Next() % (high-low); 
+		int delta = high - low;
+		if(delta == 0) return 0;
+		return low + _randomSource.Next() % delta; 
 	}
 	
 	public static bool Bool()
