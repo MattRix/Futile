@@ -271,6 +271,18 @@ public class RXRandom
 	public static object Select(params object[] objects)
 	{
 		return objects[_randomSource.Next() % objects.Length];
+	//random item from an array
+	public static T AnyItem<T>(T[] items)
+	{
+		if(items.Length == 0) return default(T); //null
+		return items[_randomSource.Next() % items.Length];
+	}
+
+	//random item from a list
+	public static T AnyItem<T>(List<T> items)
+	{
+		if(items.Count == 0) return default(T); //null
+		return items[_randomSource.Next() % items.Count];
 	}
 	
 	//this isn't really perfectly randomized, but good enough for most purposes
