@@ -10,6 +10,11 @@ public class FButton : FContainer, FSingleTouchableInterface
 	protected FAtlasElement _upElement;
 	protected FAtlasElement _downElement;
 	protected FAtlasElement _overElement;
+
+	protected bool _shouldUseCustomColors = false;
+	protected Color _upColor = Color.white;
+	protected Color _downColor = Color.white;
+	protected Color _overColor = Color.white;
 	
 	protected FSprite _sprite;
 	protected string _clickSoundName;
@@ -68,7 +73,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 	public FButton (string upElementName, string downElementName, string clickSoundName) : 
 		this(upElementName, downElementName, null, clickSoundName) {}
 	
-	public void SetElements(string upElementName, string downElementName, string overElementName)
+	virtual public void SetElements(string upElementName, string downElementName, string overElementName)
 	{
 		_upElement = Futile.atlasManager.GetElementWithName(upElementName);
 		_downElement = Futile.atlasManager.GetElementWithName(downElementName);
@@ -89,7 +94,30 @@ public class FButton : FContainer, FSingleTouchableInterface
 		}
 	}
 
-	public FLabel AddLabel (string fontName, string text, Color color)
+	virtual public void SetColors(Color upColor, Color downColor)
+	{
+		SetColors(upColor, downColor, Color.white);
+	}
+
+	virtual public void SetColors(Color upColor, Color downColor, Color overColor)
+	{
+		_shouldUseCustomColors = true;
+
+		_upColor = upColor;
+		_downColor = downColor;
+		_overColor = overColor;
+
+		if(_isTouchDown)
+		{
+			_sprite.color = _downColor;	
+		}
+		else 
+		{
+			_sprite.color = _upColor;
+		}
+	}
+
+	virtual public FLabel AddLabel (string fontName, string text, Color color)
 	{
 		if(_label != null) 
 		{
@@ -106,12 +134,12 @@ public class FButton : FContainer, FSingleTouchableInterface
 		return _label;
 	}
 
-	private void HandleUpdate()
+	virtual protected void HandleUpdate()
 	{
 		UpdateOverState();
 	}
 	
-	private void UpdateOverState()
+	virtual protected void UpdateOverState()
 	{
 		if(_isTouchDown) return; //if the touch is down then we don't have to worry about over states
 		
@@ -120,14 +148,27 @@ public class FButton : FContainer, FSingleTouchableInterface
 		if(_hitRect.Contains(mousePos))
 		{
 			_sprite.element = _overElement;
+			if (_shouldUseCustomColors)
+			{
+				_sprite.color = _overColor;
+			}
 		}
 		else 
 		{
 			_sprite.element = _upElement;
+			if (_shouldUseCustomColors)
+			{
+				_sprite.color = _upColor;
+			}
 		}
 	}
+
+	virtual protected void UpdateEnabled()
+	{
+
+	}
 	
-	public bool HandleSingleTouchBegan(FTouch touch)
+	virtual public bool HandleSingleTouchBegan(FTouch touch)
 	{
 		_isTouchDown = false;
 		
@@ -145,6 +186,10 @@ public class FButton : FContainer, FSingleTouchableInterface
 			if(_isEnabled) //swallow touches all the time, but only listen to them when enabled
 			{
 				_sprite.element = _downElement;
+				if (_shouldUseCustomColors)
+				{
+					_sprite.color = _downColor;
+				}
 				
 				if(_clickSoundName != null) FSoundManager.PlaySound(_clickSoundName);
 				
@@ -159,7 +204,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 		return false;
 	}
 	
-	public void HandleSingleTouchMoved(FTouch touch)
+	virtual public void HandleSingleTouchMoved(FTouch touch)
 	{
 		Vector2 touchPos = _sprite.GlobalToLocal(touch.position);
 		
@@ -170,20 +215,32 @@ public class FButton : FContainer, FSingleTouchableInterface
 		if(expandedRect.Contains(touchPos))
 		{
 			_sprite.element = _downElement;	
+			if (_shouldUseCustomColors)
+			{
+				_sprite.color = _downColor;
+			}
 			_isTouchDown = true;
 		}
 		else
 		{
 			_sprite.element = _upElement;	
+			if (_shouldUseCustomColors)
+			{
+				_sprite.color = _upColor;
+			}
 			_isTouchDown = false;
 		}
 	}
 	
-	public void HandleSingleTouchEnded(FTouch touch)
+	virtual public void HandleSingleTouchEnded(FTouch touch)
 	{
 		_isTouchDown = false;
 		
 		_sprite.element = _upElement;
+		if (_shouldUseCustomColors)
+		{
+			_sprite.color = _upColor;
+		}
 		
 		Vector2 touchPos = _sprite.GlobalToLocal(touch.position);
 		
@@ -198,6 +255,10 @@ public class FButton : FContainer, FSingleTouchableInterface
 			if(_supportsOver && _hitRect.Contains(touchPos)) //go back to the over image if we're over the button
 			{
 				_sprite.element = _overElement;	
+				if (_shouldUseCustomColors)
+				{
+					_sprite.color = _overColor;
+				}
 			}
 		}
 		else
@@ -206,11 +267,15 @@ public class FButton : FContainer, FSingleTouchableInterface
 		}
 	}
 	
-	public void HandleSingleTouchCanceled(FTouch touch)
+	virtual public void HandleSingleTouchCanceled(FTouch touch)
 	{
 		_isTouchDown = false;
 		
 		_sprite.element = _upElement;
+		if (_shouldUseCustomColors)
+		{
+			_sprite.color = _upColor;
+		}
 		if(SignalReleaseOutside != null) SignalReleaseOutside(this);
 	}
 	
@@ -227,6 +292,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 			if(_isEnabled != value)
 			{
 				_isEnabled = value;
+				UpdateEnabled();
 			}
 		}
 	}
