@@ -3,10 +3,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-//used for watching variables for debug reasons
-//simply put whatever property you want to watch as a public var in RXWatchTarget
-//and then call RXWatcher.GetTarget().someVariable = 6.0f;  
-
 #if UNITY_EDITOR
 
 using System.Reflection;
@@ -16,175 +12,151 @@ public class FWatcher
 	private static FWatcher _instance;
 	
 	private GameObject _gameObject;
-	
-	private List<FWatcherType> _watcherTypes;
+	private List<FWatcherLink> _watcherLinks = new List<FWatcherLink>();
 	
 	private FWatcher ()
 	{
 		_gameObject = new GameObject("FWatcher");
-		_watcherTypes = new List<FWatcherType>();
-		
-		DoRegisterWatcherType(typeof(FNode), typeof(FWatcherLink_FNode));
-		DoRegisterWatcherType(typeof(FSprite), typeof(FWatcherLink_FSprite));
-		DoRegisterWatcherType(typeof(FLabel), typeof(FWatcherLink_FLabel));
-	}
-	
-	static private void Init()
-	{
-		_instance = new FWatcher();
 	}
 	
 	static public void Watch(object target)
 	{
-		Watch (target, target.GetType().Name, true);
+		if(target == null) return;
+
+		Watch (target, false, null);
 	}
 	
-	static public void Watch(object target, string targetName)
+	static public void Watch(object target, bool shouldShowNonPublic)
 	{
-		Watch (target, targetName, true);
+		if(target == null) return;
+
+		Watch (target, shouldShowNonPublic, null);
 	}
-	
-	static public void Watch(object target, string targetName, bool shouldUseWeakReference)
+
+	static public void Watch(object target, bool shouldShowNonPublic, string targetName)
 	{
-		if(_instance == null) Init();	
-		
-		_instance.DoWatch(target, targetName, shouldUseWeakReference);
-	}
-	
-	public void DoWatch(object target, string targetName, bool shouldUseWeakReference)
-	{
-		Type targetType = target.GetType();
-		
-		int watcherTypeCount = _watcherTypes.Count;
-		
-		bool wasWatcherTypeFound = false;
-		
-		GameObject ownerGO = new GameObject(targetName);
-		ownerGO.transform.parent = _gameObject.transform;
-		
-		//for(int w = watcherTypeCount-1; w >= 0; w--) //notice the reverse order, so we check against newer stuff first
-		for(int w = 0; w < watcherTypeCount; w++)
+		if(target == null) return;
+
+		if(targetName == null)
 		{
-			FWatcherType watcherType = _watcherTypes[w];
-			
-			if(watcherType.targetType.IsAssignableFrom(targetType))
+			if(target is Type)
 			{
-				FWatcherLink link = ownerGO.AddComponent(watcherType.linkType) as FWatcherLink;
-				link.Init(target, shouldUseWeakReference);
-				wasWatcherTypeFound = true;
+				targetName = (target as Type).Name;
+			}
+			else
+			{
+				targetName = target.GetType().Name;
 			}
 		}
-		
-		if(!wasWatcherTypeFound)
+
+		if(_instance == null)
 		{
-			ownerGO.transform.parent = null; //remove the gameobject
+			_instance = new FWatcher();
 		}
+		
+		_instance.DoWatch(target, targetName, shouldShowNonPublic);
 	}
 	
-	static public void RegisterWatcherType(Type targetType, Type linkType)
+	public void DoWatch(object target, string targetName, bool shouldShowNonPublic)
 	{
-		if(_instance == null) Init();	
-		
-		_instance.DoRegisterWatcherType(targetType, linkType);
-	}
-	
-	public void DoRegisterWatcherType(Type targetType, Type linkType)
-	{
-		int watcherTypeCount = _watcherTypes.Count;
-		
-		for(int w = watcherTypeCount - 1; w >= 0; w--)
+		int watcherLinkCount = _watcherLinks.Count;
+		for(int w = 0; w<watcherLinkCount; w++)
 		{
-			if(_watcherTypes[w].targetType == targetType) 
+			if(_watcherLinks[w].GetTarget() == target)
 			{
-				//we already have a watcher for this type, so remove the old watcher
-				_watcherTypes.RemoveAt(w);
+				return; //we already have a watcher for this target!
 			}
 		}
-		
-		FWatcherType newWatcherType = new FWatcherType(targetType, linkType);
-		
-		_watcherTypes.Add (newWatcherType);
-	}
-}
 
-public class FWatcherType
-{
-	public Type targetType;
-	public Type linkType;
-	
-	public FWatcherType(Type targetType, Type linkType)
+		GameObject linkGO = new GameObject(targetName);
+
+		linkGO.transform.parent = _gameObject.transform;
+
+		FWatcherLink link = linkGO.AddComponent<FWatcherLink>();
+		link.Init(target, shouldShowNonPublic);
+
+		_watcherLinks.Add(link);
+	}
+
+	static public void RemoveWatcherLink(FWatcherLink watcherLink)
 	{
-		this.targetType = targetType;
-		this.linkType = linkType;
+		_instance.DoRemoveWatcherLink(watcherLink);
 	}
-}
 
+	public void DoRemoveWatcherLink(FWatcherLink watcherLink)
+	{
+		int watcherLinkCount = _watcherLinks.Count;
+		for(int w = 0; w<watcherLinkCount; w++)
+		{
+			if(_watcherLinks[w] == watcherLink)
+			{
+				_watcherLinks.RemoveAt(w);
+				return;
+			}
+		}
+	}
+
+}
 
 public class FWatcherLink : MonoBehaviour
 {
 	private WeakReference _targetRef;
-	private object _targetStrongRef;
-	private FieldInfo[] _linkFields;
-	private MemberInfo[] _targetMembers;
-	private bool[] _isTargetMemberAProperty;
-	private object[] _previousValues;
+
 	private bool _hasSetup = false;
+	private bool _shouldShowNonPublicMembers = false;
+
+	private List<FWatcherLinkMember> _members = new List<FWatcherLinkMember>();
 	
-	public void Init(object target, bool shouldUseWeakReference)
+	public void Init(object target, bool shouldShowNonPublic) 
 	{
 		_targetRef = new WeakReference(target);
-		
-		if(!shouldUseWeakReference)
-		{
-			_targetStrongRef = target; //now target will be retained forever... only really good for static classes
-			_targetStrongRef.ToString(); //call something on it so the compiler doesn't give a warning about it being unused
-		}
+		_shouldShowNonPublicMembers = shouldShowNonPublic;
 	}
 	
-	virtual protected void SetupTarget()
+	private void SetupTarget()
 	{
 		object target = _targetRef.Target;
 		Type targetType = _targetRef.Target.GetType();
-		
-		_linkFields = this.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
-		
-		int linkFieldsCount = _linkFields.Length;
-		_targetMembers = new MemberInfo[linkFieldsCount];
-		_previousValues = new object[linkFieldsCount];
-		_isTargetMemberAProperty = new bool[linkFieldsCount];
-		
-		for(int f = 0; f<linkFieldsCount; f++)
+
+		BindingFlags bindingFlags = BindingFlags.Public;
+
+		if(target is Type)
 		{
-			FieldInfo linkField = _linkFields[f];
-			
-			MemberInfo memberInfo = targetType.GetProperty(linkField.Name);
-			
-			if(memberInfo == null) //try seeing if it's a static field instead
-			{
-				memberInfo = targetType.GetProperty(linkField.Name, BindingFlags.Static);
-			}	
-			
-			if(memberInfo == null)
-			{
-				memberInfo = targetType.GetField(linkField.Name);	
-				_isTargetMemberAProperty[f] = false;
-				_previousValues[f] = (memberInfo as FieldInfo).GetValue(target);
-			}
-			else 
-			{
-				_isTargetMemberAProperty[f] = true;	
-				_previousValues[f] = (memberInfo as PropertyInfo).GetValue(target,null);
-			}
-			
-			_targetMembers[f] = memberInfo;
-			
-			linkField.SetValue(this, _previousValues[f]);
+			bindingFlags |= BindingFlags.Static;
+			targetType = target as Type;
 		}
-	}
-	
-	protected object GetTarget()
-	{
-		return _targetRef.Target;
+		else
+		{
+			bindingFlags |= BindingFlags.Instance;
+		}
+
+		if(_shouldShowNonPublicMembers)
+		{
+			bindingFlags |= BindingFlags.NonPublic;
+		}
+
+		FieldInfo[] fieldInfos = targetType.GetFields(bindingFlags);
+		PropertyInfo[] propertyInfos = targetType.GetProperties(bindingFlags);
+
+		for(int f = 0; f<fieldInfos.Length; f++)
+		{
+			FWatcherLinkMember member = new FWatcherLinkMember(this, fieldInfos[f]);
+
+			if(member.CheckIfValid())
+			{
+				_members.Add(member);
+			}
+		}
+
+		for(int p = 0; p<propertyInfos.Length; p++)
+		{
+			FWatcherLinkMember member = new FWatcherLinkMember(this, propertyInfos[p]);
+			
+			if(member.CheckIfValid())
+			{
+				_members.Add(member);
+			}
+		}
 	}
 	
 	public void Update()
@@ -200,52 +172,106 @@ public class FWatcherLink : MonoBehaviour
 				_hasSetup = true;
 				SetupTarget();
 			}
-			UpdateTarget();
 		}
 	}
-	
-	virtual protected void UpdateTarget()
+
+	public object GetTarget()
 	{
-		object target = _targetRef.Target;
-		
-		int linkFieldsCount = _linkFields.Length;
-		
-		for(int f = 0; f<linkFieldsCount; f++)
-		{
-			FieldInfo linkField = _linkFields[f];
-			
-			object linkValue = linkField.GetValue(this);
-			
-			if(_isTargetMemberAProperty[f])
-			{
-				PropertyInfo targetProperty = _targetMembers[f] as PropertyInfo;
-				
-				if(linkValue != _previousValues[f])
-				{
-					targetProperty.SetValue(target,linkValue,null);	
-				}
-				
-				_previousValues[f] = targetProperty.GetValue(target, null);
-			}
-			else 
-			{
-				FieldInfo targetField = _targetMembers[f] as FieldInfo;
-				
-				if(linkValue != _previousValues[f])
-				{
-					targetField.SetValue(target,linkValue);	
-				}
-				
-				_previousValues[f] = targetField.GetValue(target);
-			}
-			
-			linkField.SetValue(this, _previousValues[f]);
-		}
+		return _targetRef.Target;
+	}
+
+	public List<FWatcherLinkMember> members
+	{
+		get {return _members;}
 	}
 	
 	private void Destroy()
 	{
 		UnityEngine.Object.Destroy(gameObject);
+		FWatcher.RemoveWatcherLink(this);
+	}
+
+
+}
+
+//this is used to wrap FieldInfo+PropertyInfo so they can be treated the exact same way
+public class FWatcherLinkMember
+{
+	public string name;
+	public Type memberType;
+	public MemberInfo memberInfo;
+	
+	private FWatcherLink _link;
+	private PropertyInfo _propertyInfo = null;
+	private FieldInfo _fieldInfo = null;
+
+	
+	public FWatcherLinkMember(FWatcherLink link, MemberInfo memberInfo)
+	{
+		_link = link;
+		this.memberInfo = memberInfo;
+
+		_propertyInfo = memberInfo as PropertyInfo;
+		
+		if(_propertyInfo != null)
+		{
+			name = _propertyInfo.Name;
+
+			memberType = _propertyInfo.PropertyType;
+		}
+		else //check if it's a field instead
+		{
+			_fieldInfo = memberInfo as FieldInfo;
+			
+			if(_fieldInfo != null)
+			{
+				name = _fieldInfo.Name;
+				memberType = _fieldInfo.FieldType;
+			}
+		}
+	}
+	
+	public bool CheckIfValid()
+	{
+		if(_propertyInfo != null)
+		{
+			if(_propertyInfo.CanWrite)
+			{
+				return true;
+			}
+		}
+		else if(_fieldInfo != null)
+		{
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public object GetValue()
+	{
+		if(_propertyInfo != null)
+		{
+			return _propertyInfo.GetValue(_link.GetTarget(), null);
+		}
+		else if(_fieldInfo != null)
+		{
+			return _fieldInfo.GetValue(_link.GetTarget());
+		}
+		
+		return null;
+	}
+	
+	public void SetValue(object newValue)
+	{
+		if(_propertyInfo != null)
+		{
+			_propertyInfo.SetValue(_link.GetTarget(), newValue, null);
+		}
+		else if(_fieldInfo != null)
+		{
+			_fieldInfo.SetValue(_link.GetTarget(), newValue);
+		}
 	}
 }
 
@@ -255,36 +281,25 @@ public class FWatcherLink : MonoBehaviour
 
 public class FWatcher
 {
-
 	static public void Watch(object target)
 	{
+
 	}
 	
-	static public void Watch(object target, string targetName)
+	static public void Watch(object target, bool shouldShowNonPublic)
 	{
+
 	}
 	
-	static public void Watch(object target, string targetName, bool shouldUseWeakReference)
+	static public void Watch(object target, bool shouldShowNonPublic, string targetName)
 	{
-	}
-	
-	static public void RegisterWatcherType(Type targetType, Type linkType)
-	{
-		
+
 	}
 }
 
 public class FWatcherLink : MonoBehaviour
 {
-	virtual protected void SetupTarget()
-	{
-		
-	}
 
-	virtual protected void UpdateTarget()
-	{
-		
-	}
 }
 
 
