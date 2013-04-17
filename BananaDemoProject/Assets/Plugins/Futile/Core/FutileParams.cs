@@ -26,6 +26,7 @@ public class FutileParams
 	public bool supportsPortraitUpsideDown;
 	
 	public Color backgroundColor = Color.black;
+	public int userLayerId = 11;
 	
 	public bool shouldLerpToNearestResolutionLevel = true;
 	
