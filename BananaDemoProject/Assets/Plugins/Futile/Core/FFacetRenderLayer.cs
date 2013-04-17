@@ -59,6 +59,7 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 		batchIndex = _facetType.index*10000000 + atlas.index*10000 + shader.index;
 		
 		_gameObject = new GameObject("FRenderLayer ("+_stage.name+") ("+_facetType.name+")");
+		_gameObject.layer = Futile.instance.userLayerId; // Futile's layer to be culled from other cameras
 		_transform = _gameObject.transform;
 		
 		_transform.parent = Futile.instance.gameObject.transform;

@@ -95,17 +95,17 @@ public class Futile : MonoBehaviour
 		
 		_cameraHolder = new GameObject();
 		_cameraHolder.transform.parent = gameObject.transform;
-		
+
 		_camera = _cameraHolder.AddComponent<Camera>();
 		_camera.tag = "MainCamera";
 		_camera.name = "Camera";
-		//_camera.clearFlags = CameraClearFlags.Depth; //TODO: check if this is faster or not?
-		_camera.clearFlags = CameraClearFlags.SolidColor;
+		_camera.clearFlags = CameraClearFlags.Depth; // for 3D in the background
 		_camera.nearClipPlane = -50.0f;
 		_camera.farClipPlane = 50.0f;
 		_camera.depth = 100;
 		_camera.rect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
 		_camera.backgroundColor = _futileParams.backgroundColor;
+		_camera.cullingMask = (1 << _futileParams.userLayerId); // only show the user layer assigned to Futile (11 default)
 		
 		//we multiply this stuff by scaleInverse to make sure everything is in points, not pixels
 		_camera.orthographic = true;
@@ -308,6 +308,11 @@ public class Futile : MonoBehaviour
 	new public Camera camera
 	{
 		get {return _camera;}	
+	}
+
+	public int userLayerId
+	{
+		get { return _futileParams.userLayerId; }
 	}
 	
 	//
