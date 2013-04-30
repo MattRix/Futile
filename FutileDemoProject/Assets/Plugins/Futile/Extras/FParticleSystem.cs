@@ -39,10 +39,10 @@ public class FParticleSystem : FFacetNodeBase
 		for(int p = 0; p<_maxParticleCount; p++)
 		{
 			FParticle particle = _particles[p];
-			
+
 			if(particle.timeRemaining <= 0) 
 			{
-				continue; //this particle isn't alive, go to the next one
+				//this particle isn't alive, go to the next one
 			}
 			else if(particle.timeRemaining <= deltaTime) //is it going to end during this update?
 			{
@@ -50,23 +50,26 @@ public class FParticleSystem : FFacetNodeBase
 				_availableParticles[_availableParticleCount] = particle;
 				_availableParticleCount++;
 				particle.timeRemaining = 0;
-				continue; //don't bother updating it because it won't be rendered anyway
+
+				//don't bother updating it because it won't be rendered anyway
 			}
-			
-			particle.timeRemaining -= deltaTime;
-			
-			particle.color.r += particle.redDeltaPerSecond * deltaTime;
-			particle.color.g += particle.greenDeltaPerSecond * deltaTime;
-			particle.color.b += particle.blueDeltaPerSecond * deltaTime;
-			particle.color.a += particle.alphaDeltaPerSecond * deltaTime;
-			
-			particle.scale += particle.scaleDeltaPerSecond * deltaTime;
-			
-			particle.speedX += accelX * deltaTime;
-			particle.speedY += accelY * deltaTime;
-			
-			particle.x += particle.speedX * deltaTime;
-			particle.y += particle.speedY * deltaTime;
+			else //do the update!
+			{
+				particle.timeRemaining -= deltaTime;
+				
+				particle.color.r += particle.redDeltaPerSecond * deltaTime;
+				particle.color.g += particle.greenDeltaPerSecond * deltaTime;
+				particle.color.b += particle.blueDeltaPerSecond * deltaTime;
+				particle.color.a += particle.alphaDeltaPerSecond * deltaTime;
+				
+				particle.scale += particle.scaleDeltaPerSecond * deltaTime;
+				
+				particle.speedX += accelX * deltaTime;
+				particle.speedY += accelY * deltaTime;
+				
+				particle.x += particle.speedX * deltaTime;
+				particle.y += particle.speedY * deltaTime;
+			}
 		}
 
 		_isMeshDirty = true; //needs redraw!
