@@ -463,12 +463,4 @@ public static class RXEase
 	}
 }
 
-//public static class ArrayExtensions
-//{
-//	public static string toJson( this Array obj )
-//	{
-//		return MiniJSON.jsonEncode( obj );
-//	}
-//	
-//}
 
