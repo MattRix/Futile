@@ -435,6 +435,33 @@ public class RXCircle
 	}
 }
 
+//This class is incomplete, I just have to get around to converting all the equations to this simplified format
+public static class RXEase
+{
+	//based on these: http://www.robertpenner.com/easing/ but simplified to work with only normalized values (0..1)
+	//t = current time, b = starting value, c = final value, d = duration
+	//for our purposes, t = input, b = 0, d = 1, c = 1 :::: note that (t/d = input)
+
+	public static float ExpoOut(float input)
+	{
+		return -Mathf.Pow( 2.0f, -10.0f * input) + 1.0f;
+	}
+	
+	public static float BackOut(float input)
+	{
+		return BackOut(input, 1.7f);
+	}
+
+	public static float BackOut(float input, float backAmount)
+	{
+		return ( input * input * ( (backAmount + 1.0f ) * input + backAmount ) + 1 ); //easing back
+	}
+
+	public static float SinInOut(float input)
+	{
+		return -0.5f * (Mathf.Cos(Mathf.PI*input) - 1.0f);
+	}
+}
 
 //public static class ArrayExtensions
 //{
