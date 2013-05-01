@@ -30,7 +30,8 @@ public class FStage : FContainer
 	private FNode _followTarget = null;
 	private bool _shouldFollowScale;
 	private bool _shouldFollowRotation;
-	
+
+    private int _layer;
 	
 	public FStage(string name) : base()
 	{
@@ -209,6 +210,19 @@ public class FStage : FContainer
 		_rotation = 0.0f;
 		_isMatrixDirty = true;
 	}
+
+    public int layer
+    {
+        get { return _layer; }
+        set
+        {
+            if(_layer != value)
+            {
+                _layer = value;
+                _doesRendererNeedTransformChange = true;
+            }
+        }
+    }
 	
 	//notice how we're returning identity matrixes
 	//because we don't want our children to think we've been transformed (or else they will transform)

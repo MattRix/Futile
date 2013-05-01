@@ -97,6 +97,8 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 		_transform.position = _stage.transform.position;
 		_transform.rotation = _stage.transform.rotation;
 		_transform.localScale = _stage.transform.localScale;
+
+        _gameObject.layer = _stage.layer;
 		
 		if(_needsRecalculateBoundsIfTransformed)
 		{
