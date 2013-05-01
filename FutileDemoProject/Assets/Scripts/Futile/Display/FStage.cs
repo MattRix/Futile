@@ -31,7 +31,7 @@ public class FStage : FContainer
 	private bool _shouldFollowScale;
 	private bool _shouldFollowRotation;
 
-    private int _layer;
+    private int _layer = 0;
 	
 	public FStage(string name) : base()
 	{
