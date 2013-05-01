@@ -394,12 +394,12 @@ public class FNode
 		if(_container != null) _container.RemoveChild (this);
 	}
 	
-	public void MoveToTop()
+	public void MoveToFront()
 	{
 		if(_container != null) _container.AddChild(this);
 	}
 	
-	public void MoveToBottom()
+	public void MoveToBack()
 	{
 		if(_container != null) _container.AddChildAtIndex(this,0);	
 	}
