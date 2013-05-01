@@ -186,20 +186,66 @@ public class FAtlasManager
 
 	public FAtlasElement GetElementWithName (string elementName)
 	{
-		if(_allElementsByName.ContainsKey(elementName))
-		{
-			return _allElementsByName[elementName];
-		}
-		throw new FutileException("Couldn't find element named '"+elementName+"'");
+		if (_allElementsByName.ContainsKey(elementName))
+        {
+            return _allElementsByName [elementName];
+        } 
+        else
+        {
+            //Try to make an educated guess about what they were trying to load
+            //First we get the last part of the path (the file name) and then we remove the extension
+            //Then we check to see if that string is in any of our element names 
+            //(perhaps they have the path wrong or are mistakenly using a .png extension)
+
+            String lastChunk = null;
+
+            if(elementName.Contains("\\"))
+            {
+                String[] chunks = elementName.Split('\\');
+                lastChunk = chunks[chunks.Length-1];
+            }
+            else
+            {
+                String[] chunks = elementName.Split('/');
+                lastChunk = chunks[chunks.Length-1];
+            }
+
+            String replacementName = null;
+
+            if(lastChunk != null)
+            {
+                lastChunk = lastChunk.Split('.')[0]; //remove the extension
+
+                foreach(KeyValuePair<String, FAtlasElement> pair in _allElementsByName)
+                {
+                    if(pair.Value.name.Contains(lastChunk))
+                    {
+                        replacementName = pair.Value.name;
+                    }
+                }
+             }
+
+            if(replacementName == null)
+            {
+                throw new FutileException("Couldn't find element named '" + elementName + "'. \nUse Futile.atlasManager.LogAllElementNames() to see a list of all loaded elements names");
+            }
+            else 
+            {
+                throw new FutileException("Couldn't find element named '" + elementName + "'. Did you mean '" + replacementName + "'? \nUse Futile.atlasManager.LogAllElementNames() to see a list of all loaded element names.");
+            }
+        }
 	}
 	
 	public FFont GetFontWithName(string fontName)
 	{
-		if(!_fontsByName.ContainsKey(fontName))
+		if(_fontsByName.ContainsKey(fontName))
 		{
-			throw new FutileException("Couldn't find font named '"+fontName+"'");
+            return _fontsByName[fontName];  
+        }
+        else 
+        {
+            throw new FutileException("Couldn't find font named '"+fontName+"'");
 		}
-		return _fontsByName[fontName];	
 	}
 
 	public void LoadFont (string name, string elementName, string configPath, float offsetX, float offsetY)
