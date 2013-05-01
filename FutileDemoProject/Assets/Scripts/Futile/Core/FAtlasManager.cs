@@ -81,7 +81,7 @@ public class FAtlasManager
 			
 			if(_allElementsByName.ContainsKey(element.name))
 			{
-				throw new FutileException("Duplicate element name found! All element names must be unique!");	
+                throw new FutileException("Duplicate element name '" + element.name +"' found! All element names must be unique!");	
 			}
 			else 
 			{
