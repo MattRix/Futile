@@ -8,6 +8,7 @@ public enum BPageType
 	None,
 	TitlePage,
 	InGamePage,
+    TestPage,
 	ScorePage
 }
 
@@ -57,7 +58,7 @@ public class BMain : MonoBehaviour
 		
 		BSoundPlayer.PlayRegularMusic();
 		
-		GoToPage(BPageType.InGamePage);
+        GoToPage(BPageType.TestPage);
 	}
 
 	public void GoToPage (BPageType pageType)
@@ -74,6 +75,10 @@ public class BMain : MonoBehaviour
 		{
 			pageToCreate = new BTestLandPage();
 		}  
+        else if (pageType == BPageType.TestPage)
+        {
+            pageToCreate = new BTestPage();
+        }  
 		else if (pageType == BPageType.ScorePage)
 		{
 			pageToCreate = new BScorePage();

@@ -178,6 +178,7 @@ polygons.Add(vertices);
 			if(shouldMove)
 			{
 				_testGO.AddComponent<Rigidbody>();	
+                _testGO.rigidbody.constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY;
 				_testGO.rigidbody.mass = 10.0f;
 			}
 			
