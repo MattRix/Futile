@@ -54,20 +54,18 @@ public class Futile : MonoBehaviour
 	public event FutileUpdateDelegate SignalUpdate;
 	public event FutileUpdateDelegate SignalFixedUpdate;
 	public event FutileUpdateDelegate SignalLateUpdate;
-	
-	
-	private GameObject _cameraHolder;
-	private Camera _camera;
-	
+    
+    public bool shouldRunGCNextUpdate = false;
+    
+    private GameObject _cameraHolder;
+    private Camera _camera;
+    
 
-	private FutileParams _futileParams;
-	
-	public bool shouldRunGCNextUpdate = false;
-	
-	
-	
-	
-	
+    private FutileParams _futileParams;
+    
+    private List<FDelayedCallback> _delayedCallbacks = new List<FDelayedCallback>();
+
+
 	// Use this for initialization
 	private void Awake () 
 	{
@@ -126,6 +124,38 @@ public class Futile : MonoBehaviour
 		
 		AddStage (stage);
 	}
+
+    public FDelayedCallback StartDelayedCallback(Action func, float delayTime)
+    {
+        if (delayTime <= 0) delayTime = 0.00001f; //super small delay for 0 to avoid divide by 0 errors
+
+        FDelayedCallback callback = new FDelayedCallback(func, delayTime);
+        _delayedCallbacks.Add(callback);
+
+        return callback;
+    }
+
+    public void StopDelayedCall(Action func)
+    {
+        int count = _delayedCallbacks.Count;
+
+        for (int d = 0; d<count; d++)
+        {
+            FDelayedCallback call = _delayedCallbacks[d];
+
+            if(call.func == func)
+            {
+                _delayedCallbacks.RemoveAt(d);
+                d--;
+                count--;
+            }
+        }
+    }
+
+    public void StopDelayedCall(FDelayedCallback callToRemove)
+    {
+        _delayedCallbacks.Remove(callToRemove);
+    }
 
 	public void CreateDefaultAtlases()
 	{
@@ -244,10 +274,30 @@ public class Futile : MonoBehaviour
 		return _stages[index];
 	}
 
-	
+    private void ProcessDelayedCallbacks()
+    {
+        int count = _delayedCallbacks.Count;
+
+        for (int d = 0; d<count; d++)
+        {
+            FDelayedCallback callback = _delayedCallbacks[d];
+
+            callback.timeRemaining -= Time.deltaTime;
+
+            if(callback.timeRemaining < 0)
+            {
+                callback.func();
+                _delayedCallbacks.RemoveAt(d);
+                d--;
+                count--;
+            }
+        }
+    }
 	
 	private void Update()
 	{
+        ProcessDelayedCallbacks();
+
 		screen.Update();
 		
 		if(SignalUpdate != null) SignalUpdate();
@@ -354,7 +404,29 @@ public class Futile : MonoBehaviour
 		get {throw new NotSupportedException("Obsolete! Use Futile.screen.height instead");}
 		set {throw new NotSupportedException("Obsolete! Use Futile.screen.height instead");}
 	}
-	
-
 }
+
+public class FDelayedCallback
+{
+    public float delayTime;
+    public float timeRemaining;
+    public Action func;
+
+    public FDelayedCallback(Action func, float delayTime)
+    {
+        this.func = func;
+        this.delayTime = delayTime;
+        this.timeRemaining = delayTime;
+    }
+
+    public float percentComplete //0.0f when started, 1.0f when finished
+    {
+        get 
+        {
+            return Mathf.Clamp01(1.0f - timeRemaining/delayTime);
+        }
+    }
+}
+
+
 
