@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 //parts of this were inspired by https://github.com/prime31/UIToolkit/blob/master/Assets/Plugins/UIToolkit/UIElements/UIText.cs
 
-public class FLabel : FFacetNode
+public class FLabel : FFacetElementNode
 {
 	public static float defaultAnchorX = 0.5f;
 	public static float defaultAnchorY = 0.5f;

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-public class FSprite : FFacetNode
+public class FSprite : FFacetElementNode
 {
 	public static float defaultAnchorX = 0.5f;
 	public static float defaultAnchorY = 0.5f;

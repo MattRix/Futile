@@ -73,7 +73,7 @@ public class FPPolygonalCollider : MonoBehaviour
 	}
 }
 
-public class FPDebugPolygonColliderView : FFacetNode
+public class FPDebugPolygonColliderView : FFacetElementNode
 {
 	private FPPolygonalCollider _mesh2D;
 	private int _triangleCount; 

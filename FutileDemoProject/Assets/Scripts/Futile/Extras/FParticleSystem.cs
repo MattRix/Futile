@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class FParticleSystem : FFacetNodeBase
+public class FParticleSystem : FFacetNode
 {
 	private int _maxParticleCount;
 	private FParticle[] _particles;

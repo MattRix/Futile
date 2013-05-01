@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-public class FFacetNodeBase : FNode
+public class FFacetNode : FNode
 {
 	protected FAtlas _atlas = null;
 	protected FShader _shader = null;
@@ -15,7 +15,7 @@ public class FFacetNodeBase : FNode
 	
 	private bool _hasInited = false;
 	
-	public FFacetNodeBase ()
+	public FFacetNode ()
 	{
 		
 	}
@@ -86,7 +86,7 @@ public class FFacetNodeBase : FNode
 }
 
 //FFacetNode handles only a single element
-public class FFacetNode : FFacetNodeBase
+public class FFacetElementNode : FFacetNode
 {
 	protected FAtlasElement _element;
 	
