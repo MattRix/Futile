@@ -179,7 +179,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 			_hitRect = _sprite.textureRect;
 		}
 		
-		Vector2 touchPos = _sprite.GlobalToLocal(touch.position);
+		Vector2 touchPos = _sprite.GetLocalTouchPosition(touch);
 		
 		if(_hitRect.Contains(touchPos))
 		{
@@ -206,7 +206,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 	
 	virtual public void HandleSingleTouchMoved(FTouch touch)
 	{
-		Vector2 touchPos = _sprite.GlobalToLocal(touch.position);
+        Vector2 touchPos = _sprite.GetLocalTouchPosition(touch);
 		
 		//expand the hitrect so that it has more error room around the edges
 		//this is what Apple does on iOS and it makes for better usability
@@ -242,7 +242,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 			_sprite.color = _upColor;
 		}
 		
-		Vector2 touchPos = _sprite.GlobalToLocal(touch.position);
+        Vector2 touchPos = _sprite.GetLocalTouchPosition(touch);
 		
 		//expand the hitrect so that it has more error room around the edges
 		//this is what Apple does on iOS and it makes for better usability
