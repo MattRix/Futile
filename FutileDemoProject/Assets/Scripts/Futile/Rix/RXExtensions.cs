@@ -45,6 +45,24 @@ public static class RectExtensions
 			rect.yMin <= otherRect.yMax
 		);
 	}
+
+    //this can handle rects with negative width and negative height
+    public static bool CheckIntersectComplex(this Rect rect, Rect otherRect)
+    {
+        float rx = rect.x;
+        float ry = rect.y;
+
+        float orx = otherRect.x;
+        float ory = otherRect.y;
+        
+        return 
+        (
+            Mathf.Max(rx, rx + rect.width) >= Mathf.Min(orx, orx + otherRect.width) && 
+            Mathf.Min(rx, rx + rect.width) <= Mathf.Max(orx, orx + otherRect.width) && 
+            Mathf.Max(ry, ry + rect.height) >= Mathf.Max(ory, ory + otherRect.height) && 
+            Mathf.Min(ry, ry + rect.height) <= Mathf.Min(ory, ory + otherRect.height)
+        );
+    }
 	
 	public static Rect CloneAndMultiply(this Rect rect, float multiplier)
 	{
