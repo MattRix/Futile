@@ -172,7 +172,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 	{
 		_isTouchDown = false;
 		
-		if(!_isVisible) return false;
+		if(!IsAncestryVisible()) return false;
 		
 		if(!_shouldUseCustomHitRect)
 		{
