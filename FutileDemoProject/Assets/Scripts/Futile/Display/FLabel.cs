@@ -229,6 +229,24 @@ public class FLabel : FFacetElementNode
 			_renderLayer.HandleVertsChange();
 		}
 	}
+
+    public FLabelAlignment alignment
+    {
+        get 
+        {
+            if (_anchorX == 0.5f) return FLabelAlignment.Center;
+            if (_anchorX == 0.0f) return FLabelAlignment.Left;
+            if (_anchorX == 1.0f) return FLabelAlignment.Right;
+
+            return FLabelAlignment.Custom;
+        }
+        set 
+        {
+            if (value == FLabelAlignment.Center) this.anchorX = 0.5f;
+            else if (value == FLabelAlignment.Left) this.anchorX = 0.0f;
+            else if (value == FLabelAlignment.Right) this.anchorX = 1.0f;
+        }
+    }
 	
 	public string text
 	{
@@ -286,7 +304,7 @@ public class FLabel : FFacetElementNode
 	{
 		get {return _textRect;}	
 	}
-	
+
 	[Obsolete("FLabel's boundsRect is obsolete, use textRect instead")]
 	public Rect boundsRect
 	{
@@ -310,7 +328,15 @@ public class FLabel : FFacetElementNode
 	{
 		return new Vector2(_anchorX,_anchorY);	
 	}
-	
-	
 }
+
+public enum FLabelAlignment
+{
+    Center,
+    Left,
+    Right,
+    Custom
+}
+
+
 
