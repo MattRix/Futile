@@ -403,7 +403,7 @@ public class FNode
 	{
 		if(_container != null) _container.AddChildAtIndex(this,0);	
 	}
-	
+
 	public bool isVisible
 	{
 		get { return _isVisible;}
@@ -417,6 +417,26 @@ public class FNode
 			}
 		}
 	}
+
+    //check if the ancestry of this node *including this node* is visible. 
+    public bool IsAncestryVisible()
+    {
+        if (_isVisible)
+        {
+            if (container != null)
+            {
+                return container.IsAncestryVisible();
+            } 
+            else 
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
 	
 	public float x
 	{
