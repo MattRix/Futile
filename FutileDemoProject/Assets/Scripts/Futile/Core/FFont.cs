@@ -390,10 +390,10 @@ public class FFont
 		}
 		
 		//make sure the space character doesn't have offsetY and offsetX
-		if(_charInfosByID[32] != null)
+        if(_charInfosByID.ContainsKey(ASCII_SPACE))
 		{
-			_charInfosByID[32].offsetX = 0;
-			_charInfosByID[32].offsetY = 0;
+            _charInfosByID[ASCII_SPACE].offsetX = 0;
+            _charInfosByID[ASCII_SPACE].offsetY = 0;
 		}
 		
 	}
