@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
  
-public class FPUtils
+public static class FPUtils
 {
 	
 	//look into poly decomposition here: http://xnaer.com/Code/Details/1548
@@ -144,4 +144,12 @@ public class FPUtils
  
         return ((aCROSSbp >= 0.0f) && (bCROSScp >= 0.0f) && (cCROSSap >= 0.0f));
     }
+	static public Vector2 ToVector2InPoints(this Vector3 vec)
+	{
+		return new Vector2(vec.x * FPhysics.METERS_TO_POINTS, vec.y * FPhysics.METERS_TO_POINTS);
+	}
+	static public Vector3 ToVector3InMeters(this Vector2 vec)
+	{
+		return new Vector3(vec.x * FPhysics.POINTS_TO_METERS, vec.y * FPhysics.POINTS_TO_METERS, 0.0f);
+	}
 }
