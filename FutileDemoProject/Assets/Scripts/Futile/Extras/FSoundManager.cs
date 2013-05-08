@@ -78,6 +78,10 @@ public class FSoundManager
 		}
 		
 		_currentMusicClip = Resources.Load(fullPath) as AudioClip;
+		if (_currentMusicClip == null)
+		{
+			Debug.Log("Error! Couldn't find music clip " + fullPath);
+		}
 		_musicSource.clip = _currentMusicClip;
 		_musicSource.volume = volume;
 		_musicSource.loop = true;
@@ -91,7 +95,10 @@ public class FSoundManager
 
 	static public void StopMusic ()
 	{
+		if (_musicSource != null)
+		{
 		_musicSource.Stop();
+		}
 	}
 	
 	static public void UnloadAllSounds()
