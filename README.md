@@ -6,7 +6,7 @@ This is for those of you who want to do everything in code with as little editor
 
 If you've used Cocos2D or Flash you should feel right at home.
 
-It's under development and completely undocumented... but it works. 
+It's in development and completely undocumented... but it works. 
 ___
 
 ##Go to http://struct.ca/futile for videos and other links
