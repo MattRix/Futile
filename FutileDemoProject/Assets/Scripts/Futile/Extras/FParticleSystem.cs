@@ -90,6 +90,7 @@ public class FParticleSystem : FFacetNode
 		{
 			_hasInited = true;
 			Init(FFacetType.Quad, element.atlas, _maxParticleCount);
+			if(stage != null) stage.HandleFacetsChanged();
 		}
 		
 		FParticle particle;
