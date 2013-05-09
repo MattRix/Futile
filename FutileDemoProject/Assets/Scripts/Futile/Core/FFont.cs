@@ -450,10 +450,10 @@ public class FFont
 		
 		char previousLetter = '\0';
 		
-		float minX = 100000;
-		float maxX = -100000;
-		float minY = 100000;
-		float maxY = -100000;
+		float minX = float.MaxValue;
+		float maxX = float.MinValue;
+		float minY = float.MaxValue;
+		float maxY = float.MinValue;
 		
 		float usableLineHeight = _lineHeight + textParams.scaledLineHeightOffset + _textParams.scaledLineHeightOffset;
 		
@@ -463,12 +463,19 @@ public class FFont
 			
 			if(letter == ASCII_NEWLINE)
 			{	
-				lines[lineCount].bounds = new Rect(minX,minY,maxX-minX,maxY-minY);
+				if(letterCount == 0)
+				{
+					lines[lineCount].bounds = new Rect(0,0,0,0);
+				}
+				else 
+				{
+					lines[lineCount].bounds = new Rect(minX,minY,maxX-minX,maxY-minY);
+				}
 				
-				minX = 100000;
-				maxX = -100000;
-				minY = 100000;
-				maxY = -100000;
+				minX = float.MaxValue;
+				maxX = float.MinValue;
+				minY = float.MaxValue;
+				maxY = float.MinValue;
 				
 				nextX = 0;
 				nextY -= usableLineHeight;
@@ -533,9 +540,14 @@ public class FFont
 			previousLetter = letter; 
 		}
 		
-		
-		
-		lines[lineCount].bounds = new Rect(minX,minY,maxX-minX,maxY-minY);
+		if(letterCount == 0)
+		{
+			lines[lineCount].bounds = new Rect(0,0,0,0);
+		}
+		else 
+		{
+			lines[lineCount].bounds = new Rect(minX,minY,maxX-minX,maxY-minY);
+		}
 		
 		return lines;
 	}

@@ -302,7 +302,12 @@ public class FLabel : FFacetElementNode
 	
 	virtual public Rect textRect
 	{
-		get {return _textRect;}	
+		get 
+		{
+			if(_doesTextNeedUpdate) CreateTextQuads();
+			if(_doesLocalPositionNeedUpdate) UpdateLocalPosition();
+			return _textRect;
+		}	
 	}
 
 	[Obsolete("FLabel's boundsRect is obsolete, use textRect instead")]
