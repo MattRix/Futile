@@ -465,7 +465,7 @@ public class FFont
 			{	
 				if(letterCount == 0)
 				{
-					lines[lineCount].bounds = new Rect(0,0,0,0);
+					lines[lineCount].bounds = new Rect(0,0,nextY,nextY - usableLineHeight);
 				}
 				else 
 				{
@@ -542,7 +542,7 @@ public class FFont
 		
 		if(letterCount == 0)
 		{
-			lines[lineCount].bounds = new Rect(0,0,0,0);
+			lines[lineCount].bounds = new Rect(0,0,nextY,nextY - usableLineHeight);
 		}
 		else 
 		{
