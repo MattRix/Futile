@@ -48,13 +48,21 @@ public class FScreen
 	public FScreen (FutileParams futileParams)
 	{
 		_futileParams = futileParams;
+
 		#if UNITY_IPHONE || UNITY_ANDROID
-		TouchScreenKeyboard.autorotateToLandscapeLeft = false;
-		TouchScreenKeyboard.autorotateToLandscapeRight = false;
-		TouchScreenKeyboard.autorotateToPortrait = false;
-		TouchScreenKeyboard.autorotateToPortraitUpsideDown = false;
+			#if UNITY_3_5
+				TouchScreenKeyboard.autorotateToLandscapeLeft = false;
+				TouchScreenKeyboard.autorotateToLandscapeRight = false;
+				TouchScreenKeyboard.autorotateToPortrait = false;
+				TouchScreenKeyboard.autorotateToPortraitUpsideDown = false;
+			#else
+				Screen.autorotateToLandscapeLeft = false;
+				Screen.autorotateToLandscapeRight = false;
+				Screen.autorotateToPortrait = false;
+				Screen.autorotateToPortraitUpsideDown = false;
+			#endif
 		#endif
-		
+
 		//Non-mobile unity always defaults to portrait for some reason, so fix this manually
 		if(Screen.height > Screen.width)
 		{
