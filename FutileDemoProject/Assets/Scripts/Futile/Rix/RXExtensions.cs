@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Text;
 //
 //public static class EventExtensions
 //{
@@ -185,10 +186,61 @@ public static class ArrayExtensions
 		if(wasFound) count--;
 	}
 
+	public static void Log<T>(this T[] items) {items.Log("");}
+	public static void Log<T>(this T[] items, string name)
+	{
+		StringBuilder builder = new StringBuilder();
+
+		if(name != "")
+		{
+			builder.Append(name);
+			builder.Append(": ");
+		}
+
+		builder.Append('[');
+
+		int count = items.Length;
+
+		for(int t = 0;t<count;t++)
+		{
+			builder.Append(items[t].ToString());
+			if(t < count-1) builder.Append(',');
+		}
+
+		builder.Append(']');
+
+		Debug.Log(builder.ToString());
+	}
 }
 
 public static class ListExtensions
 {
+	public static void Log<T>(this List<T> list) {list.Log("");}
+	public static void Log<T>(this List<T> list, string name)
+	{
+		StringBuilder builder = new StringBuilder();
+
+		if(name != "")
+		{
+			builder.Append(name);
+			builder.Append(": ");
+		}
+
+		builder.Append('[');
+
+		int count = list.Count;
+
+		for(int t = 0;t<count;t++)
+		{
+			builder.Append(list[t].ToString());
+			if(t < count-1) builder.Append(',');
+		}
+
+		builder.Append(']');
+
+		Debug.Log(builder.ToString());
+	}
+
 	public static T Unshift<T>(this List<T> list)
 	{
 		T thing = list[0];
