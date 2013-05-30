@@ -109,15 +109,6 @@ public class RXColorHSL
 
 public class RXColor
 {
-	public const float HUE_RED = 0.0f;
-	public const float HUE_ORANGE = 0.1f;
-	public const float HUE_YELLOW = 0.16f;
-	public const float HUE_GREEN = 0.25f;
-	public const float HUE_CYAN = 0.5f;
-	public const float HUE_BLUE = 0.6f;
-	public const float HUE_PURPLE = 0.8f;
-	public const float HUE_PINK = 0.9f;
-	
 	//TODO: IMPLEMENT THIS
 	public static Color ColorFromRGBString(string rgbString)
 	{
