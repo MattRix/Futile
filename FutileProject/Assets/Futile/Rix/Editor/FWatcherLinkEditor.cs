@@ -2,7 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(FWatcherLink))]
+[CustomEditor(typeof(RXWatcherLink))]
 public class FWatcherLinkEditor : Editor
 {
 	public static Type FLOAT = typeof(float);
@@ -11,11 +11,11 @@ public class FWatcherLinkEditor : Editor
 	public static Type COLOR = typeof(Color);
 	public static Type VECTOR2 = typeof(Vector2);
 
-	public FWatcherLink link = null;
+	public RXWatcherLink link = null;
 
 	public void OnEnable()
 	{
-		link = target as FWatcherLink;
+		link = target as RXWatcherLink;
 
 		//Watcher objects in the inspector update every frame, but only when selected.
 

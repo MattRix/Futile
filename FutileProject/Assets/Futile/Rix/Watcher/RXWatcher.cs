@@ -7,14 +7,14 @@ using System.Collections.Generic;
 
 using System.Reflection;
 
-public class FWatcher
+public class RXWatcher
 {
-	private static FWatcher _instance;
+	private static RXWatcher _instance;
 	
 	private GameObject _gameObject;
-	private List<FWatcherLink> _watcherLinks = new List<FWatcherLink>();
+	private List<RXWatcherLink> _watcherLinks = new List<RXWatcherLink>();
 	
-	private FWatcher ()
+	private RXWatcher ()
 	{
 		_gameObject = new GameObject("FWatcher");
 	}
@@ -51,7 +51,7 @@ public class FWatcher
 
 		if(_instance == null)
 		{
-			_instance = new FWatcher();
+			_instance = new RXWatcher();
 		}
 		
 		_instance.DoWatch(target, targetName, shouldShowNonPublic);
@@ -72,18 +72,18 @@ public class FWatcher
 
 		linkGO.transform.parent = _gameObject.transform;
 
-		FWatcherLink link = linkGO.AddComponent<FWatcherLink>();
+		RXWatcherLink link = linkGO.AddComponent<RXWatcherLink>();
 		link.Init(target, shouldShowNonPublic);
 
 		_watcherLinks.Add(link);
 	}
 
-	static public void RemoveWatcherLink(FWatcherLink watcherLink)
+	static public void RemoveWatcherLink(RXWatcherLink watcherLink)
 	{
 		_instance.DoRemoveWatcherLink(watcherLink);
 	}
 
-	public void DoRemoveWatcherLink(FWatcherLink watcherLink)
+	public void DoRemoveWatcherLink(RXWatcherLink watcherLink)
 	{
 		int watcherLinkCount = _watcherLinks.Count;
 		for(int w = 0; w<watcherLinkCount; w++)
@@ -98,7 +98,7 @@ public class FWatcher
 
 }
 
-public class FWatcherLink : MonoBehaviour
+public class RXWatcherLink : MonoBehaviour
 {
 	private WeakReference _targetRef;
 
@@ -188,7 +188,7 @@ public class FWatcherLink : MonoBehaviour
 	private void Destroy()
 	{
 		UnityEngine.Object.Destroy(gameObject);
-		FWatcher.RemoveWatcherLink(this);
+		RXWatcher.RemoveWatcherLink(this);
 	}
 
 
@@ -201,12 +201,12 @@ public class FWatcherLinkMember
 	public Type memberType;
 	public MemberInfo memberInfo;
 	
-	private FWatcherLink _link;
+	private RXWatcherLink _link;
 	private PropertyInfo _propertyInfo = null;
 	private FieldInfo _fieldInfo = null;
 
 	
-	public FWatcherLinkMember(FWatcherLink link, MemberInfo memberInfo)
+	public FWatcherLinkMember(RXWatcherLink link, MemberInfo memberInfo)
 	{
 		_link = link;
 		this.memberInfo = memberInfo;
@@ -279,7 +279,7 @@ public class FWatcherLinkMember
 
 //do nothing if we're not in the editor
 
-public class FWatcher
+public class RXWatcher
 {
 	static public void Watch(object target)
 	{
@@ -297,10 +297,9 @@ public class FWatcher
 	}
 }
 
-public class FWatcherLink : MonoBehaviour
+public class RXWatcherLink : MonoBehaviour
 {
 
 }
-
 
 #endif
