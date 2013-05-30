@@ -32,7 +32,6 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 	protected bool _didColorsChange = false;
 	protected bool _didVertCountChange = false;
 	protected bool _doesMeshNeedClear = false;
-	protected bool _shouldUpdateBounds = false;
 
 	protected int _expansionAmount;
 	protected int _maxEmptyFacets;
@@ -42,9 +41,7 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 	protected int _nextAvailableFacetIndex;
 	
 	protected int _lowestZeroIndex = 0;
-	
-	protected bool _needsRecalculateBoundsIfTransformed = false;
-	
+
 	public FFacetRenderLayer (FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)
 	{
 		_stage = stage;
@@ -99,12 +96,6 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 		_transform.localScale = _stage.transform.localScale;
 
         _gameObject.layer = _stage.layer;
-		
-		if(_needsRecalculateBoundsIfTransformed)
-		{
-			_needsRecalculateBoundsIfTransformed = false;
-			_mesh.RecalculateBounds();
-		}
 	}
 	
 	public void AddToWorld () //add to the transform etc
@@ -216,7 +207,6 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 			_didColorsChange = false;
 			_didVertsChange = false;
 			_didUVsChange = false;
-			_shouldUpdateBounds = false;
 			
 			//in theory we shouldn't need clear because we KNOW everything is correct
 			//see http://docs.unity3d.com/Documentation/ScriptReference/Mesh.html
@@ -224,6 +214,10 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 			_mesh.vertices = _vertices;
 			_mesh.triangles = _triangles;
 			_mesh.uv = _uvs;
+
+			//make the bounds huge so it won't ever be culled
+			_mesh.bounds = new Bounds(Vector3.zero, new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
+
 			
 			//TODO: switch to using colors32 at some point for performance
 			//see http://docs.unity3d.com/Documentation/ScriptReference/Mesh-colors32.html
@@ -234,20 +228,7 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 			if (_didVertsChange) 
 			{
 				_didVertsChange = false;
-				_shouldUpdateBounds = true;
-				
 				_mesh.vertices = _vertices;
-			}
-		
-			if (_shouldUpdateBounds) 
-			{
-				//Taking this out because it seems heavy, and I don't think there are benefits
-				//http://docs.unity3d.com/Documentation/ScriptReference/Mesh.RecalculateBounds.html
-				//Ok nevermind, I put it back in for now because if you scroll the stage, it's needed
-				
-				_needsRecalculateBoundsIfTransformed = true;
-				
-				_shouldUpdateBounds = false;
 			}
 		
 			if (_didColorsChange) 
