@@ -4,11 +4,12 @@ using System.Collections.Generic;
 
 public class FSoundManager
 {
-	static private String _resourcePrefix = "Audio/";
+	static public String resourcePrefix = "Audio/";
 	
 	static private GameObject _gameObject;
 	static private AudioSource _soundSource;
 	static private AudioSource _musicSource;
+	static private string _currentMusicPath = "";
 	
 	static private Dictionary<string, AudioClip> _soundClips = new Dictionary<string, AudioClip>();
 	static private AudioClip _currentMusicClip = null;
@@ -30,14 +31,37 @@ public class FSoundManager
 	
 	static public void SetResourcePrefix (String prefix)
 	{
-		_resourcePrefix = prefix;
+		resourcePrefix = prefix;
 	}
 
-	static public void PlaySound (String resourceName, float volume)
+	static public void PreloadSound (String resourceName)
+	{
+		string fullPath = resourcePrefix+resourceName;
+
+		if(_soundClips.ContainsKey(fullPath))
+		{
+			return; //we already have it, no need to preload it again!
+		}
+		else
+		{
+			AudioClip soundClip = Resources.Load(fullPath) as AudioClip;	
+
+			if(soundClip == null)
+			{
+				Debug.Log("Couldn't find sound at: " + fullPath);
+			}
+			else
+			{
+				_soundClips[fullPath] = soundClip;
+			}
+		}
+	}
+
+	static public void PlaySound (String resourceName, float volume) //it is not necessary to preload sounds in order to play them
 	{
 		if(_soundSource == null) Init ();
 		
-		string fullPath = _resourcePrefix+resourceName;
+		string fullPath = resourcePrefix+resourceName;
 		
 		AudioClip soundClip;
 		
@@ -48,11 +72,15 @@ public class FSoundManager
 		else
 		{
 			soundClip = Resources.Load(fullPath) as AudioClip;	
-			_soundClips[fullPath] = soundClip;
 
 			if(soundClip == null)
 			{
 				Debug.Log("Couldn't find sound at: " + fullPath);
+				return; //can't play the sound because we can't find it!
+			}
+			else
+			{
+				_soundClips[fullPath] = soundClip;
 			}
 		}
 		
@@ -66,26 +94,51 @@ public class FSoundManager
 
 	static public void PlayMusic (string resourceName, float volume)
 	{
+		PlayMusic(resourceName,volume,true);
+	}
+
+	static public void PlayMusic (string resourceName, float volume, bool shouldRestartIfSameSongIsAlreadyPlaying)
+	{
 		if(_musicSource == null) Init ();
 		
-		string fullPath = _resourcePrefix+resourceName;
+		string fullPath = resourcePrefix+resourceName;
 		
 		if(_currentMusicClip != null) //we only want to have one music clip in memory at a time
 		{
-			_musicSource.Stop();
-			Resources.UnloadAsset(_currentMusicClip);	
-			_currentMusicClip = null;
+			if(_currentMusicPath == fullPath) //we're already playing this music, just restart it!
+			{
+				if(shouldRestartIfSameSongIsAlreadyPlaying)
+				{
+					_musicSource.Stop();
+					_musicSource.volume = volume;
+					_musicSource.loop = true;
+					_musicSource.Play();
+				}
+				return;
+			}
+			else //unload the old music
+			{
+				_musicSource.Stop();
+				Resources.UnloadAsset(_currentMusicClip);	
+				_currentMusicClip = null;
+				_currentMusicPath = "";
+			}
 		}
 		
 		_currentMusicClip = Resources.Load(fullPath) as AudioClip;
+
 		if (_currentMusicClip == null)
 		{
 			Debug.Log("Error! Couldn't find music clip " + fullPath);
 		}
-		_musicSource.clip = _currentMusicClip;
-		_musicSource.volume = volume;
-		_musicSource.loop = true;
-		_musicSource.Play();
+		else 
+		{
+			_currentMusicPath = fullPath;
+			_musicSource.clip = _currentMusicClip;
+			_musicSource.volume = volume;
+			_musicSource.loop = true;
+			_musicSource.Play();
+		}
 	}
 
 	static public void PlayMusic (string resourceName)
@@ -97,7 +150,29 @@ public class FSoundManager
 	{
 		if (_musicSource != null)
 		{
-		_musicSource.Stop();
+			_musicSource.Stop();
+		}
+	}
+
+	static public void UnloadSound (String resourceName)
+	{
+		string fullPath = resourcePrefix+resourceName;
+
+		if(_soundClips.ContainsKey(fullPath)) //check if we have it
+		{
+			AudioClip clip = _soundClips[fullPath];
+			Resources.UnloadAsset(clip);
+			_soundClips.Remove(fullPath);
+		}
+	}
+
+	static public void UnloadMusic()
+	{
+		if(_currentMusicClip != null)
+		{
+			Resources.UnloadAsset(_currentMusicClip);
+			_currentMusicClip = null;
+			_currentMusicPath = "";
 		}
 	}
 	
@@ -114,13 +189,7 @@ public class FSoundManager
 	static public void UnloadAllSoundsAndMusic()
 	{
 		UnloadAllSounds();
-		
-		if(_currentMusicClip != null)
-		{
-			Resources.UnloadAsset(_currentMusicClip);
-		}
-		
-		_currentMusicClip = null;
+		UnloadMusic();
 	}
 	
 	static public float volume
