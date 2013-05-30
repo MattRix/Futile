@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(RXWatcherLink))]
-public class FWatcherLinkEditor : Editor
+public class RXWatcherLinkEditor : Editor
 {
 	public static Type FLOAT = typeof(float);
 	public static Type INT = typeof(int);
