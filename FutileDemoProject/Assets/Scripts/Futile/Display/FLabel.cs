@@ -42,28 +42,16 @@ public class FLabel : FFacetElementNode
 		_text = text;
 		_font = Futile.atlasManager.GetFontWithName(_fontName);
 		_textParams = textParams;
-		 
+
 		Init(FFacetType.Quad, _font.element, 0);
-		
+
 		CreateTextQuads();
 	}
-	
-	override public void HandleAddedToStage()
-	{
-		Futile.instance.SignalUpdate += HandleUpdate;
-		base.HandleAddedToStage();
-	}
-	
-	override public void HandleRemovedFromStage()
-	{
-		Futile.instance.SignalUpdate -= HandleUpdate;
-		base.HandleRemovedFromStage();
-	}
-	
+
 	public void CreateTextQuads()
 	{
 		_doesTextNeedUpdate = false;
-		
+
 		int oldFacetsNeeded = _numberOfFacetsNeeded;
 		
 		_letterQuadLines = _font.GetQuadInfoForText(_text,_textParams);
@@ -130,23 +118,15 @@ public class FLabel : FFacetElementNode
 		_textRect.y = minY+offsetY;
 		_textRect.width = maxX-minX;
 		_textRect.height = maxY-minY;
-		
+
 		_isMeshDirty = true; 
 	}
-	
-	private void HandleUpdate()
-	{
-		if(_doesTextNeedUpdate)
-		{
-			CreateTextQuads();
-		}		
-	}
-
+	 
 	override public void Redraw(bool shouldForceDirty, bool shouldUpdateDepth)
 	{
 		bool wasMatrixDirty = _isMatrixDirty;
 		bool wasAlphaDirty = _isAlphaDirty;
-		
+
 		UpdateDepthMatrixAlpha(shouldForceDirty, shouldUpdateDepth);
 		
 		if(shouldUpdateDepth)
@@ -257,10 +237,11 @@ public class FLabel : FFacetElementNode
 			{
 				_text = value; 
 				_doesTextNeedUpdate = true;
+				CreateTextQuads(); //lazily creating the quads was causing too many issues, so just create them when .text is set
 			}
 		}
 	}
-	
+
 	public float anchorX
 	{
 		get {return _anchorX;}
