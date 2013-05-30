@@ -299,7 +299,7 @@ public class FNode
 		
 		//do NOT set _isMatrixDirty to false here because it is used in the redraw loop and will be set false then
 		
-		_matrix.SetScaleThenRotate(_x,_y,_scaleX,_scaleY,_rotation * -RXMath.DTOR);
+		_matrix.SetScaleThenRotate(_x,_y,_scaleX,_scaleY,_rotation * -0.01745329f); //0.01745329 is RXMath.DTOR
 			
 		if(_container != null)
 		{
@@ -312,12 +312,19 @@ public class FNode
 		
 		if(_needsSpecialMatrices)
 		{
-			if(_stage != null)
-			{
+
 				_inverseConcatenatedMatrix.InvertAndCopyValues(_concatenatedMatrix);
-				_screenConcatenatedMatrix.ConcatAndCopyValues(_concatenatedMatrix, _stage.screenConcatenatedMatrix);
+
+				if(_isOnStage)
+				{
+					_screenConcatenatedMatrix.ConcatAndCopyValues(_concatenatedMatrix,_stage.screenConcatenatedMatrix);
+				}
+				else
+				{
+					_screenConcatenatedMatrix.CopyValues(_concatenatedMatrix); //if it's not on the stage, just use its normal matrix
+				}
+
 				_screenInverseConcatenatedMatrix.InvertAndCopyValues(_screenConcatenatedMatrix);
-			}
 		}
 	}
 	
@@ -332,7 +339,7 @@ public class FNode
 		{
 			_isMatrixDirty = false;
 			
-			_matrix.SetScaleThenRotate(_x,_y,_scaleX,_scaleY,_rotation * -RXMath.DTOR);
+			_matrix.SetScaleThenRotate(_x,_y,_scaleX,_scaleY,_rotation * -0.01745329f); //0.01745329 is RXMath.DTOR
 			
 			if(_container != null)
 			{
@@ -517,10 +524,17 @@ public class FNode
 		_inverseConcatenatedMatrix = new FMatrix();
 		_screenConcatenatedMatrix = new FMatrix();
 		_screenInverseConcatenatedMatrix = new FMatrix();
-		
-		_inverseConcatenatedMatrix.InvertAndCopyValues(_concatenatedMatrix);
-		_screenConcatenatedMatrix.ConcatAndCopyValues(_concatenatedMatrix, _stage.screenConcatenatedMatrix);
-		_screenInverseConcatenatedMatrix.InvertAndCopyValues(_screenConcatenatedMatrix);
+
+		if(_isOnStage)
+		{
+			_inverseConcatenatedMatrix.InvertAndCopyValues(_concatenatedMatrix);
+			_screenConcatenatedMatrix.ConcatAndCopyValues(_concatenatedMatrix,_stage.screenConcatenatedMatrix);
+			_screenInverseConcatenatedMatrix.InvertAndCopyValues(_screenConcatenatedMatrix);
+		}
+		else
+		{
+			Debug.Log("Futile: Warning! You're probably trying to use GlobalToLocal/LocalToLocal with an object that isn't currently part of the display list");
+		}
 	}
 	
 	virtual public FMatrix inverseConcatenatedMatrix 
