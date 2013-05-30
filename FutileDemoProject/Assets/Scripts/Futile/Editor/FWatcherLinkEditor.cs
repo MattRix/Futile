@@ -16,12 +16,26 @@ public class FWatcherLinkEditor : Editor
 	public void OnEnable()
 	{
 		link = target as FWatcherLink;
-	}
 
+		//Watcher objects in the inspector update every frame, but only when selected.
+
+		Futile.instance.SignalUpdate += HandleSignalUpdate;
+	}
+	
+	public void OnDisable()
+	{
+		Futile.instance.SignalUpdate -= HandleSignalUpdate;
+	}
+	
+	private void HandleSignalUpdate ()
+	{
+		Repaint();
+	}
+	
 	override public void OnInspectorGUI() 
 	{
 		GUILayout.Label(link.name, EditorStyles.boldLabel);
-
+		
 		EditorGUILayout.Separator();
 
 		int memberCount = link.members.Count;
