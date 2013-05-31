@@ -29,25 +29,11 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 
 	public BInGamePage()
 	{
-		
+		EnableMultiTouch();
+		ListenForUpdate(HandleUpdate);
+		ListenForResize(HandleResize);
 	}
-	
-	override public void HandleAddedToStage()
-	{
-		Futile.touchManager.AddMultiTouchTarget(this);
-		Futile.instance.SignalUpdate += HandleUpdate;
-		Futile.screen.SignalResize += HandleResize;
-		base.HandleAddedToStage();	
-	}
-	
-	override public void HandleRemovedFromStage()
-	{
-		Futile.touchManager.RemoveMultiTouchTarget(this);
-		Futile.instance.SignalUpdate -= HandleUpdate;
-		Futile.screen.SignalResize -= HandleResize;
-		base.HandleRemovedFromStage();	
-	}
-	
+
 	override public void Start()
 	{
 		BMain.instance.score = 0;
@@ -163,7 +149,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		particleNode.x = banana.x;
 		particleNode.y = banana.y;
 		
-		FSoundManager.PlaySound("BananaSound", 0.33f);
+		FSoundManager.PlaySound("BananaSound", 1.0f);
 	}
 
 	public void CreateBanana ()
@@ -183,7 +169,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		
 		if(_secondsLeft <= 0)
 		{
-			FSoundManager.PlayMusic("VictoryMusic");
+			FSoundManager.PlayMusic("VictoryMusic",0.5f);
 			BMain.instance.GoToPage(BPageType.ScorePage);
 			return;
 		}

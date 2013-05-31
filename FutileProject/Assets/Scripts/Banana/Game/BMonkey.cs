@@ -3,15 +3,13 @@ using UnityEngine;
 
 public class BMonkey : FSprite
 {
-	static int numFrames = 19;
-	
-	private int _frameCount = 0;
 	private int _frameIndex = 0;
+
 	private FAtlasElement[] _frameElements;
 	
 	public BMonkey () : base("Monkey_0")
 	{
-		_frameElements = new FAtlasElement[numFrames];
+		_frameElements = new FAtlasElement[19];
 		
 		FAtlasManager am = Futile.atlasManager;
 		//of course there are way smarter ways to do this, but this is fast
@@ -35,18 +33,17 @@ public class BMonkey : FSprite
 		_frameElements[16] = am.GetElementWithName("Monkey_2");	
 		_frameElements[17] = am.GetElementWithName("Monkey_1");	
 		_frameElements[18] = am.GetElementWithName("Monkey_0");	
+
+		ListenForUpdate(HandleUpdate);
 	}
-	
-	override public void Redraw(bool shouldForceDirty, bool shouldUpdateDepth)
+
+	private void HandleUpdate()
 	{
-		if(_frameCount % 2 == 0) //update every other frame, aka 30 fps
+		if(Time.frameCount % 2 == 0) //update every other frame, aka 30 fps
 		{
-			_frameIndex = (_frameIndex+1)%numFrames; //increment the frame but keep it wrapping
-			this.element = _frameElements[_frameIndex];
+			_frameIndex++;
+			this.element = _frameElements[_frameIndex % _frameElements.Length]; //use % to keep it wrapping
 		}
-		
-		_frameCount++;
-		base.Redraw(shouldForceDirty, shouldUpdateDepth);
 	}
 
 }

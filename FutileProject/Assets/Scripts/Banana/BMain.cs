@@ -55,7 +55,7 @@ public class BMain : MonoBehaviour
 		
 		_stage = Futile.stage;
 		
-		FSoundManager.PlayMusic ("NormalMusic");
+		FSoundManager.PlayMusic ("NormalMusic",0.5f);
 		
         GoToPage(BPageType.TitlePage);
 	}

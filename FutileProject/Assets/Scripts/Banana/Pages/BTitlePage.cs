@@ -13,22 +13,9 @@ public class BTitlePage : BPage
 	
 	public BTitlePage()
 	{
-		
+		ListenForUpdate(HandleUpdate);
+		ListenForResize(HandleResize);
 	}
-	override public void HandleAddedToStage()
-	{
-		Futile.instance.SignalUpdate += HandleUpdate;
-		Futile.screen.SignalResize += HandleResize;
-		base.HandleAddedToStage();	
-	}
-	
-	override public void HandleRemovedFromStage()
-	{
-		Futile.instance.SignalUpdate -= HandleUpdate;
-		Futile.screen.SignalResize -= HandleResize;
-		base.HandleRemovedFromStage();	
-	}
-	
 	
 	override public void Start()
 	{

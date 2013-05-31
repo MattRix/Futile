@@ -10,18 +10,8 @@ public class BBanana : FSprite
 	{
 		_rotationSpeed = RXRandom.Range(-3.0f,3.0f);	
 		_speedY = RXRandom.Range(-0.1f,-0.5f);	
-	}
-	
-	override public void HandleAddedToStage()
-	{
-		Futile.instance.SignalUpdate += HandleUpdate;
-		base.HandleAddedToStage();	
-	}
-	
-	override public void HandleRemovedFromStage()
-	{
-		Futile.instance.SignalUpdate -= HandleUpdate;
-		base.HandleRemovedFromStage();	
+
+		ListenForUpdate(HandleUpdate);
 	}
 	
 	public void HandleUpdate()

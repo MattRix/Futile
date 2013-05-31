@@ -14,22 +14,9 @@ public class BScorePage : BPage
 	
 	public BScorePage()
 	{
-		
+		ListenForUpdate(HandleUpdate);
+		ListenForResize(HandleResize);
 	}
-	override public void HandleAddedToStage()
-	{
-		Futile.instance.SignalUpdate += HandleUpdate;
-		Futile.screen.SignalResize += HandleResize;
-		base.HandleAddedToStage();	
-	}
-	
-	override public void HandleRemovedFromStage()
-	{
-		Futile.instance.SignalUpdate -= HandleUpdate;
-		Futile.screen.SignalResize -= HandleResize;
-		base.HandleRemovedFromStage();	
-	}
-	
 	
 	override public void Start()
 	{
@@ -114,7 +101,7 @@ public class BScorePage : BPage
 
 	private void HandleAgainButtonRelease (FButton button)
 	{
-		FSoundManager.PlayMusic("NormalMusic");
+		FSoundManager.PlayMusic("NormalMusic",0.5f);
 		BMain.instance.GoToPage(BPageType.InGamePage); 
 	}
 	
