@@ -114,7 +114,7 @@ public class BScorePage : BPage
 
 	private void HandleAgainButtonRelease (FButton button)
 	{
-		BSoundPlayer.PlayRegularMusic();
+		FSoundManager.PlayMusic("NormalMusic");
 		BMain.instance.GoToPage(BPageType.InGamePage); 
 	}
 	

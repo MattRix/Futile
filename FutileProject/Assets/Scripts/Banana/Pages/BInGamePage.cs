@@ -163,7 +163,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		particleNode.x = banana.x;
 		particleNode.y = banana.y;
 		
-		BSoundPlayer.PlayBananaSound();
+		FSoundManager.PlaySound("BananaSound", 0.33f);
 	}
 
 	public void CreateBanana ()
@@ -183,7 +183,7 @@ public class BInGamePage : BPage, FMultiTouchableInterface
 		
 		if(_secondsLeft <= 0)
 		{
-			BSoundPlayer.PlayVictoryMusic();
+			FSoundManager.PlayMusic("VictoryMusic");
 			BMain.instance.GoToPage(BPageType.ScorePage);
 			return;
 		}
