@@ -20,6 +20,7 @@ public class FAtlasElement
 	
 	public Rect sourceRect;
 	public Vector2 sourceSize;
+	public Vector2 sourcePixelSize;
 	public bool isTrimmed;
 	//public bool isRotated;
 	
@@ -177,20 +178,21 @@ public class FAtlas
 			{
 				throw new NotSupportedException("Futile no longer supports TexturePacker's \"rotated\" flag. Please disable it when creating the "+_dataPath+" atlas.");
 			}
-			
+
+			//the uv coordinate rectangle within the atlas
 			IDictionary frame = (IDictionary)itemDict["frame"];
 			
-			float rectX = float.Parse(frame["x"].ToString());
-			float rectY = float.Parse(frame["y"].ToString());
-			float rectW = float.Parse(frame["w"].ToString());
-			float rectH = float.Parse(frame["h"].ToString()); 
+			float frameX = float.Parse(frame["x"].ToString());
+			float frameY = float.Parse(frame["y"].ToString());
+			float frameW = float.Parse(frame["w"].ToString());
+			float frameH = float.Parse(frame["h"].ToString()); 
 			
 			Rect uvRect = new Rect
 			(
-				rectX/_textureSize.x,
-				((_textureSize.y - rectY - rectH)/_textureSize.y),
-				rectW/_textureSize.x,
-				rectH/_textureSize.y
+				frameX/_textureSize.x,
+				((_textureSize.y - frameY - frameH)/_textureSize.y),
+				frameW/_textureSize.x,
+				frameH/_textureSize.y
 			);
 				
 			element.uvRect = uvRect;
@@ -199,22 +201,28 @@ public class FAtlas
 			element.uvTopRight.Set(uvRect.xMax,uvRect.yMax);
 			element.uvBottomRight.Set(uvRect.xMax,uvRect.yMin);
 			element.uvBottomLeft.Set(uvRect.xMin,uvRect.yMin);
-			
-			
+
+
+			//the source size is the untrimmed size
+			IDictionary sourcePixelSize = (IDictionary)itemDict["sourceSize"];
+
+			element.sourcePixelSize.x = float.Parse(sourcePixelSize["w"].ToString());	
+			element.sourcePixelSize.y = float.Parse(sourcePixelSize["h"].ToString());	
+
+			element.sourceSize.x = element.sourcePixelSize.x * scaleInverse;	
+			element.sourceSize.y = element.sourcePixelSize.y * scaleInverse;
+
+
+			//this rect is the trimmed size and position relative to the untrimmed rect
 			IDictionary sourceRect = (IDictionary)itemDict["spriteSourceSize"];
 
-			rectX = float.Parse(sourceRect["x"].ToString()) * scaleInverse;
-			rectY = float.Parse(sourceRect["y"].ToString()) * scaleInverse;
-			rectW = float.Parse(sourceRect["w"].ToString()) * scaleInverse;
-			rectH = float.Parse(sourceRect["h"].ToString()) * scaleInverse;
+			float rectX = float.Parse(sourceRect["x"].ToString()) * scaleInverse;
+			float rectY = float.Parse(sourceRect["y"].ToString()) * scaleInverse;
+			float rectW = float.Parse(sourceRect["w"].ToString()) * scaleInverse;
+			float rectH = float.Parse(sourceRect["h"].ToString()) * scaleInverse;
 			
 			element.sourceRect = new Rect(rectX,rectY,rectW,rectH);
 
-			
-			IDictionary sourceSize = (IDictionary)itemDict["sourceSize"];
-			element.sourceSize.x = float.Parse(sourceSize["w"].ToString()) * scaleInverse;	
-			element.sourceSize.y = float.Parse(sourceSize["h"].ToString()) * scaleInverse;	
-			
 			_elements.Add (element);
 			_elementsByName.Add(element.name, element);
 		}
@@ -241,9 +249,13 @@ public class FAtlas
 		element.uvBottomRight.Set(uvRect.xMax,uvRect.yMin);
 		element.uvBottomLeft.Set(uvRect.xMin,uvRect.yMin);
 		
-		element.sourceRect = new Rect(0,0,_textureSize.x*scaleInverse,_textureSize.y*scaleInverse);
 		
 		element.sourceSize = new Vector2(_textureSize.x*scaleInverse,_textureSize.y*scaleInverse);
+		element.sourcePixelSize = new Vector2(_textureSize.x,_textureSize.y);
+
+		element.sourceRect = new Rect(0,0,_textureSize.x*scaleInverse,_textureSize.y*scaleInverse);
+
+
 		element.isTrimmed = false;
 		
 		_elements.Add (element);
