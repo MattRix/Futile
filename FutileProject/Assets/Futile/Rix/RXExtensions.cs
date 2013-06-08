@@ -8,7 +8,7 @@ using System.Text;
 //    
 //}
 
-public static class ColorExtensions
+public static class RXColorExtensions
 {
 	public static Color CloneWithNewAlpha(this Color color, float alpha)
 	{
@@ -29,7 +29,7 @@ public static class ColorExtensions
 	}
 }
 
-public static class RectExtensions
+public static class RXRectExtensions
 {
 	public static Rect CloneWithExpansion(this Rect rect, float expansionAmount)
 	{
@@ -143,7 +143,7 @@ public static class RectExtensions
 	}
 }
 
-public static class GoKitExtensions
+public static class RXGoKitExtensions
 {
 	//this makes it so we don't have to specify false for isRelative every.single.time.
 	public static TweenConfig floatProp(this TweenConfig config, string propName, float propValue)
@@ -163,7 +163,7 @@ public static class GoKitExtensions
 	}
 }
 
-public static class ArrayExtensions
+public static class RXArrayExtensions
 {
 	public static void RemoveItem<T>(this T[] items, T itemToRemove, ref int count) where T : class
 	{
@@ -213,7 +213,7 @@ public static class ArrayExtensions
 	}
 }
 
-public static class ListExtensions
+public static class RXListExtensions
 {
 	public static void Log<T>(this List<T> list) {list.Log("");}
 	public static void Log<T>(this List<T> list, string name)
