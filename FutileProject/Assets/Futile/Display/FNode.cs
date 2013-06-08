@@ -533,7 +533,7 @@ public class FNode
 		}
 		else
 		{
-			Debug.Log("Futile: Warning! You're probably trying to use GlobalToLocal/LocalToLocal with an object that isn't currently part of the display list");
+			Debug.LogWarning("Futile: Warning! You're probably trying to use GlobalToLocal/LocalToLocal with an object that isn't currently part of the display list");
 		}
 	}
 	
