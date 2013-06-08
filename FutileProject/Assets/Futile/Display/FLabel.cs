@@ -81,11 +81,11 @@ public class FLabel : FFacetElementNode
 	{
 		_doesLocalPositionNeedUpdate = false;
 		
-		float minY = 100000000;
-		float maxY = -100000000;
+		float minY = float.MaxValue;
+		float maxY = float.MinValue;
 		
-		float minX = 100000000;
-		float maxX = -100000000;
+		float minX = float.MaxValue;
+		float maxX = float.MinValue;
 		
 		int lineCount = _letterQuadLines.Length;
 		for(int i = 0; i<lineCount; i++)
@@ -108,9 +108,7 @@ public class FLabel : FFacetElementNode
 			int quadCount = line.quads.Length;
 			for(int q = 0; q< quadCount; q++)
 			{
-				//todo: figure out where this magic 1.0f comes from
-				//it's needed for everything to be perfectly positioned, but I'm not sure why...
-				line.quads[q].CalculateVectors(offsetX+_font.offsetX+1.0f, offsetY+_font.offsetY+1.0f);
+				line.quads[q].CalculateVectors(offsetX+_font.offsetX, offsetY+_font.offsetY);
 			}
 		}
 		
