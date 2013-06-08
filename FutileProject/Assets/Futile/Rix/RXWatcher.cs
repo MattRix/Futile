@@ -16,7 +16,7 @@ public class RXWatcher
 	
 	private RXWatcher ()
 	{
-		_gameObject = new GameObject("FWatcher");
+		_gameObject = new GameObject("RXWatcher");
 	}
 	
 	static public void Watch(object target)
@@ -105,7 +105,7 @@ public class RXWatcherLink : MonoBehaviour
 	private bool _hasSetup = false;
 	private bool _shouldShowNonPublicMembers = false;
 
-	private List<FWatcherLinkMember> _members = new List<FWatcherLinkMember>();
+	private List<RXWatcherLinkMember> _members = new List<RXWatcherLinkMember>();
 	
 	public void Init(object target, bool shouldShowNonPublic) 
 	{
@@ -140,7 +140,7 @@ public class RXWatcherLink : MonoBehaviour
 
 		for(int f = 0; f<fieldInfos.Length; f++)
 		{
-			FWatcherLinkMember member = new FWatcherLinkMember(this, fieldInfos[f]);
+			RXWatcherLinkMember member = new RXWatcherLinkMember(this, fieldInfos[f]);
 
 			if(member.CheckIfValid())
 			{
@@ -150,7 +150,7 @@ public class RXWatcherLink : MonoBehaviour
 
 		for(int p = 0; p<propertyInfos.Length; p++)
 		{
-			FWatcherLinkMember member = new FWatcherLinkMember(this, propertyInfos[p]);
+			RXWatcherLinkMember member = new RXWatcherLinkMember(this, propertyInfos[p]);
 			
 			if(member.CheckIfValid())
 			{
@@ -180,7 +180,7 @@ public class RXWatcherLink : MonoBehaviour
 		return _targetRef.Target;
 	}
 
-	public List<FWatcherLinkMember> members
+	public List<RXWatcherLinkMember> members
 	{
 		get {return _members;}
 	}
@@ -195,7 +195,7 @@ public class RXWatcherLink : MonoBehaviour
 }
 
 //this is used to wrap FieldInfo+PropertyInfo so they can be treated the exact same way
-public class FWatcherLinkMember
+public class RXWatcherLinkMember
 {
 	public string name;
 	public Type memberType;
@@ -206,7 +206,7 @@ public class FWatcherLinkMember
 	private FieldInfo _fieldInfo = null;
 
 	
-	public FWatcherLinkMember(RXWatcherLink link, MemberInfo memberInfo)
+	public RXWatcherLinkMember(RXWatcherLink link, MemberInfo memberInfo)
 	{
 		_link = link;
 		this.memberInfo = memberInfo;

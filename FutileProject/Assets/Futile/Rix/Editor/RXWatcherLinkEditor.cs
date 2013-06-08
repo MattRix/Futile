@@ -42,7 +42,7 @@ public class RXWatcherLinkEditor : Editor
 
 		for(int m = 0; m<memberCount; m++)
 		{
-			FWatcherLinkMember member = link.members[m];
+			RXWatcherLinkMember member = link.members[m];
 
 			object oldValue = member.GetValue();
 			object newValue = null; 
