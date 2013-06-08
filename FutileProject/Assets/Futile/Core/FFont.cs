@@ -248,9 +248,6 @@ public class FFont
 
 				_lineHeight = ((float)int.Parse(words[1].Split('=')[1])) * _configRatio * resourceScaleInverse;	
 				//_lineBase = int.Parse(words[2].Split('=')[1]) * _configRatio;	
-
-				Debug.Log("source rect width " + _element.sourceRect.width + "  source pixel size x " + _element.sourcePixelSize.x + "  config width " + _configWidth + "  config ratio " + _configRatio + " resource scale " + resourceScaleInverse);
-
 			}
 			else if(words[0] == "chars") //chars count=92
 			{
@@ -411,7 +408,7 @@ public class FFont
 		
 	}
 	
-	public FLetterQuadLine[] GetQuadInfoForText(string text, FTextParams textParams)
+	public FLetterQuadLine[] GetQuadInfoForText(string text, FTextParams labelTextParams)
 	{
 		int lineCount = 0;
 		int letterCount = 0;
@@ -468,8 +465,8 @@ public class FFont
 		float minY = float.MaxValue;
 		float maxY = float.MinValue;
 		
-		float usableLineHeight = _lineHeight + textParams.scaledLineHeightOffset + _textParams.scaledLineHeightOffset;
-		
+		float usableLineHeight = _lineHeight + labelTextParams.scaledLineHeightOffset + _textParams.scaledLineHeightOffset;
+
 		for(int c = 0; c<lettersLength; ++c)
 		{
 			char letter = letters[c];
@@ -522,9 +519,16 @@ public class FFont
 					charInfo = _charInfosByID[0];
 				}
 				
-				float totalKern = foundKerning.amount + textParams.scaledKerningOffset + _textParams.scaledKerningOffset;
+				float totalKern = foundKerning.amount + labelTextParams.scaledKerningOffset + _textParams.scaledKerningOffset;
 
-				nextX += totalKern; 
+				if(letterCount == 0)
+				{
+					nextX = -charInfo.offsetX; //don't offset the first character
+				}
+				else
+				{
+					nextX += totalKern; 
+				}
 				
 				letterQuad.charInfo = charInfo;
 				
@@ -534,17 +538,11 @@ public class FFont
 				
 				lines[lineCount].quads[letterCount] = letterQuad;	
 				
-				
-				
 				minX = Math.Min (minX, quadRect.xMin);
 				maxX = Math.Max (maxX, quadRect.xMax);
-				maxY = Math.Max (maxY, nextY);
-				
 				minY = Math.Min (minY, nextY - usableLineHeight);
+				maxY = Math.Max (maxY, nextY);
 
-//				minY = Math.Min (minY, quadRect.yMin);
-//				maxY = Math.Max (maxY, quadRect.yMax);
-				
 				nextX += charInfo.xadvance;
 
 				letterCount++;
@@ -553,7 +551,7 @@ public class FFont
 			previousLetter = letter; 
 		}
 		
-		if(letterCount == 0)
+		if(letterCount == 0) //there were no letters, so minX and minY would be crazy if we used them
 		{
 			lines[lineCount].bounds = new Rect(0,0,nextY,nextY - usableLineHeight);
 		}

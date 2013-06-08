@@ -104,12 +104,13 @@ public class FLabel : FFacetElementNode
 			
 			minX = Math.Min (offsetX,minX);
 			maxX = Math.Max (offsetX+line.bounds.width,maxX);
-			
+
 			int quadCount = line.quads.Length;
 			for(int q = 0; q< quadCount; q++)
 			{
 				line.quads[q].CalculateVectors(offsetX+_font.offsetX, offsetY+_font.offsetY);
 			}
+
 		}
 		
 		_textRect.x = minX;
