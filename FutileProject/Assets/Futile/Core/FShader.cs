@@ -31,6 +31,11 @@ public class FShader
 		this.index = index;
 		this.name = name;
 		this.shader = shader; 
+
+		if(shader == null)
+		{
+			throw new FutileException("Couldn't find Futile shader '"+name+"'");
+		}
 	}
 	
 	public static void Init() //called by Futile
