@@ -34,49 +34,6 @@ public class FParticleSystem : FFacetNode
 		ListenForUpdate(HandleUpdate);
 	}
 	
-	private void HandleUpdate()
-	{
-		float deltaTime = Time.deltaTime;
-		
-		for(int p = 0; p<_maxParticleCount; p++)
-		{
-			FParticle particle = _particles[p];
-
-			if(particle.timeRemaining <= 0) 
-			{
-				//this particle isn't alive, go to the next one
-			}
-			else if(particle.timeRemaining <= deltaTime) //is it going to end during this update?
-			{
-				//add it back to the available particles
-				_availableParticles[_availableParticleCount] = particle;
-				_availableParticleCount++;
-				particle.timeRemaining = 0;
-
-				//don't bother updating it because it won't be rendered anyway
-			}
-			else //do the update!
-			{
-				particle.timeRemaining -= deltaTime;
-				
-				particle.color.r += particle.redDeltaPerSecond * deltaTime;
-				particle.color.g += particle.greenDeltaPerSecond * deltaTime;
-				particle.color.b += particle.blueDeltaPerSecond * deltaTime;
-				particle.color.a += particle.alphaDeltaPerSecond * deltaTime;
-				
-				particle.scale += particle.scaleDeltaPerSecond * deltaTime;
-				
-				particle.speedX += accelX * deltaTime;
-				particle.speedY += accelY * deltaTime;
-				
-				particle.x += particle.speedX * deltaTime;
-				particle.y += particle.speedY * deltaTime;
-			}
-		}
-
-		_isMeshDirty = true; //needs redraw!
-	}
-	
 	public void AddParticle(FParticleDefinition particleDefinition)
 	{
 		FAtlasElement element = particleDefinition.element;
@@ -131,18 +88,20 @@ public class FParticleSystem : FFacetNode
 		particle.speedY = particleDefinition.speedY;
 		
 		particle.scale = particleDefinition.startScale;
+
+		float lifetimeInverse = 1.0f / lifetime; //we'll use this a few times, so invert it because multiplication is faster
 		
-		particle.scaleDeltaPerSecond = (particleDefinition.endScale - particleDefinition.startScale) / lifetime;
+		particle.scaleDeltaPerSecond = (particleDefinition.endScale - particleDefinition.startScale) * lifetimeInverse;
 		
 		Color startColor = particleDefinition.startColor;
 		Color endColor = particleDefinition.endColor;
 		
 		particle.color = startColor;
 		
-		particle.redDeltaPerSecond = (endColor.r - startColor.r) / lifetime;
-		particle.greenDeltaPerSecond = (endColor.g - startColor.g) / lifetime;
-		particle.blueDeltaPerSecond = (endColor.b - startColor.b) / lifetime;
-		particle.alphaDeltaPerSecond = (endColor.a - startColor.a) / lifetime;
+		particle.redDeltaPerSecond = (endColor.r - startColor.r) * lifetimeInverse;
+		particle.greenDeltaPerSecond = (endColor.g - startColor.g) * lifetimeInverse;
+		particle.blueDeltaPerSecond = (endColor.b - startColor.b) * lifetimeInverse;
+		particle.alphaDeltaPerSecond = (endColor.a - startColor.a) * lifetimeInverse;
 		
 		particle.elementHalfWidth = element.sourceSize.x * 0.5f;
 		particle.elementHalfHeight = element.sourceSize.y * 0.5f;
@@ -151,6 +110,138 @@ public class FParticleSystem : FFacetNode
 		particle.uvTopRight = element.uvTopRight;
 		particle.uvBottomRight = element.uvBottomRight;
 		particle.uvBottomLeft = element.uvBottomLeft;
+
+		particle.initialTopLeft = new Vector2(-particle.elementHalfWidth,particle.elementHalfHeight);
+		particle.initialTopRight = new Vector2(particle.elementHalfWidth,particle.elementHalfHeight);
+		particle.initialBottomRight = new Vector2(particle.elementHalfWidth,-particle.elementHalfHeight);
+		particle.initialBottomLeft = new Vector2(-particle.elementHalfWidth,-particle.elementHalfHeight);
+
+		//notice how these are both multiplied by -1, this is to account for the flipped vertical coordinates in unity/futile
+		particle.rotation = particleDefinition.startRotation * RXMath.DTOR * -1.0f;
+		particle.rotationDeltaPerSecond = (particleDefinition.endRotation - particleDefinition.startRotation) * lifetimeInverse * RXMath.DTOR * -1.0f;
+
+		if(particle.rotationDeltaPerSecond == 0) //no rotation
+		{
+			particle.doesNeedRotationUpdates = false;
+
+			if(particle.rotation == 0)
+			{
+				particle.resultTopLeftX = particle.initialTopLeft.x;
+				particle.resultTopLeftY = particle.initialTopLeft.y;
+				particle.resultTopRightX = particle.initialTopRight.x;
+				particle.resultTopRightY = particle.initialTopRight.y;
+				particle.resultBottomRightX = particle.initialBottomRight.x;
+				particle.resultBottomRightY = particle.initialBottomRight.y;
+				particle.resultBottomLeftX = particle.initialBottomLeft.x;
+				particle.resultBottomLeftY = particle.initialBottomLeft.y;
+			}
+			else //bake the rotation once
+			{
+				float sin = (float)Math.Sin(particle.rotation);
+				float cos = (float)Math.Cos(particle.rotation);
+
+				float ix, iy;
+
+				ix = particle.initialTopLeft.x;
+				iy = particle.initialTopLeft.y;
+				particle.resultTopLeftX = ix * cos - iy * sin; 
+				particle.resultTopLeftY = ix * sin + iy * cos; 
+
+				ix = particle.initialTopRight.x;
+				iy = particle.initialTopRight.y;
+				particle.resultTopRightX = ix * cos - iy * sin; 
+				particle.resultTopRightY = ix * sin + iy * cos; 
+
+				ix = particle.initialBottomRight.x;
+				iy = particle.initialBottomRight.y;
+				particle.resultBottomRightX = ix * cos - iy * sin; 
+				particle.resultBottomRightY = ix * sin + iy * cos; 
+
+				ix = particle.initialBottomLeft.x;
+				iy = particle.initialBottomLeft.y;
+				particle.resultBottomLeftX = ix * cos - iy * sin; 
+				particle.resultBottomLeftY = ix * sin + iy * cos; 
+			}
+
+		}
+		else
+		{
+			//the rotation will be updated on the update
+			particle.doesNeedRotationUpdates = true;
+		}
+	}
+
+	private void HandleUpdate()
+	{
+		float deltaTime = Time.deltaTime;
+
+		for(int p = 0; p<_maxParticleCount; p++)
+		{
+			FParticle particle = _particles[p];
+
+			if(particle.timeRemaining <= 0) 
+			{
+				//this particle isn't alive, go to the next one
+			}
+			else if(particle.timeRemaining <= deltaTime) //is it going to end during this update?
+			{
+				//add it back to the available particles
+				_availableParticles[_availableParticleCount] = particle;
+				_availableParticleCount++;
+				particle.timeRemaining = 0;
+
+				//don't bother updating it because it won't be rendered anyway
+			}
+			else //do the update!
+			{
+				particle.timeRemaining -= deltaTime;
+
+				particle.color.r += particle.redDeltaPerSecond * deltaTime;
+				particle.color.g += particle.greenDeltaPerSecond * deltaTime;
+				particle.color.b += particle.blueDeltaPerSecond * deltaTime;
+				particle.color.a += particle.alphaDeltaPerSecond * deltaTime;
+
+				particle.scale += particle.scaleDeltaPerSecond * deltaTime;
+
+				particle.speedX += accelX * deltaTime;
+				particle.speedY += accelY * deltaTime;
+
+				particle.x += particle.speedX * deltaTime;
+				particle.y += particle.speedY * deltaTime;
+
+				if(particle.doesNeedRotationUpdates)
+				{
+					particle.rotation += particle.rotationDeltaPerSecond * (double)deltaTime;
+
+					float sin = (float)Math.Sin(particle.rotation);
+					float cos = (float)Math.Cos(particle.rotation);
+
+					float ix, iy;
+
+					ix = particle.initialTopLeft.x;
+					iy = particle.initialTopLeft.y;
+					particle.resultTopLeftX = ix * cos - iy * sin; 
+					particle.resultTopLeftY = ix * sin + iy * cos; 
+
+					ix = particle.initialTopRight.x;
+					iy = particle.initialTopRight.y;
+					particle.resultTopRightX = ix * cos - iy * sin; 
+					particle.resultTopRightY = ix * sin + iy * cos; 
+
+					ix = particle.initialBottomRight.x;
+					iy = particle.initialBottomRight.y;
+					particle.resultBottomRightX = ix * cos - iy * sin; 
+					particle.resultBottomRightY = ix * sin + iy * cos; 
+
+					ix = particle.initialBottomLeft.x;
+					iy = particle.initialBottomLeft.y;
+					particle.resultBottomLeftX = ix * cos - iy * sin; 
+					particle.resultBottomLeftY = ix * sin + iy * cos; 
+				}
+			}
+		}
+
+		_isMeshDirty = true; //needs redraw!
 	}
 	
 	override public void Redraw(bool shouldForceDirty, bool shouldUpdateDepth)
@@ -216,36 +307,35 @@ public class FParticleSystem : FFacetNode
 				
 				if(particle.timeRemaining > 0)
 				{		
-					float ew = particle.elementHalfWidth * particle.scale;
-					float eh = particle.elementHalfHeight * particle.scale;
+					float scale = particle.scale;
 					float px = particle.x * a + particle.y * b + tx;
 					float py = particle.x * c + particle.y * d + ty;
 					
 					vertices[vertexIndex0] = new Vector3
 					(
-						px - ew,
-						py + eh,
+						px + particle.resultTopLeftX * scale,
+						py + particle.resultTopLeftY * scale,
 						0
 					);
 					
 					vertices[vertexIndex1] = new Vector3
 					(
-						px + ew,
-						py + eh,
+						px + particle.resultTopRightX * scale,
+						py + particle.resultTopRightY * scale,
 						0
 					);
-					
+
 					vertices[vertexIndex2] = new Vector3
 					(
-						px + ew,
-						py - eh,
+						px + particle.resultBottomRightX * scale,
+						py + particle.resultBottomRightY * scale,
 						0
 					);
-					
+
 					vertices[vertexIndex3] = new Vector3
-					(
-						px - ew,
-						py - eh,
+						(
+						px + particle.resultBottomLeftX * scale,
+						py + particle.resultBottomLeftY * scale,
 						0
 					);
 					
@@ -296,6 +386,9 @@ public class FParticleDefinition
 	
 	public Color startColor = Futile.white;
 	public Color endColor = Futile.white;
+
+	public float startRotation = 0;
+	public float endRotation = 0;
 	
 	public FParticleDefinition(string elementName)
 	{
@@ -340,4 +433,28 @@ public class FParticle
 	public Vector2 uvTopRight;
 	public Vector2 uvBottomRight;
 	public Vector2 uvBottomLeft;
+
+	public Vector2 initialTopLeft;
+	public Vector2 initialTopRight;
+	public Vector2 initialBottomRight;
+	public Vector2 initialBottomLeft;
+
+	//storing as straight floats rather than vectors for extra speed
+	public float resultTopLeftX;
+	public float resultTopLeftY;
+	public float resultTopRightX;
+	public float resultTopRightY;
+	public float resultBottomRightX;
+	public float resultBottomRightY;
+	public float resultBottomLeftX;
+	public float resultBottomLeftY;
+
+	public double rotation; //in radians
+	public double rotationDeltaPerSecond; //in radians
+
+	public bool doesNeedRotationUpdates;
 }
+
+
+
+
