@@ -33,7 +33,7 @@ public class FKerningInfo
 	public float amount;
 }
 
-public class FLetterQuad
+public struct FLetterQuad
 {
 	public FCharInfo charInfo;
 	public Rect rect;
@@ -120,7 +120,7 @@ public class FTextParams
 	}
 }
 
-public class FLetterQuadLine
+public struct FLetterQuadLine
 {
 	public Rect bounds;
 	public int letterCount;
@@ -416,6 +416,7 @@ public class FFont
 		char[] letters = text.ToCharArray();
 		
 		//at some point these should probably be pooled and reused so we're not allocing new ones all the time
+		//now they're structs though, so it might not be an issue
 		FLetterQuadLine[] lines = new FLetterQuadLine[10];
 		
 		int lettersLength = letters.Length;
