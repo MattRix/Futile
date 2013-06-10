@@ -215,10 +215,9 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 			_mesh.triangles = _triangles;
 			_mesh.uv = _uvs;
 
-			//make the bounds huge so it won't ever be culled
-			_mesh.bounds = new Bounds(Vector3.zero, new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
+			//make the bounds huge so it won't ever be culled (I tried using float.MaxValue here but it made the Unity editor crash)
+			_mesh.bounds = new Bounds(Vector3.zero, new Vector3(9999999999, 9999999999, 9999999999));
 
-			
 			//TODO: switch to using colors32 at some point for performance
 			//see http://docs.unity3d.com/Documentation/ScriptReference/Mesh-colors32.html
 			_mesh.colors = _colors;
