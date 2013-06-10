@@ -11,7 +11,7 @@ public class FParticleSystem : FFacetNode
 	private bool _isMeshDirty;
 	
 	public float accelX = 0.0f;
-	public float accelY = 0.0f; //-625.0f;
+	public float accelY = 0.0f;
 	
 	private bool _hasInited = false;
 
