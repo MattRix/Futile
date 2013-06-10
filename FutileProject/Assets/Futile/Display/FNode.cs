@@ -5,15 +5,15 @@ using System.Collections.Generic;
 
 public class FNode
 {
-	protected float _x;
-	protected float _y;
-	protected float _scaleX;
-	protected float _scaleY;
-	protected float _rotation;
+	protected float _x = 0f;
+	protected float _y = 0f;
+	protected float _scaleX = 1f;
+	protected float _scaleY = 1f;
+	protected float _rotation = 0f;
 	
-	protected float _sortZ; //sortZ is used for depth sorting but ONLY if the node container's shouldSortByZ = true;
+	protected float _sortZ = 0f; //sortZ is used for depth sorting but ONLY if the node container's shouldSortByZ = true;
 	
-	protected bool _isMatrixDirty;
+	protected bool _isMatrixDirty = false;
 	
 	protected FContainer _container = null;
 	
@@ -26,18 +26,18 @@ public class FNode
 	
 	protected bool _needsSpecialMatrices = false;
 	
-	protected float _alpha;
-	protected float _concatenatedAlpha;
-	protected bool _isAlphaDirty;
+	protected float _alpha = 1f;
+	protected float _concatenatedAlpha = 1f;
+	protected bool _isAlphaDirty = false;
 	
 	protected bool _isOnStage = false;
 	
-	protected int _depth;
+	protected int _depth = 0;
 	
 	protected FStage _stage = null; //assigned in HandleAddedToStage
 	
 	protected bool _isVisible = true;
-	protected float _visibleAlpha = 1.0f;
+	protected float _visibleAlpha = 1f;
 	
 	public object data = null; //the user can put whatever data they want here
 	
@@ -45,23 +45,12 @@ public class FNode
 	
 	public FNode () 
 	{
-		_depth = 0;
-		
-		_x = 0;
-		_y = 0;
-		_scaleX = 1;
-		_scaleY = 1;
-		_rotation = 0;
-		
-		_sortZ = 0;
-		
-		_alpha = 1.0f;
-		_concatenatedAlpha = 1.0f;
-		_isAlphaDirty = false;
-		
 		_matrix = new FMatrix();
 		_concatenatedMatrix = new FMatrix();
-		_isMatrixDirty = false;
+
+		#if UNITY_EDITOR
+			if(Futile.instance.shouldTrackNodesInRXProfiler) RXProfiler.TrackLifeCycle(this);
+		#endif 
 	}
 	
 	protected void AddEnabler(FNodeEnabler enabler)
