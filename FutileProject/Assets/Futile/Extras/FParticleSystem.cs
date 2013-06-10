@@ -14,6 +14,8 @@ public class FParticleSystem : FFacetNode
 	public float accelY = 0.0f; //-625.0f;
 	
 	private bool _hasInited = false;
+
+	public bool shouldNewParticlesOverwriteExistingParticles = true;
 	
 	public FParticleSystem (int maxParticleCount)
 	{
@@ -97,15 +99,21 @@ public class FParticleSystem : FFacetNode
 		
 		if(_availableParticleCount == 0) 
 		{
-			//return; //there are no particles available, just don't create a new one! (later on we could just reuse an existing one)
-			
-			//get one of the currently running particles and overwrite it
-			//but make sure we don't keep overwriting the same particle!
-			particle = _availableParticles[_unavailableParticleIndex--];
-			if(_unavailableParticleIndex < 0)
+			if(shouldNewParticlesOverwriteExistingParticles)
 			{
-				_unavailableParticleIndex = _maxParticleCount-1;	
+				//get one of the currently running particles and overwrite it
+				//but make sure we don't keep overwriting the same particle!
+				particle = _availableParticles[_unavailableParticleIndex--];
+				if(_unavailableParticleIndex < 0)
+				{
+					_unavailableParticleIndex = _maxParticleCount-1;	
+				}
 			}
+			else
+			{
+				return; //there are no particles available, so don't create a new one
+			}
+
 		}
 		else 
 		{
