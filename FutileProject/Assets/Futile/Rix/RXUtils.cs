@@ -359,7 +359,7 @@ public static class RXRandom
 		return _randomSource.NextDouble() < 0.5;	
 	}
 
-	//random item from all passed arguments/params - RXRandom.Select(one, two three);
+	//random item from all passed arguments/params - RXRandom.Select(one, two, three);
 	public static object Select(params object[] objects)
 	{
 		return objects[_randomSource.Next() % objects.Length];
