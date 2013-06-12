@@ -1,4 +1,4 @@
-#Futile (0.9 Beta)
+#Futile (0.91 Beta)
 
 Futile is a code-centric 2D framework for Unity. 
 
@@ -12,6 +12,8 @@ ___
 ##Go to http://struct.ca/futile for videos and other links
 
 ##Ask questions on http://reddit.com/r/futile
+
+##Futile works great with Unity 3.5 and 4.*
 
 ##How to try the demo project:##
 
@@ -36,7 +38,9 @@ Notes:
 ##Third Party add-ons for Futile
 
 - https://github.com/ManaOrb/FSceneManager (Futile Scene Manager and Parallax Scrolling Layer)
-- https://github.com/mattfox12/FutileAdditionalClasses (FutileAdditionalClasses including FAnimatedSprite)
+- https://github.com/mattfox12/FutileAdditionalClasses (including animated sprites and TMX tilemaps)
+- https://github.com/Grizzlage/Futile-SpineSprite (for using animations made with Spine)
+- https://gist.github.com/jpsarda/4573831 (FDrawingSprite.cs, for drawing lines)
 
 
 ##Legal stuff##
