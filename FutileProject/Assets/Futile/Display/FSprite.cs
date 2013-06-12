@@ -14,8 +14,8 @@ public class FSprite : FFacetElementNode
 	protected float _anchorX = defaultAnchorX;
 	protected float _anchorY = defaultAnchorY;
 	
-	protected Rect _localRect;
-	protected Rect _textureRect;
+	protected Rect _localRect; //localRect is the TRIMMED rect
+	protected Rect _textureRect; //textureRect is the UN-TRIMMED rect
 
 	protected bool _isMeshDirty = false;
 	protected bool _areLocalVerticesDirty = false;
