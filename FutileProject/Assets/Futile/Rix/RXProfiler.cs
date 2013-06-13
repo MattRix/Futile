@@ -14,16 +14,18 @@ public class RXProfiler : MonoBehaviour
 		#if UNITY_EDITOR
 		GameObject go = new GameObject("RXProfiler");
 		go.AddComponent<RXProfiler>(); //for watching in the editor
-
-		_timer = new Timer(1.0f);
-		_timer.Elapsed += HandleTick; 
-		_timer.Start();
 		#endif
 	}
 
-	static private void HandleTick(object sender, ElapsedEventArgs e)
+	public void Update()
 	{
-		CheckInstanceCounts();
+		#if UNITY_EDITOR
+			//update every second
+			if(Time.frameCount % Application.targetFrameRate == 0)
+			{
+				RXProfiler.CheckInstanceCounts();
+			}
+		#endif
 	}
 
 	static private void CheckInstanceCounts()
