@@ -11,20 +11,24 @@ public class RXProfiler : MonoBehaviour
 
 	static RXProfiler()
 	{
+		#if UNITY_EDITOR
 		GameObject go = new GameObject("RXProfiler");
 		go.AddComponent<RXProfiler>(); //for watching in the editor
-
-		_timer = new Timer(1.0f);
-		_timer.Elapsed += HandleTick;
-		_timer.Start();
+		#endif
 	}
 
-	static void HandleTick(object sender, ElapsedEventArgs e)
+	public void Update()
 	{
-		CheckInstanceCounts();
+		#if UNITY_EDITOR
+			//update every second
+			if(Time.frameCount % Application.targetFrameRate == 0)
+			{
+				RXProfiler.CheckInstanceCounts();
+			}
+		#endif
 	}
 
-	static void CheckInstanceCounts()
+	static private void CheckInstanceCounts()
 	{
 		foreach(KeyValuePair<Type, List<WeakReference>> typePair in instancesByType)
 		{
@@ -52,10 +56,7 @@ public class RXProfiler : MonoBehaviour
 
 	static public void TrackLifeCycle(System.Object thing)
 	{
-		#if !UNITY_EDITOR
-			return;
-		#endif
-
+		#if UNITY_EDITOR
 		Type targetType = thing.GetType();
 
 		List<WeakReference> weakRefs = null;
@@ -83,6 +84,7 @@ public class RXProfiler : MonoBehaviour
 		weakRefs.Add(new WeakReference(thing));
 
 		//Debug.Log ("RXProfiler: Added an instance of [" + targetType.Name + "]. There are now " + weakRefs.Count + " alive.");
+		#endif
 	}
 }
 
