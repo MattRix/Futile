@@ -3,23 +3,47 @@ using UnityEditor;
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.Diagnostics;
 
 public class ExportUnityPackage : MonoBehaviour 
 {
-	[MenuItem ("Futile/ExportUnityPackage")]
-	static public void Export()
+	[MenuItem ("Futile/Export both .unitypackages")]
+	static public void ExportBoth()
+	{
+		ExportCore();
+		ExportWithDemos();
+	}
+
+	//[MenuItem ("Futile/Export FutileCore.unitypackage")]
+	static public void ExportCore()
+	{
+		Export("FutileCore",false);
+	}
+
+	//[MenuItem ("Futile/Export FutileWithDemos.unitypackage")]
+	static public void ExportWithDemos()
+	{
+		Export("FutileWithDemos",true);
+	}
+
+	static public void Export(string fileName, bool shouldIncludeDemos)
 	{
 		List<String> paths = new List<String>();
 
-		paths.Add("Futile/");
-		paths.Add("Assets/FutileDemos/");
-		paths.Add("Assets/FutileScene.scene");
+		paths.Add("Assets/Futile");
+		if(shouldIncludeDemos) paths.Add("Assets/FutileDemos");
+		if(shouldIncludeDemos) paths.Add("Assets/FutileScene");
 
-		Debug.Log("V1 ");
+		AssetDatabase.ExportPackage(paths.ToArray(),"../../../reference/UnityPackages/"+fileName+".unitypackage", ExportPackageOptions.Recurse); 
+	}
 
-		Debug.Log("SASEED " + AssetDatabase.GetAssetPath(Shader.Find("Futile/Basic")));
 
-		//ExportPackageOptions.Recurse | ExportPackageOptions.IncludeLibraryAssets
-		AssetDatabase.ExportPackage(paths.ToArray(),"TestThing.unitypackage", ExportPackageOptions.Recurse | ExportPackageOptions.Interactive); 
+	[MenuItem ("Futile/Upload both .unitypackages")]
+	static public void Upload()
+	{
+		Process uploadBat = new Process();
+		uploadBat.StartInfo.FileName = "..\\..\\..\\reference\\UnityPackages\\upload.bat";
+		UnityEngine.Debug.Log("FIL " + uploadBat.StartInfo.FileName);
+		uploadBat.Start();
 	}
 }
