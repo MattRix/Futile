@@ -9,9 +9,11 @@ If you've used Cocos2D or Flash you should feel right at home.
 It's in development and completely undocumented... but it works. 
 ___
 
-##Go to http://struct.ca/futile for videos and other links
+##Go to http://struct.ca/futile for UnityPackages and instructional videos
 
-##Ask questions on http://reddit.com/r/futile
+##Ask questions and share stuff you've made on http://reddit.com/r/futile
+
+##Submit bugs and feature requests to http://github.com/MattRix/Futile/issues
 
 ##Futile works great with Unity 3.5 and 4.*
 
