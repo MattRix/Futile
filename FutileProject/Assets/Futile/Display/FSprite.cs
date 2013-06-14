@@ -43,6 +43,7 @@ public class FSprite : FFacetElementNode
 	override public void HandleElementChanged()
 	{
 		_areLocalVerticesDirty = true;
+		UpdateLocalVertices();
 	}
 	
 	override public void Redraw(bool shouldForceDirty, bool shouldUpdateDepth)

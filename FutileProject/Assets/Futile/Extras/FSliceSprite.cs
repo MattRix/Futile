@@ -72,6 +72,8 @@ public class FSliceSprite : FSprite
 			_numberOfFacetsNeeded = _sliceCount;
 			if(_isOnStage) _stage.HandleFacetsChanged();
 		}
+
+		UpdateLocalVertices();
 	}
 	
 	override public void UpdateLocalVertices()
