@@ -68,21 +68,6 @@ public static class RXUtils
 		return "("+vector.x + "," + vector.y +")";
 	}
 	
-	public static Color GetColorFromHex(uint hex)
-	{
-		uint red = hex >> 16;
-		uint greenBlue = hex - (red<<16);
-		uint green = greenBlue >> 8;
-		uint blue = greenBlue - (green << 8);
-		
-		return new Color(red/255.0f, green/255.0f, blue/255.0f);
-	}
-	
-	public static Color GetColorFromHex(string hexString)
-	{
-		return GetColorFromHex(Convert.ToUInt32(hexString,16));
-	}
-	
 	public static Vector2 GetVector2FromString(string input)
 	{
 		string[] parts = input.Split(new char[] {','});	
@@ -250,6 +235,12 @@ public class RXColor
 		
 		return new Color(red/255.0f, green/255.0f, blue/255.0f);
 	}
+
+	public static Color GetColorFromHex(string hexString)
+	{
+		return GetColorFromHex(Convert.ToUInt32(hexString,16));
+	}
+
 }
 
 public class RXMath
