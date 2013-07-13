@@ -190,6 +190,11 @@ public class FContainer : FNode
 	{
 		return _childNodes[childIndex];
 	}
+
+	public int GetChildIndex(FNode childNode)
+	{
+		return _childNodes.IndexOf(childNode);
+	}
 	
 	public bool shouldSortByZ
 	{
