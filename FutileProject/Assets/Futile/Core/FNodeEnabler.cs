@@ -166,4 +166,27 @@ public class FNodeEnablerForOrientationChange : FNodeEnabler
 	}
 }
 
+public class FNodeEnablerForAddedOrRemoved : FNodeEnabler
+{
+	public delegate void Delegate(bool wasAdded);
+
+	public Delegate handleAddedOrRemovedCallback;
+
+	public FNodeEnablerForAddedOrRemoved(Delegate handleAddedOrRemovedCallback)
+	{
+		this.handleAddedOrRemovedCallback = handleAddedOrRemovedCallback;	
+	}
+
+	override public void Connect()
+	{
+		handleAddedOrRemovedCallback.Invoke(true);
+	}
+
+	override public void Disconnect()
+	{
+		handleAddedOrRemovedCallback.Invoke(false);
+	}
+}
+
+
 
