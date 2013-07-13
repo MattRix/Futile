@@ -108,7 +108,7 @@ public class FNode
 	
 	public void ListenForOrientationChange(FScreen.ScreenOrientationChangeDelegate handleOrientationChangeCallback)
 	{
-		RemoveEnablerOfType(typeof(FNodeEnablerForOrientationChange));;
+		RemoveEnablerOfType(typeof(FNodeEnablerForOrientationChange));
 		AddEnabler(new FNodeEnablerForOrientationChange(handleOrientationChangeCallback));
 	}
 	
@@ -170,6 +170,17 @@ public class FNode
 	public void DisableMultiTouch()
 	{
 		RemoveEnablerOfType(typeof(FNodeEnablerForMultiTouch));
+	}
+
+	public void ListenForAddedOrRemoved(FNodeEnablerForAddedOrRemoved.Delegate handleAddedOrRemoved)
+	{
+		RemoveEnablerOfType(typeof(FNodeEnablerForAddedOrRemoved));
+		AddEnabler(new FNodeEnablerForAddedOrRemoved(handleAddedOrRemoved));
+	}
+
+	public void RemoveListenForAddedOrRemoved()
+	{
+		RemoveEnablerOfType(typeof(FNodeEnablerForAddedOrRemoved));
 	}
 
 	
