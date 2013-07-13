@@ -10,6 +10,7 @@ public class FSoundManager
 	static private AudioSource _soundSource;
 	static private AudioSource _musicSource;
 	static private string _currentMusicPath = "";
+	static private bool _isMuted = false;
 	
 	static private Dictionary<string, AudioClip> _soundClips = new Dictionary<string, AudioClip>();
 	static private AudioClip _currentMusicClip = null;
@@ -59,7 +60,9 @@ public class FSoundManager
 
 	static public void PlaySound (String resourceName, float volume) //it is not necessary to preload sounds in order to play them
 	{
-		if(_soundSource == null) Init ();
+		if (_isMuted) return;
+
+		if (_soundSource == null) Init();
 		
 		string fullPath = resourcePrefix+resourceName;
 		
@@ -99,7 +102,9 @@ public class FSoundManager
 
 	static public void PlayMusic (string resourceName, float volume, bool shouldRestartIfSameSongIsAlreadyPlaying)
 	{
-		if(_musicSource == null) Init ();
+		if (_isMuted) return;
+
+		if (_musicSource == null) Init();
 		
 		string fullPath = resourcePrefix+resourceName;
 		
@@ -198,7 +203,7 @@ public class FSoundManager
 		{ 
 			_volume = value;
 			
-			if(AudioListener.pause)
+			if(_isMuted)
 			{
 				AudioListener.volume = 0.0f;
 			}
@@ -215,10 +220,11 @@ public class FSoundManager
 	{
 		set 
 		{ 
+			_isMuted = value;
 			AudioListener.pause = value; 
 			PlayerPrefs.SetInt("FSoundManager_IsAudioMuted", value ? 1 : 0);
 			
-			if(AudioListener.pause)
+			if(_isMuted)
 			{
 				AudioListener.volume = 0.0f;
 			}
