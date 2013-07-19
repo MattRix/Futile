@@ -1,8 +1,9 @@
 
 //Based on a brilliant idea by Matthew Wegner - https://twitter.com/mwegner/status/355147544818495488
 //My implementation is super lazy with magic numbers everywhere! :D
+//NOTE: only works in Unity 4
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !UNITY_3_5
 
 using System;
 using UnityEngine;
@@ -138,6 +139,21 @@ public class RXDividerDrawer : PropertyDrawer
 
 		EditorGUI.PropertyField(rect, property, label, true);
 	}
+}
+
+#elif UNITY_3_5
+
+using System;
+using UnityEngine;
+
+public class RXDivider 
+{
+	public string header;
+	public string subtitle;
+
+	public RXDivider(string header, string subtitle) {}
+	public RXDivider(string header) {}
+	public RXDivider() {}
 }
 
 #else
