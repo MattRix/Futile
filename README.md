@@ -23,7 +23,7 @@ ___
 
 - Grab the project from github and put it somewhere - [For the lazy, here's a zip of the whole repo](https://github.com/MattRix/Futile/zipball/master)
 - Make sure you have Unity installed
-- Go into FutileDemoProject/Assets and open FutileDemoScene.unity
+- Go into FutileProject/Assets and open FutileScene.unity
 
 ####How to make sure you're running it at the right resolution
 - Go to File -> Build Settings -> Click "PC and Mac Standalone" -> Click "Switch Platform" (if it's already greyed out, you're good)
