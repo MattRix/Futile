@@ -214,6 +214,7 @@ public class FNode
 	
 	public Vector2 LocalToScreen(Vector2 localVector) //for sending local points back to screen coords
 	{
+		_isMatrixDirty = true;
 		UpdateMatrix();
 		
 		//the offsets account for the camera's 0,0 point (eg, center, bottom left, etc.)
@@ -231,6 +232,7 @@ public class FNode
 	
 	public Vector2 ScreenToLocal(Vector2 screenVector) //for transforming mouse or touch points to local coords
 	{
+		_isMatrixDirty = true;
 		UpdateMatrix();
 		
 		//the offsets account for the camera's 0,0 point (eg, center, bottom left, etc.)
@@ -248,12 +250,14 @@ public class FNode
 	
 	public Vector2 LocalToStage(Vector2 localVector)
 	{
+		_isMatrixDirty = true;
 		UpdateMatrix();
 		return _concatenatedMatrix.GetNewTransformedVector(localVector);
 	}
 	
 	public Vector2 StageToLocal(Vector2 globalVector) 
 	{
+		_isMatrixDirty = true;
 		UpdateMatrix();
 		//using "this" so the getter is called (because it checks if the matrix exists and lazy inits it if it doesn't)
 		return this.inverseConcatenatedMatrix.GetNewTransformedVector(globalVector);
@@ -261,6 +265,7 @@ public class FNode
 	
 	public Vector2 LocalToGlobal(Vector2 localVector)
 	{
+		_isMatrixDirty = true;
 		UpdateMatrix();
 		//using "this" so the getter is called (because it checks if the matrix exists and lazy inits it if it doesn't)
 		return this.screenConcatenatedMatrix.GetNewTransformedVector(localVector);
@@ -268,6 +273,7 @@ public class FNode
 	
 	public Vector2 GlobalToLocal(Vector2 globalVector)
 	{
+		_isMatrixDirty = true;
 		UpdateMatrix();
 		//using "this" so the getter is called (because it checks if the matrix exists and lazy inits it if it doesn't)
 		return this.screenInverseConcatenatedMatrix.GetNewTransformedVector(globalVector);
@@ -312,19 +318,18 @@ public class FNode
 		
 		if(_needsSpecialMatrices)
 		{
+			_inverseConcatenatedMatrix.InvertAndCopyValues(_concatenatedMatrix);
 
-				_inverseConcatenatedMatrix.InvertAndCopyValues(_concatenatedMatrix);
+			if(_isOnStage)
+			{
+				_screenConcatenatedMatrix.ConcatAndCopyValues(_concatenatedMatrix,_stage.screenConcatenatedMatrix);
+			}
+			else
+			{
+				_screenConcatenatedMatrix.CopyValues(_concatenatedMatrix); //if it's not on the stage, just use its normal matrix
+			}
 
-				if(_isOnStage)
-				{
-					_screenConcatenatedMatrix.ConcatAndCopyValues(_concatenatedMatrix,_stage.screenConcatenatedMatrix);
-				}
-				else
-				{
-					_screenConcatenatedMatrix.CopyValues(_concatenatedMatrix); //if it's not on the stage, just use its normal matrix
-				}
-
-				_screenInverseConcatenatedMatrix.InvertAndCopyValues(_screenConcatenatedMatrix);
+			_screenInverseConcatenatedMatrix.InvertAndCopyValues(_screenConcatenatedMatrix);
 		}
 	}
 	
