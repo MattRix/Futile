@@ -214,6 +214,7 @@ public class FNode
 	
 	public Vector2 LocalToScreen(Vector2 localVector) //for sending local points back to screen coords
 	{
+		if(_container != null) _container.UpdateMatrix();
 		_isMatrixDirty = true;
 		UpdateMatrix();
 		
@@ -232,6 +233,7 @@ public class FNode
 	
 	public Vector2 ScreenToLocal(Vector2 screenVector) //for transforming mouse or touch points to local coords
 	{
+		if(_container != null) _container.UpdateMatrix();
 		_isMatrixDirty = true;
 		UpdateMatrix();
 		
@@ -250,6 +252,7 @@ public class FNode
 	
 	public Vector2 LocalToStage(Vector2 localVector)
 	{
+		if(_container != null) _container.UpdateMatrix();
 		_isMatrixDirty = true;
 		UpdateMatrix();
 		return _concatenatedMatrix.GetNewTransformedVector(localVector);
@@ -257,6 +260,7 @@ public class FNode
 	
 	public Vector2 StageToLocal(Vector2 globalVector) 
 	{
+		if(_container != null) _container.UpdateMatrix();
 		_isMatrixDirty = true;
 		UpdateMatrix();
 		//using "this" so the getter is called (because it checks if the matrix exists and lazy inits it if it doesn't)
@@ -265,6 +269,7 @@ public class FNode
 	
 	public Vector2 LocalToGlobal(Vector2 localVector)
 	{
+		if(_container != null) _container.UpdateMatrix();
 		_isMatrixDirty = true;
 		UpdateMatrix();
 		//using "this" so the getter is called (because it checks if the matrix exists and lazy inits it if it doesn't)
@@ -273,6 +278,7 @@ public class FNode
 	
 	public Vector2 GlobalToLocal(Vector2 globalVector)
 	{
+		if(_container != null) _container.UpdateMatrix();
 		_isMatrixDirty = true;
 		UpdateMatrix();
 		//using "this" so the getter is called (because it checks if the matrix exists and lazy inits it if it doesn't)
