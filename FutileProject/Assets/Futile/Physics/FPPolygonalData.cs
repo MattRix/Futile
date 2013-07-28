@@ -15,7 +15,7 @@ public class FPPolygonalData
 	
 	public Mesh[] meshes; //meshes made from the polygons, for doing collisions
 	
-	public FPPolygonalData (Vector2[] vertices, bool shouldDecomposeIntoConvexPolygons)
+	public FPPolygonalData (Vector2[] vertices, bool shouldDecomposeIntoConvexPolygons) //turn a single polygon into multiple
 	{
 		this.sourceVertices = vertices;
 		this.shouldDecomposeIntoConvexPolygons = shouldDecomposeIntoConvexPolygons;
@@ -113,16 +113,34 @@ public class FPPolygonalData
 		return mesh;
 	}
 	
-	public FPPolygonalData (List<Vector2[]> vertexPolygons, List<int[]> trianglePolygons) //provide your own vertices and triangles
+	public FPPolygonalData (List<Vector2[]> vertexPolygons, List<int[]> trianglePolygons) //provide polygons and triangles
 	{
+		int polygonCount = vertexPolygons.Count;
+
 		this.vertexPolygons = vertexPolygons;
 		this.trianglePolygons = trianglePolygons;
+
+		meshes = new Mesh[polygonCount];
 		
+		
+		for(int p = 0; p<polygonCount; p++)
+		{
+			meshes[p] = CreateMeshFromPolygon(p);
+		}
+	}
+
+	public FPPolygonalData (List<Vector2[]> vertexPolygons) //provide untriangulated polygons
+	{
 		int polygonCount = vertexPolygons.Count;
+
+		this.vertexPolygons = vertexPolygons;
+		this.trianglePolygons = new List<int[]>(polygonCount);
+
 		meshes = new Mesh[polygonCount];
 		
 		for(int p = 0; p<polygonCount; p++)
 		{
+			trianglePolygons.Add(FPUtils.Triangulate(vertexPolygons[p])); //triangulate the polygon
 			meshes[p] = CreateMeshFromPolygon(p);
 		}
 	}
