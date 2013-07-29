@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class FPPolygonalData
 {
-	public bool shouldDecomposeIntoConvexPolygons;
+	public bool hasBeenDecomposedIntoConvexPolygons = false;
 	
 	public bool shouldUseSmoothSphereCollisions = false; //set to true manually if needed
 	
@@ -18,10 +18,10 @@ public class FPPolygonalData
 	public FPPolygonalData (Vector2[] vertices, bool shouldDecomposeIntoConvexPolygons) //turn a single polygon into multiple
 	{
 		this.sourceVertices = vertices;
-		this.shouldDecomposeIntoConvexPolygons = shouldDecomposeIntoConvexPolygons;
 		
 		if(shouldDecomposeIntoConvexPolygons)
 		{
+			this.hasBeenDecomposedIntoConvexPolygons = true;
 			List<Vector2> sourceVerticesList = new List<Vector2>(sourceVertices);
 			
 			sourceVerticesList.Reverse(); //the algorithm needs them in reverse order
@@ -42,6 +42,8 @@ public class FPPolygonalData
 		}
 		else 
 		{
+			this.hasBeenDecomposedIntoConvexPolygons = false;
+
 			meshes = new Mesh[1];
 			
 			vertexPolygons = new List<Vector2[]>(1);
@@ -115,6 +117,8 @@ public class FPPolygonalData
 	
 	public FPPolygonalData (List<Vector2[]> vertexPolygons, List<int[]> trianglePolygons) //provide polygons and triangles
 	{
+		this.hasBeenDecomposedIntoConvexPolygons = true;
+
 		int polygonCount = vertexPolygons.Count;
 
 		this.vertexPolygons = vertexPolygons;
@@ -131,6 +135,8 @@ public class FPPolygonalData
 
 	public FPPolygonalData (List<Vector2[]> vertexPolygons) //provide untriangulated polygons
 	{
+		this.hasBeenDecomposedIntoConvexPolygons = true;
+
 		int polygonCount = vertexPolygons.Count;
 
 		this.vertexPolygons = vertexPolygons;

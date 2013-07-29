@@ -38,7 +38,7 @@ public class FPPolygonalCollider : MonoBehaviour
 		
 		collider.sharedMesh = mesh;
 		
-		if(_polygonalData.shouldDecomposeIntoConvexPolygons)
+		if(_polygonalData.hasBeenDecomposedIntoConvexPolygons)
 		{
 			collider.convex = true; //we're decomposing so we'll always have convex stuff
 		}
