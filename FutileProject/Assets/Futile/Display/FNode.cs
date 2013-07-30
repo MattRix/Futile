@@ -7,11 +7,11 @@ public class FNode
 {
 	protected float _x = 0f;
 	protected float _y = 0f;
-	protected float _z = 0f;
 	protected float _scaleX = 1f;
 	protected float _scaleY = 1f;
 	protected float _rotation = 0f;
-	
+
+	protected float _meshZ = 0f;
 	protected float _sortZ = 0f; //sortZ is used for depth sorting but ONLY if the node container's shouldSortByZ = true;
 	
 	protected bool _isMatrixDirty = false;
@@ -483,10 +483,10 @@ public class FNode
 		set { _y = value; _isMatrixDirty = true;}
 	}
 
-	public float z
+	public float meshZ
 	{
-		get { return _z;}
-		set { _z = value; _isMatrixDirty = true;}
+		get { return _meshZ;}
+		set { _meshZ = value; _isMatrixDirty = true;}
 	}
 	
 	virtual public float sortZ
