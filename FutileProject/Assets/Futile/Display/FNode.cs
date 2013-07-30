@@ -7,6 +7,7 @@ public class FNode
 {
 	protected float _x = 0f;
 	protected float _y = 0f;
+	protected float _z = 0f;
 	protected float _scaleX = 1f;
 	protected float _scaleY = 1f;
 	protected float _rotation = 0f;
@@ -480,6 +481,12 @@ public class FNode
 	{
 		get { return _y;}
 		set { _y = value; _isMatrixDirty = true;}
+	}
+
+	public float z
+	{
+		get { return _z;}
+		set { _z = value; _isMatrixDirty = true;}
 	}
 	
 	virtual public float sortZ
