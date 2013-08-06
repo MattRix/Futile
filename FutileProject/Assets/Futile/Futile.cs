@@ -56,7 +56,7 @@ public class Futile : MonoBehaviour
 	public event FutileUpdateDelegate SignalLateUpdate;
     
 	//configuration values
-	public bool shouldTrackNodesInRXProfiler = true;
+	public bool shouldTrackNodesInRXProfiler = false;
     
     private GameObject _cameraHolder;
     private Camera _camera;
