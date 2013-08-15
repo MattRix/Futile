@@ -137,7 +137,7 @@ public class FGameObjectNode : FNode, FRenderableLayerInterface
 		}
 	}
 	
-	virtual public void UpdateGameObject()
+	public void UpdateGameObject()
 	{
 		if(_isOnStage) {
 			FMatrix matrix = this.screenConcatenatedMatrix;
