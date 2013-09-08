@@ -48,7 +48,10 @@ public class FGameObjectNode : FNode, FRenderableLayerInterface
 	
 	protected void Unsetup()
 	{
-		_gameObject.transform.parent = null;
+		if(_gameObject != null)
+		{
+			_gameObject.transform.parent = null;
+		}
 	}
 	
 	override public void HandleAddedToStage()
