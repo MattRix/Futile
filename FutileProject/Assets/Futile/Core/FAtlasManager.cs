@@ -184,6 +184,10 @@ public class FAtlasManager
 		ActuallyUnloadAtlasOrImage(imagePath);	
 	}
 
+	public bool DoesContainElementWithName(string elementName)
+	{
+		return _allElementsByName.ContainsKey(elementName);
+	}
 	public FAtlasElement GetElementWithName (string elementName)
 	{
 		if (_allElementsByName.ContainsKey(elementName))
