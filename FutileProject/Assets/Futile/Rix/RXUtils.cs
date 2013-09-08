@@ -350,7 +350,7 @@ public static class RXRandom
 	public static int Range(int low, int high)
 	{
 		int delta = high - low;
-		if(delta == 0) return 0;
+		if(delta == 0) return low;
 		return low + _randomSource.Next() % delta; 
 	}
 	
