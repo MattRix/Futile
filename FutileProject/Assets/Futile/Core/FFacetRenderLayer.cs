@@ -66,11 +66,13 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 		_meshRenderer.receiveShadows = false;
 		
 		_mesh = _meshFilter.mesh;
-		
+
+		//we could possibly create a pool of materials so they can be reused, 
+		//but that would create issues when unloading textures, so it's probably not worth it
 		_material = new Material(_shader.shader);
 		_material.mainTexture = _atlas.texture;
 		
-		_meshRenderer.renderer.material = _material;
+		_meshRenderer.renderer.sharedMaterial = _material;
 		
 		#if UNITY_3_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
 			_gameObject.active = false;
@@ -87,6 +89,9 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 	public void Destroy()
 	{
 		UnityEngine.Object.Destroy(_gameObject);
+
+		UnityEngine.Object.Destroy(_mesh);
+		UnityEngine.Object.Destroy(_material);
 	}
 
 	public void UpdateTransform()
