@@ -285,8 +285,15 @@ public class FTouchManager
 			if(!_singleTouchablesToAdd.Contains(touchable))
 			{
 				int index = _singleTouchablesToRemove.IndexOf(touchable);
-				if(index != -1) _singleTouchablesToRemove.RemoveAt(index);
-				_singleTouchablesToAdd.Add(touchable);
+				if(index != -1) 
+				{
+					//we were going to remove it, so just don't remove it instead of adding it 
+					_singleTouchablesToRemove.RemoveAt(index);
+				}
+				else
+				{
+					_singleTouchablesToAdd.Add(touchable);
+				}
 			}
 		}
 		else
@@ -306,8 +313,15 @@ public class FTouchManager
 			if(!_multiTouchablesToAdd.Contains(touchable))
 			{
 				int index = _multiTouchablesToRemove.IndexOf(touchable);
-				if(index != -1) _multiTouchablesToRemove.RemoveAt(index);
-				_multiTouchablesToAdd.Add(touchable);
+				if(index != -1)
+				{
+					//we were going to remove it, so just don't remove it instead of adding it 
+					_multiTouchablesToRemove.RemoveAt(index);
+				}
+				else
+				{
+					_multiTouchablesToAdd.Add(touchable);
+				}
 			}
 		}
 		else
@@ -326,8 +340,15 @@ public class FTouchManager
 			if(!_singleTouchablesToRemove.Contains(touchable))
 			{
 				int index = _singleTouchablesToAdd.IndexOf(touchable);
-				if(index != -1) _singleTouchablesToAdd.RemoveAt(index);
-				_singleTouchablesToRemove.Add(touchable);
+				if(index != -1) 
+				{
+					//we're trying to remove a touchable that is about to be added, so just prevent it from being added
+					_singleTouchablesToAdd.RemoveAt(index);
+				}
+				else 
+				{
+					_singleTouchablesToRemove.Add(touchable);
+				}
 			}
 		}
 		else
@@ -343,8 +364,15 @@ public class FTouchManager
 			if(!_multiTouchablesToRemove.Contains(touchable))
 			{
 				int index = _multiTouchablesToAdd.IndexOf(touchable);
-				if(index != -1) _multiTouchablesToAdd.RemoveAt(index);
-				_multiTouchablesToRemove.Add(touchable);
+				if(index != -1) 
+				{
+					//we're trying to remove a touchable that is about to be added, so just prevent it from being added
+					_multiTouchablesToAdd.RemoveAt(index);
+				}
+				else 
+				{
+					_multiTouchablesToRemove.Add(touchable);
+				}
 			}
 		}
 		else
