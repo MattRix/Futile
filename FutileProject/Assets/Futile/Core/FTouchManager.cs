@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 public struct FTouch //had to make a copy of Unity's Touch so I could make properties writeable for mouse touches
 {
@@ -380,5 +381,37 @@ public class FTouchManager
 			_multiTouchables.Remove(touchable);
 		}
 	}
-	
+
+	public void LogAllListeners()
+	{
+		StringBuilder stringBuilder = new StringBuilder("SingleTouchables("+_singleTouchables.Count+"): ");
+
+		for(int s = 0;s<_singleTouchables.Count;s++)
+		{
+			stringBuilder.Append(_singleTouchables[s]);
+			if(s < _singleTouchables.Count - 1)
+			{
+				stringBuilder.Append(", ");
+			}
+		}
+
+		Debug.Log(stringBuilder.ToString());
+		
+		stringBuilder = new StringBuilder("MultiTouchables("+_multiTouchables.Count+"): ");
+
+		for(int m = 0;m<_multiTouchables.Count;m++)
+		{
+			stringBuilder.Append(_multiTouchables[m]);
+			if(m < _multiTouchables.Count - 1)
+			{
+				stringBuilder.Append(", ");
+			}
+		}
+
+		Debug.Log(stringBuilder.ToString());
+	}
 }
+
+
+
+
