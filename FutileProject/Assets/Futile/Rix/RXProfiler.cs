@@ -2,12 +2,10 @@ using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Timers;
 
 public class RXProfiler : MonoBehaviour
 {
 	static public Dictionary<Type,List<WeakReference>> instancesByType = new Dictionary<Type, List<WeakReference>>();
-	static private Timer _timer;
 
 	static RXProfiler()
 	{
