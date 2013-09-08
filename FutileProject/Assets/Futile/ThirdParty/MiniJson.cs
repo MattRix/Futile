@@ -520,29 +520,31 @@ public static class Json {
 	                }
 	                break;
 	            }
-	        }
+			}
 
-	        builder.Append('\"');
-	    }
+			builder.Append('\"');
+		}
 
-	    void SerializeOther(object value) {
-	        if (value is float
-	            || value is int
-	            || value is uint
-	            || value is long
-	            || value is double
-	            || value is sbyte
-	            || value is byte
-	            || value is short
-	            || value is ushort
-	            || value is ulong
-	            || value is decimal) {
-	            builder.Append(value.ToString());
-	        }
-	        else {
-	            SerializeString(value.ToString());
-	        }
-	    }
+		void SerializeOther(object value) {
+			if (value is int
+			    || value is uint
+			    || value is long
+			    || value is sbyte
+			    || value is byte
+			    || value is short
+			    || value is ushort
+			    || value is ulong) {
+				builder.Append(value.ToString());
+			}
+			else if(value is float
+			        || value is double
+			        || value is decimal) {
+				builder.Append(string.Format("{0:0.000}", value));
+			}
+			else {
+				SerializeString(value.ToString());
+			}
+		}
 	}
 }
 
