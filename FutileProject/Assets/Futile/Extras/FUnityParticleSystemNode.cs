@@ -20,18 +20,8 @@ public class FUnityParticleSystemNode : FGameObjectNode
 		}
 		
 		Init(gameObject, true, false, false);
-	}
-	
-	override public void HandleAddedToStage()
-	{
-		Futile.instance.SignalUpdate += HandleUpdate;
-		base.HandleAddedToStage();	
-	}
-	
-	override public void HandleRemovedFromStage()
-	{
-		Futile.instance.SignalUpdate -= HandleUpdate;
-		base.HandleRemovedFromStage();	
+
+		ListenForUpdate(HandleUpdate);
 	}
 	
 	protected void HandleUpdate()
