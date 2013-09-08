@@ -17,12 +17,18 @@ public class RXProfilerEditor : Editor
 	public void OnEnable()
 	{
 		//update when selected
-		Futile.instance.SignalUpdate += HandleSignalUpdate;
+		if(Futile.instance != null)
+		{
+			Futile.instance.SignalUpdate += HandleSignalUpdate;
+		}
 	}
 
 	public void OnDisable()
 	{
-		Futile.instance.SignalUpdate -= HandleSignalUpdate;
+		if(Futile.instance != null)
+		{
+			Futile.instance.SignalUpdate -= HandleSignalUpdate;
+		}
 	}
 
 	private void HandleSignalUpdate ()
