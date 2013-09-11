@@ -41,9 +41,9 @@ public class FGameObjectNode : FNode, FRenderableLayerInterface
 			{
 				_gameObject.renderer.material.renderQueue = _renderQueueDepth;
 			}
+			
+			_gameObject.layer = _stage.layer;
 		}
-		
-		UpdateGameObject();
 	}
 	
 	protected void Unsetup()
@@ -148,6 +148,8 @@ public class FGameObjectNode : FNode, FRenderableLayerInterface
 			if(_shouldLinkPosition) _gameObject.transform.localPosition = matrix.GetVector3FromLocalVector2(Vector2.zero,0);
 			if(_shouldLinkRotation) _gameObject.transform.eulerAngles = new Vector3(_gameObject.transform.eulerAngles.x,_gameObject.transform.eulerAngles.y,matrix.GetRotation());
 			if(_shouldLinkScale) _gameObject.transform.localScale = new Vector3(matrix.GetScaleX(), matrix.GetScaleY (), _gameObject.transform.localScale.z);
+			
+			_gameObject.layer = _stage.layer;
 		}
 	}
 	
