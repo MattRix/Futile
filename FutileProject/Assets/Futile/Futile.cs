@@ -52,6 +52,7 @@ public class Futile : MonoBehaviour
 	public delegate void FutileUpdateDelegate();
 	
 	public event FutileUpdateDelegate SignalUpdate;
+	public event FutileUpdateDelegate SignalAfterUpdate;
 	public event FutileUpdateDelegate SignalFixedUpdate;
 	public event FutileUpdateDelegate SignalLateUpdate;
     
@@ -305,12 +306,14 @@ public class Futile : MonoBehaviour
 		touchManager.Update();
 
 		if(SignalUpdate != null) SignalUpdate();
+
+		if(SignalAfterUpdate != null) SignalAfterUpdate();
 		
 		for(int s = 0; s<_stages.Count; s++)
 		{
 			_stages[s].Redraw (false,_isDepthChangeNeeded);
 		}
-		
+
 		_isDepthChangeNeeded = false;
 		
 		if(_shouldRunGCNextUpdate)

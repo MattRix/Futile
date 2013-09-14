@@ -128,6 +128,17 @@ public class FNode
 	{	
 		RemoveEnablerOfType(typeof(FNodeEnablerForUpdate));
 	}
+
+	public void ListenForAfterUpdate(Futile.FutileUpdateDelegate handleUpdateCallback)
+	{
+		RemoveEnablerOfType(typeof(FNodeEnablerForAfterUpdate));
+		AddEnabler(new FNodeEnablerForAfterUpdate(handleUpdateCallback));
+	}
+	
+	public void RemoveListenForAfterUpdate()
+	{	
+		RemoveEnablerOfType(typeof(FNodeEnablerForAfterUpdate));
+	}
 	
 	public void ListenForLateUpdate(Futile.FutileUpdateDelegate handleUpdateCallback)
 	{
