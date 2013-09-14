@@ -30,6 +30,8 @@ public class FNode
 	protected float _alpha = 1f;
 	protected float _concatenatedAlpha = 1f;
 	protected bool _isAlphaDirty = false;
+
+	protected float _visibleScale = 1f;
 	
 	protected bool _isOnStage = false;
 	
@@ -38,7 +40,6 @@ public class FNode
 	protected FStage _stage = null; //assigned in HandleAddedToStage
 	
 	protected bool _isVisible = true;
-	protected float _visibleAlpha = 1f;
 	
 	public object data = null; //the user can put whatever data they want here
 	
@@ -322,8 +323,8 @@ public class FNode
 		if(!_isMatrixDirty) return;
 		
 		//do NOT set _isMatrixDirty to false here because it is used in the redraw loop and will be set false then
-		
-		_matrix.SetScaleThenRotate(_x,_y,_scaleX,_scaleY,_rotation * -0.01745329f); //0.01745329 is RXMath.DTOR
+
+		_matrix.SetScaleThenRotate(_x,_y,_scaleX*_visibleScale,_scaleY*_visibleScale,_rotation * -0.01745329f); //0.01745329 is RXMath.DTOR
 			
 		if(_container != null)
 		{
@@ -362,7 +363,7 @@ public class FNode
 		{
 			_isMatrixDirty = false;
 			
-			_matrix.SetScaleThenRotate(_x,_y,_scaleX,_scaleY,_rotation * -0.01745329f); //0.01745329 is RXMath.DTOR
+			_matrix.SetScaleThenRotate(_x,_y,_scaleX*_visibleScale,_scaleY*_visibleScale,_rotation * -0.01745329f); //0.01745329 is RXMath.DTOR
 			
 			if(_container != null)
 			{
@@ -387,11 +388,11 @@ public class FNode
 			
 			if(_container != null)
 			{
-				_concatenatedAlpha = _container.concatenatedAlpha*_alpha*_visibleAlpha;
+				_concatenatedAlpha = _container.concatenatedAlpha*_alpha;
 			}
 			else 
 			{
-				_concatenatedAlpha = _alpha*_visibleAlpha;
+				_concatenatedAlpha = _alpha;
 			}
 		}	
 	}
@@ -456,8 +457,8 @@ public class FNode
 			if(_isVisible != value)
 			{
 				_isVisible = value;
-				_visibleAlpha = _isVisible ? 1.0f : 0.0f;
-				_isAlphaDirty = true;
+				_visibleScale = _isVisible ? 1f : 0f;
+				_isMatrixDirty = true;
 			}
 		}
 	}
