@@ -47,7 +47,7 @@ public class FTouchManager
 	private List<FMultiTouchableInterface> _multiTouchablesToAdd = new List<FMultiTouchableInterface>();
 	private List<FMultiTouchableInterface> _multiTouchablesToRemove = new List<FMultiTouchableInterface>();
 	
-	private FSingleTouchableInterface _theSingleTouchable = null;
+	protected FSingleTouchableInterface _theSingleTouchable = null;
 	
 	private bool _isUpdating = false;
 	
@@ -81,7 +81,7 @@ public class FTouchManager
 		return (_theSingleTouchable != null);	
 	}
 	
-	public void Update()
+	virtual public void Update()
 	{
 		if (!isEnabled) return;
 		
