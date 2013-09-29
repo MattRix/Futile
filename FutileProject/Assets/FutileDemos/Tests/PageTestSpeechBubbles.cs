@@ -82,7 +82,7 @@ public class PageTestSpeechBubbles1 : PageTest, FMultiTouchableInterface
 	
 	override public void Start()
 	{
-		FLabel label=new FLabel(Config.fontFile,"Click anywhere\noutside the box",Config.textParams);
+		FLabel label=new FLabel(Config.fontFile,"Click anywhere\noutside of the box",Config.textParams);
 		label.color=Color.black;
 		
 		_bubble=new FSpeechBubble();

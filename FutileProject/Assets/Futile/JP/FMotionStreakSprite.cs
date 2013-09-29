@@ -276,6 +276,22 @@ public class FMotionStreakSprite : FSprite
 		UpdateElements();
 		_isMeshDirty=true;
 	}
+	
+	
+	//Remove the motion streak after the trail has vanished
+	protected int _removeCountDown;
+	public void RemoveFromContainerAnimated() {
+		_removeCountDown=_maxTrailQuads+1;
+		Futile.instance.SignalUpdate+=HandleUpdate;
+	}
+	protected void HandleUpdate() {
+		_removeCountDown--;
+		PushPosition(CurrentPosition());
+		if (_removeCountDown<0) {
+			Futile.instance.SignalUpdate-=HandleUpdate;
+			this.RemoveFromContainer();
+		}
+	}
 }
 
 

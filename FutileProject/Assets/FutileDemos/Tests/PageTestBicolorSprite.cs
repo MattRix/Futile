@@ -25,6 +25,8 @@ public class PageTestBicolorSprite : PageTest, FMultiTouchableInterface
 	protected FBicolorSprite _bicolorSprite0,_bicolorSprite1;
 	override public void Start()
 	{
+		ShowTitle("FBicolorSprite\nClick to fade to new colors");
+		
 		_bicolorSprite0=new FBicolorSprite("Monkey_0"); //used as a reference
 	    //_bicolorSprite0.bottomColor=RandomUtils.RandomColor();
 	    //_bicolorSprite0.topColor=RandomUtils.RandomColor();
@@ -37,7 +39,7 @@ public class PageTestBicolorSprite : PageTest, FMultiTouchableInterface
 		AddChild(_bicolorSprite1);
 		_bicolorSprite1.x=_bicolorSprite1.textureRect.width*0.5f;
 		
-		ShowTitle("FBicolorSprite\nClick to fade to new colors");
+		
 		base.Start();
 	}
 	

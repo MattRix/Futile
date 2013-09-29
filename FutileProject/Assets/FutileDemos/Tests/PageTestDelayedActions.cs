@@ -25,6 +25,8 @@ public class PageTestDelayedActions : PageTest, FMultiTouchableInterface
 	protected List<FSprite> _sprites;
 	override public void Start()
 	{
+		ShowTitle("ListDelayedActions\nClick to start the chain");
+		
 		_sprites=new List<FSprite>();
 		
 		//Build the grid
@@ -46,7 +48,7 @@ public class PageTestDelayedActions : PageTest, FMultiTouchableInterface
 			}
 		}
 
-		ShowTitle("ListDelayedActions\nClick to start the chain");
+		
 		base.Start();
 	}
 	

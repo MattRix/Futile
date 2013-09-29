@@ -8,6 +8,7 @@ using System.IO;
 public enum PageType
 {
 	None,
+	PageTestMotionStreak,
 	PageTestDelayedActions,
 	PageTestBicolorSprite,
 	PageTestSplitSprite,
