@@ -170,6 +170,8 @@ public class FButton : FContainer, FSingleTouchableInterface
 	
 	virtual public bool HandleSingleTouchBegan(FTouch touch)
 	{
+		if (!_isTouchDown) return; //If button is disabled, we still get the HandleSingleTouchMoved event but _isTouchDown is false, and we don't want to change the button state in that case
+
 		_isTouchDown = false;
 		
 		if(!IsAncestryVisible()) return false;
@@ -206,6 +208,8 @@ public class FButton : FContainer, FSingleTouchableInterface
 	
 	virtual public void HandleSingleTouchMoved(FTouch touch)
 	{
+		if (!_isTouchDown) return; //If button is disabled, or if mouse/touch went out of the expandedRect, we don't want to send the click Signal
+		
         Vector2 touchPos = _sprite.GetLocalTouchPosition(touch);
 		
 		//expand the hitrect so that it has more error room around the edges
