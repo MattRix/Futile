@@ -119,12 +119,17 @@ public class FButton : FContainer, FSingleTouchableInterface
 
 	virtual public FLabel AddLabel (string fontName, string text, Color color)
 	{
+		return this.AddLabel(fontName,text,new FTextParams(),color);
+	}
+	
+	virtual public FLabel AddLabel (string fontName, string text, FTextParams textParams, Color color)
+	{
 		if(_label != null) 
 		{
 			RemoveChild(_label);
 		}
 
-		_label = new FLabel(fontName, text);
+		_label = new FLabel(fontName, text, textParams);
 		AddChild(_label);
 		_label.color = color;
 		_label.anchorX = _label.anchorY = 0.5f;
