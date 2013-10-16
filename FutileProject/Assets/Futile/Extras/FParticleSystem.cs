@@ -301,44 +301,34 @@ public class FParticleSystem : FFacetNode
 			int vertexIndex2 = vertexIndex0 + 2;
 			int vertexIndex3 = vertexIndex0 + 3;
 
+			float px;
+			float py;
+			float ps;
+
 			for(int p = 0; p<_maxParticleCount; p++)
 			{
 				FParticle particle = _particles[p];
 				
 				if(particle.timeRemaining > 0)
 				{		
-					float scale = particle.scale;
-					float px = particle.x * a + particle.y * b + tx;
-					float py = particle.x * c + particle.y * d + ty;
-					
-					vertices[vertexIndex0] = new Vector3
-					(
-						px + particle.resultTopLeftX * scale,
-						py + particle.resultTopLeftY * scale,
-						0
-					);
-					
-					vertices[vertexIndex1] = new Vector3
-					(
-						px + particle.resultTopRightX * scale,
-						py + particle.resultTopRightY * scale,
-						0
-					);
+					ps = particle.scale;
 
-					vertices[vertexIndex2] = new Vector3
-					(
-						px + particle.resultBottomRightX * scale,
-						py + particle.resultBottomRightY * scale,
-						0
-					);
+					px = particle.x+particle.resultTopLeftX*ps;
+					py = particle.y+particle.resultTopLeftY*ps;
+					vertices[vertexIndex0] = new Vector3(px*a + py*c + tx,px*b + py*d + ty,_meshZ);
 
-					vertices[vertexIndex3] = new Vector3
-						(
-						px + particle.resultBottomLeftX * scale,
-						py + particle.resultBottomLeftY * scale,
-						0
-					);
+					px = particle.x+particle.resultTopRightX*ps;
+					py = particle.y+particle.resultTopRightY*ps;
+					vertices[vertexIndex1] = new Vector3(px*a + py*c + tx,px*b + py*d + ty,_meshZ);
+
+					px = particle.x+particle.resultBottomRightX*ps;
+					py = particle.y+particle.resultBottomRightY*ps;
+					vertices[vertexIndex2] = new Vector3(px*a + py*c + tx,px*b + py*d + ty,_meshZ);
 					
+					px = particle.x+particle.resultBottomLeftX*ps;
+					py = particle.y+particle.resultBottomLeftY*ps;
+					vertices[vertexIndex3] = new Vector3(px*a + py*c + tx,px*b + py*d + ty,_meshZ);
+
 					uvs[vertexIndex0] = particle.uvTopLeft;
 					uvs[vertexIndex1] = particle.uvTopRight;
 					uvs[vertexIndex2] = particle.uvBottomRight;
