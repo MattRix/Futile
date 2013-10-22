@@ -12,6 +12,7 @@ public class RXWatcherLinkEditor : Editor
 	public static Type STRING = typeof(string);
 	public static Type COLOR = typeof(Color);
 	public static Type VECTOR2 = typeof(Vector2);
+	public static Type BOOL = typeof(bool);
 
 	public RXWatcherLink link = null;
 
@@ -70,6 +71,10 @@ public class RXWatcherLinkEditor : Editor
 			else if(member.memberType == VECTOR2)
 			{
 				newValue = EditorGUILayout.Vector2Field(member.name, (Vector2)oldValue);
+			}
+			else if(member.memberType == BOOL)
+			{
+				newValue = EditorGUILayout.Toggle(member.name, (bool)oldValue);
 			}
 
 			if(newValue != null && !newValue.Equals(oldValue))
