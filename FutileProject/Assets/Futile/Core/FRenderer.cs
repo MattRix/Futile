@@ -36,6 +36,34 @@ public class FRenderer
 		_allRenderables.Clear();
 	}
 
+	public void ClearLayersThatUseAtlas(FAtlas atlas)
+	{
+		bool didHaveLayerThatUsedAtlas = false;
+
+		for(int a = _allLayers.Count - 1; a >= 0; --a)
+		{
+			if(_allLayers[a].atlas == atlas)
+			{
+				didHaveLayerThatUsedAtlas = true;
+
+				FFacetRenderLayer layer = _allLayers[a];
+
+				_liveLayers.Remove(layer);
+				_previousLiveLayers.Remove(layer);
+				_cachedLayers.Remove(layer);
+				_allRenderables.Remove(layer);
+				_allLayers.Remove(layer);
+
+				layer.Destroy();
+			}
+		}
+
+		if(didHaveLayerThatUsedAtlas)
+		{
+			_stage.HandleFacetsChanged();
+		}
+	}
+
 	public void UpdateLayerTransforms()
 	{
 		int allLayerCount = _allLayers.Count;

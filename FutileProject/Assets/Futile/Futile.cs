@@ -266,6 +266,15 @@ public class Futile : MonoBehaviour
 		
 		_isDepthChangeNeeded = true;
 	}
+
+	public void ClearLayersThatUseAtlas(FAtlas atlas)
+	{
+		int stageCount = _stages.Count;
+		for(int s = 0; s<stageCount; s++)
+		{
+			_stages[s].renderer.ClearLayersThatUseAtlas(atlas);
+		}
+	}
 	
 	static public int GetStageCount()
 	{

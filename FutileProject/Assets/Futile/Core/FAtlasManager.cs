@@ -161,14 +161,15 @@ public class FAtlasManager
 				
 				atlas.Unload();
 				_atlases.RemoveAt(a);
-				
+
+				Futile.instance.ClearLayersThatUseAtlas(atlas);
+
 				wasAtlasRemoved = true;
 			}
 		}
 		
 		if(wasAtlasRemoved)
 		{
-			Futile.stage.renderer.Clear();
 			Resources.UnloadUnusedAssets();
 		}
 	}
@@ -188,6 +189,7 @@ public class FAtlasManager
 	{
 		return _allElementsByName.ContainsKey(elementName);
 	}
+
 	public FAtlasElement GetElementWithName (string elementName)
 	{
 		if (_allElementsByName.ContainsKey(elementName))

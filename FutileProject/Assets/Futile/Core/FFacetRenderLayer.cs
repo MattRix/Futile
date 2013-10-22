@@ -278,6 +278,11 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 	{
 		get {return _colors;}
 	}
+
+	public FAtlas atlas
+	{
+		get {return _atlas;}
+	}
 }
 
 public class FQuadRenderLayer : FFacetRenderLayer
