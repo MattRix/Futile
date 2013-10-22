@@ -185,6 +185,17 @@ public class FNode
 		RemoveEnablerOfType(typeof(FNodeEnablerForMultiTouch));
 	}
 
+	public void EnableSmartTouch()
+	{
+		DisableSmartTouch(); //clear any old ones first
+		AddEnabler(new FNodeEnablerForSmartTouch(this));
+	}
+	
+	public void DisableSmartTouch()
+	{
+		RemoveEnablerOfType(typeof(FNodeEnablerForSmartTouch));
+	}
+
 	public void ListenForAddedOrRemoved(FNodeEnablerForAddedOrRemoved.Delegate handleAddedOrRemoved)
 	{
 		RemoveEnablerOfType(typeof(FNodeEnablerForAddedOrRemoved));
