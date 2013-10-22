@@ -304,7 +304,11 @@ public class RXMath
 		if(first < 0.5f) return first*2.0f;
 		else return 1.0f - ((first - 0.5f)*2.0f); 
 	}
-	
+	public static Vector2 GetOffsetFromAngle(float angle, float distance)
+	{
+		float radians = angle * RXMath.DTOR;
+		return new Vector2(Mathf.Cos(radians) * distance, -Mathf.Sin(radians) * distance);
+	}
 }
 
 public static class RXRandom
