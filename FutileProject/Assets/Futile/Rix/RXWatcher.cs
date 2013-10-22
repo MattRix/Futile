@@ -46,6 +46,19 @@ public class RXWatcher
 			else
 			{
 				targetName = target.GetType().Name;
+				FLabel targetAsLbl = target as FLabel;
+				if (targetAsLbl != null)
+				{
+					targetName += " - '" + targetAsLbl.text + "'";
+				}
+				else
+				{
+					FSprite targetAsSprite = target as FSprite;
+					if (targetAsSprite != null)
+					{
+						targetName += " - '" + targetAsSprite.element.name + "'";
+					}
+				}
 			}
 		}
 
