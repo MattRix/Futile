@@ -165,6 +165,19 @@ public static class RXGoKitExtensions
 
 public static class RXArrayExtensions
 {
+	public static int IndexOf<T>(this T[] items, T itemToFind) where T:class
+	{
+		int count = items.Length;
+
+		for(int i = 0; i<count; i++)
+		{
+			if(items[i] == itemToFind)
+			{
+				return i;
+			}
+		}	
+		return -1;
+	}
 	public static void RemoveItem<T>(this T[] items, T itemToRemove, ref int count) where T : class
 	{
 		//this thing basically just removes it from the array
