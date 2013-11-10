@@ -196,6 +196,16 @@ public class FSoundManager
 		UnloadAllSounds();
 		UnloadMusic();
 	}
+
+	static public AudioSource soundSource
+	{
+		get {return _soundSource;}
+	}
+
+	static public AudioSource musicSource
+	{
+		get {return _musicSource;}
+	}
 	
 	static public float volume
 	{
