@@ -262,6 +262,82 @@ public class FAtlas
 		_elementsByName.Add (element.name, element);
 	}
 
+	public void UpdateElement (FAtlasElement element, float leftX, float bottomY, float pixelWidth, float pixelHeight)
+	{
+		//		TODO: decide whether to scale by resScale or not
+		//		float resScale = Futile.resourceScale;
+		//		leftX *= resScale;
+		//		bottomY *= resScale;
+		//		pixelWidth *= resScale;
+		//		pixelHeight *= resScale;
+		
+		element.atlas = this;
+		element.atlasIndex = _index;
+		
+		float scaleInverse = Futile.resourceScaleInverse;
+		
+		//the uv coordinate rectangle within the atlas
+		Rect uvRect = new Rect
+			(
+				leftX/_textureSize.x,
+				bottomY/_textureSize.y,
+				pixelWidth/_textureSize.x,
+				pixelHeight/_textureSize.y
+				);
+
+		element.uvRect = uvRect;
+		
+		element.uvTopLeft.Set(uvRect.xMin,uvRect.yMax);
+		element.uvTopRight.Set(uvRect.xMax,uvRect.yMax);
+		element.uvBottomRight.Set(uvRect.xMax,uvRect.yMin);
+		element.uvBottomLeft.Set(uvRect.xMin,uvRect.yMin);
+		
+		//the source size is the untrimmed size
+		element.sourcePixelSize.x = pixelWidth;	
+		element.sourcePixelSize.y = pixelHeight;	
+		
+		element.sourceSize.x = element.sourcePixelSize.x * scaleInverse;	
+		element.sourceSize.y = element.sourcePixelSize.y * scaleInverse;
+		
+		//sourceRect is the trimmed rect, inside the other rect, for now always as if untrimmed
+		element.sourceRect = new Rect(0,0,pixelWidth*scaleInverse,pixelHeight*scaleInverse);
+	}
+
+	public FAtlasElement CreateUnnamedElement (float leftX, float bottomY, float pixelWidth, float pixelHeight)
+	{
+		//note that this element has no name, so it is not stored in the atlas or atlasmanager
+
+		FAtlasElement element = new FAtlasElement();
+
+		element.atlas = this;
+		element.atlasIndex = _index;
+
+		UpdateElement(element,leftX,bottomY,pixelWidth,pixelHeight);
+
+		return element;
+	}
+
+	public FAtlasElement CreateNamedElement (string elementName, float leftX, float bottomY, float pixelWidth, float pixelHeight)
+	{
+		FAtlasElement element = _elementsByName[elementName];
+
+		if(element == null) //it doesn't exist, so create it (if it does exist we just update it)
+		{
+			element = new FAtlasElement();
+			element.name = elementName;
+			element.atlas = this;
+			element.atlasIndex = _index;
+			
+			_elementsByName.Add(elementName,element);
+			_elements.Add(element);
+			Futile.atlasManager.AddElement(element);
+		}
+
+		UpdateElement(element,leftX,bottomY,pixelWidth,pixelHeight);
+
+		return element;
+	}
+
 	public void Unload ()
 	{
 		if(_isTextureAnAsset)

@@ -39,27 +39,31 @@ public class FAtlasManager
 		return false;
 	}
 
-	public void LoadAtlasFromTexture (string name, Texture texture)
+	public FAtlas LoadAtlasFromTexture (string name, Texture texture)
 	{
-		if(DoesContainAtlas(name)) return; //we already have it, don't load it again
+		if(DoesContainAtlas(name)) return GetAtlasWithName(name); //we already have it, don't load it again
 		
 		FAtlas atlas = new FAtlas(name, texture, _nextAtlasIndex++);
 		
 		AddAtlas(atlas);
+
+		return atlas;
 	}
 	
-	public void LoadAtlasFromTexture (string name, string dataPath, Texture texture)
+	public FAtlas LoadAtlasFromTexture (string name, string dataPath, Texture texture)
 	{
-		if(DoesContainAtlas(name)) return; //we already have it, don't load it again
+		if(DoesContainAtlas(name)) return GetAtlasWithName(name); //we already have it, don't load it again
 		
 		FAtlas atlas = new FAtlas(name, dataPath, texture, _nextAtlasIndex++);
 		
 		AddAtlas(atlas);
+
+		return atlas;
 	}
 	
-	public void ActuallyLoadAtlasOrImage(string name, string imagePath, string dataPath)
+	public FAtlas ActuallyLoadAtlasOrImage(string name, string imagePath, string dataPath)
 	{
-		if(DoesContainAtlas(name)) return; //we already have it, don't load it again
+		if(DoesContainAtlas(name)) return GetAtlasWithName(name); //we already have it, don't load it again
 		
 		//if dataPath is empty, load it as a single image
 		bool isSingleImage = (dataPath == "");
@@ -67,6 +71,8 @@ public class FAtlasManager
 		FAtlas atlas = new FAtlas(name, imagePath, dataPath, _nextAtlasIndex++, isSingleImage);
 		
 		AddAtlas(atlas);
+
+		return atlas;
 	}
 	
 	private void AddAtlas(FAtlas atlas)
@@ -92,9 +98,9 @@ public class FAtlasManager
 		_atlases.Add(atlas); 
 	}
 	
-	public void LoadAtlas(string atlasPath)
+	public FAtlas LoadAtlas(string atlasPath)
 	{
-		if(DoesContainAtlas(atlasPath)) return; //we already have it, don't load it again
+		if(DoesContainAtlas(atlasPath)) return GetAtlasWithName(atlasPath); //we already have it, don't load it again
 		
 		string filePath = atlasPath+Futile.resourceSuffix+"_png";
 		
@@ -108,17 +114,17 @@ public class FAtlasManager
 			
 			Resources.UnloadAsset(imageBytes);
 			
-			LoadAtlasFromTexture(atlasPath,atlasPath+Futile.resourceSuffix, texture);
+			return LoadAtlasFromTexture(atlasPath,atlasPath+Futile.resourceSuffix, texture);
 		}
 		else //load it as a normal Unity image asset
 		{
-			ActuallyLoadAtlasOrImage(atlasPath, atlasPath+Futile.resourceSuffix, atlasPath+Futile.resourceSuffix);
+			return ActuallyLoadAtlasOrImage(atlasPath, atlasPath+Futile.resourceSuffix, atlasPath+Futile.resourceSuffix);
 		}
 	}
 	
-	public void LoadImage(string imagePath)
+	public FAtlas LoadImage(string imagePath)
 	{
-		if(DoesContainAtlas(imagePath)) return; //we already have it
+		if(DoesContainAtlas(imagePath)) return GetAtlasWithName(imagePath); //we already have it
 		
 		string filePath = imagePath+Futile.resourceSuffix+"_png";
 		
@@ -132,11 +138,11 @@ public class FAtlasManager
 			
 			Resources.UnloadAsset(imageBytes);
 			
-			LoadAtlasFromTexture(imagePath, texture);
+			return LoadAtlasFromTexture(imagePath, texture);
 		}
 		else //load it as a normal Unity image asset
 		{
-			ActuallyLoadAtlasOrImage(imagePath, imagePath+Futile.resourceSuffix,"");
+			return ActuallyLoadAtlasOrImage(imagePath, imagePath+Futile.resourceSuffix,"");
 		}
 	}
 	
@@ -161,15 +167,14 @@ public class FAtlasManager
 				
 				atlas.Unload();
 				_atlases.RemoveAt(a);
-
-				Futile.instance.ClearLayersThatUseAtlas(atlas);
-
+				
 				wasAtlasRemoved = true;
 			}
 		}
 		
 		if(wasAtlasRemoved)
 		{
+			Futile.stage.renderer.Clear();
 			Resources.UnloadUnusedAssets();
 		}
 	}
@@ -266,6 +271,18 @@ public class FAtlasManager
 	
 		_fonts.Add(font);
 		_fontsByName.Add (name, font);
+	}
+
+	public void AddElement (FAtlasElement element) //It's recommended to use myAtlas.CreateElement() instead of this
+	{
+		if(_allElementsByName.ContainsKey(element.name))
+		{
+			throw new FutileException("Duplicate element name '" + element.name +"' found! All element names must be unique!");	
+		}
+		else 
+		{
+			_allElementsByName.Add (element.name, element);
+		}
 	}
 
 	public void LogAllElementNames()
