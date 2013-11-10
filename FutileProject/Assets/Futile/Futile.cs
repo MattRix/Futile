@@ -27,7 +27,6 @@ public class Futile : MonoBehaviour
 	
 	static public bool shouldRemoveAtlasElementFileExtensions = true;
 	
-	
 	//These are set in FScreen
 	static public float displayScale; //set based on the resolution setting (the unit to pixel scale)
 	static public float displayScaleInverse; // 1/displayScale
@@ -100,7 +99,6 @@ public class Futile : MonoBehaviour
 		_camera = _cameraHolder.AddComponent<Camera>();
 		_camera.tag = "MainCamera";
 		_camera.name = "Camera";
-		//_camera.clearFlags = CameraClearFlags.Depth; //TODO: check if this is faster or not?
 		_camera.clearFlags = CameraClearFlags.SolidColor;
 		_camera.nearClipPlane = 0.0f;
 		_camera.farClipPlane = 500.0f;
@@ -342,6 +340,8 @@ public class Futile : MonoBehaviour
 		}
 		
 		if(SignalLateUpdate != null) SignalLateUpdate();
+
+		touchManager.CleanUpEndedAndCanceledTouches();
 	}	
 	
 	private void FixedUpdate()
