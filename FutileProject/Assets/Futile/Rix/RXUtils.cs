@@ -368,6 +368,13 @@ public class RXMath
 		float radians = angle * RXMath.DTOR;
 		return new Vector2(Mathf.Cos(radians) * distance, -Mathf.Sin(radians) * distance);
 	}
+
+	//returns the percentage across a subrange...
+	//so for example (0.75,0.25,1.0) would return 0.666, because 0.75f is 66% of the way between 0.25 and 1.0f
+	public static float GetSubPercent(float fullPercent, float lowEnd, float highEnd)
+	{
+		return Mathf.Clamp01((fullPercent-lowEnd)/(highEnd-lowEnd));
+	}
 }
 
 public static class RXRandom
