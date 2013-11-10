@@ -153,13 +153,21 @@ public static class RXGoKitExtensions
 	
 	public static TweenConfig removeWhenComplete(this TweenConfig config)
 	{
-		config.onComplete(HandleRemoveWhenDoneTweenComplete);	
+		config.onComplete((tween) => {((tween as Tween).target as FNode).RemoveFromContainer();});	
 		return config;
 	}
-	
-	private static void HandleRemoveWhenDoneTweenComplete (AbstractTween tween)
+
+	public static TweenConfig hideWhenComplete(this TweenConfig config)
 	{
-		((tween as Tween).target as FNode).RemoveFromContainer();
+		config.onComplete((tween) => {((tween as Tween).target as FNode).isVisible = false;});	
+		return config;
+	}
+
+	//forward to an action with no arguments instead (ex you can pass myNode.RemoveFromContainer)
+	public static TweenConfig onComplete(this TweenConfig config, Action onCompleteAction)
+	{
+		config.onComplete((tween) => {onCompleteAction();});	
+		return config;
 	}
 }
 
@@ -293,5 +301,71 @@ public static class RXListExtensions
 			
 	        list[i + 1] = item;
     	}
+	}
+}
+
+public static class RXDictionaryExtensions
+{
+	//this implementation can alternatively be written using dict.TryGetKey, but I'm not sure which approach is faster
+	public static TValue GetValueOrDefault<TKey,TValue>(this Dictionary<TKey,TValue> dict, TKey key, TValue defaultValue)
+	{
+		if(dict.ContainsKey(key))
+		{
+			return dict[key];
+		}
+		else 
+		{
+			return defaultValue;
+		}
+	}
+	
+	public static void SetValueIfExists<TKey,TValue>(this Dictionary<TKey,TValue> dict, TKey key, ref TValue thingToSet)
+	{
+		if(dict.ContainsKey(key))
+		{
+			thingToSet = dict[key];
+		}
+	}
+	
+	//these next few are super handy for parsing json Dictionary<string,object> stuff
+	
+	public static void SetStringIfExists<TKey,TValue>(this Dictionary<TKey,TValue> dict, TKey key, ref string thingToSet)
+	{
+		if(dict.ContainsKey(key))
+		{
+			thingToSet = dict[key] as string;
+		}
+	}
+	
+	public static void SetFloatIfExists<TKey,TValue>(this Dictionary<TKey,TValue> dict, TKey key, ref float thingToSet)
+	{
+		if(dict.ContainsKey(key))
+		{
+			thingToSet = float.Parse(dict[key] as string);
+		}
+	}
+	
+	public static void SetIntIfExists<TKey,TValue>(this Dictionary<TKey,TValue> dict, TKey key, ref int thingToSet)
+	{
+		if(dict.ContainsKey(key))
+		{
+			thingToSet = int.Parse(dict[key] as string);
+		}
+	}
+	
+	public static void SetBoolIfExists<TKey,TValue>(this Dictionary<TKey,TValue> dict, TKey key, ref bool thingToSet)
+	{
+		if(dict.ContainsKey(key))
+		{
+			thingToSet = bool.Parse(dict[key] as string);
+		}
+	}
+}
+
+public static class RXStringExtensions
+{
+	public static string Format(this string @this, params object[] args)
+	{
+		return string.Format(@this,args);
 	}
 }
