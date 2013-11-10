@@ -79,7 +79,7 @@ public class FAtlas
 		_texture = texture;
 		_textureSize = new Vector2(_texture.width,_texture.height);
 		
-		CreateAtlasFromSingleImage();
+		CreateElementForEntireAtlas();
 	}
 	
 	public FAtlas (string name, string dataPath, Texture texture, int index) //atlas with data path
@@ -94,6 +94,7 @@ public class FAtlas
 		
 		_isSingleImage = false;
 		LoadAtlasData();
+		CreateElementForEntireAtlas();
 	}
 	
 	public FAtlas (string name, string imagePath, string dataPath, int index, bool shouldLoadAsSingleImage)
@@ -109,12 +110,13 @@ public class FAtlas
 		if(shouldLoadAsSingleImage)
 		{
 			_isSingleImage = true;
-			CreateAtlasFromSingleImage();
+			CreateElementForEntireAtlas();
 		}
 		else
 		{
 			_isSingleImage = false;
 			LoadAtlasData();
+			CreateElementForEntireAtlas();
 		}
 	}
 	
@@ -230,7 +232,7 @@ public class FAtlas
 		Resources.UnloadAsset(dataAsset);
 	}
 	
-	private void CreateAtlasFromSingleImage()
+	private void CreateElementForEntireAtlas()
 	{
 		FAtlasElement element = new FAtlasElement();
 		
