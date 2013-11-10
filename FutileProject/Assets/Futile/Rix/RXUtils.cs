@@ -310,7 +310,7 @@ public class RXMath
 		return (input < 0) ? result + range : result;
 	}
 	
-	public static float Wrap(float input, float range)
+	public static float Wrap(float input, float range) 
 	{
 		float result = input % range;
 		return (input < 0) ? result + range : result;
@@ -353,7 +353,7 @@ public class RXMath
 	{
 		input = Wrap(input,1.0f);
 		if(input < 0.5f) return input*2f;
-		return 2f-input*2f;
+		return 2f-input*2f; 
 	}
 
 	//turn input from 0 to 1 into a circular sin pattern
@@ -369,7 +369,7 @@ public class RXMath
 		return new Vector2(Mathf.Cos(radians) * distance, -Mathf.Sin(radians) * distance);
 	}
 
-	//returns the percentage across a subrange...
+	//returns the percentage across a subrange... 
 	//so for example (0.75,0.25,1.0) would return 0.666, because 0.75f is 66% of the way between 0.25 and 1.0f
 	public static float GetSubPercent(float fullPercent, float lowEnd, float highEnd)
 	{
@@ -505,71 +505,119 @@ public class RXCircle
 	}
 }
 
-//This class is incomplete, I just have to get around to converting all the equations to this simplified format
+//these equations shamelessly stolen from Chevy Ray's AutoMotion ;) (https://github.com/UnityPatterns/AutoMotion/) 
+//note that they only take a t variable (which should be between 0 and 1) and return a value between 0 and 1
 public static class RXEase
 {
-	//based on GoKit's easing equations: https://github.com/prime31/GoKit/tree/master/Assets/Plugins/GoKit/easing
-	//but simplified to work with only normalized values (0..1)
-	//t = current time, b = starting value, c = final value, d = duration
-	//for our purposes, t = input, b = 0, d = 1, c = 1 :::: note that (t/d = input)
+	public delegate float Delegate(float t);
 
-	public static float QuadOut(float input)
-	{
-		return -input * (input - 2.0f);
-	}
+	public static Delegate Linear = (t) => 		{ return t; };
+	public static Delegate QuadIn = (t) => 		{ return t * t; };
+	public static Delegate QuadOut = (t) => 	{ return 1f - QuadIn(1f - t); };
+	public static Delegate QuadInOut = (t) => 	{ return (t <= 0.5f) ? QuadIn(t * 2f) * 0.5f : QuadOut(t * 2f - 1f) * 0.5f + 0.5f; };
+	public static Delegate CubeIn = (t) => 		{ return t * t * t; };
+	public static Delegate CubeOut = (t) => 	{ return 1f - CubeIn(1f - t); };
+	public static Delegate CubeInOut = (t) => 	{ return (t <= 0.5f) ? CubeIn(t * 2f) * 0.5f : CubeOut(t * 2f - 1f) * 0.5f + 0.5f; };
+	public static Delegate BackIn = (t) => 		{ return t * t * (2.70158f * t - 1.70158f); };
+	public static Delegate BackOut = (t) => 	{ return 1f - BackIn(1f - t); };
+	public static Delegate BackInOut = (t) => 	{ return (t <= 0.5f) ? BackIn(t * 2f) * 0.5f : BackOut(t * 2f - 1f) * 0.5f + 0.5f; };
+	public static Delegate ExpoIn = (t) => 		{ return Mathf.Pow(2f, 10f * (t-1.0f)); };
+	public static Delegate ExpoOut = (t) => 	{ return 1f - Mathf.Pow(2f, -10f * t); };
+	public static Delegate ExpoInOut = (t) => 	{ return t < .5f ? ExpoIn(t * 2f) * 0.5f : ExpoOut(t * 2f - 1f) * 0.5f + 0.5f; };
+	public static Delegate SineIn = (t) => 		{ return -Mathf.Cos(Mathf.PI * 0.5f * t) + 1f; };
+	public static Delegate SineOut = (t) => 	{ return Mathf.Sin(Mathf.PI * 0.5f * t); };
+	public static Delegate SineInOut = (t) => 	{ return -Mathf.Cos(Mathf.PI * t) * 0.5f + .5f; };
+	public static Delegate ElasticIn = (t) => 	{ return 1f - ElasticOut(1f - t); };
+	public static Delegate ElasticOut = (t) => 	{ return Mathf.Pow(2f, -10f * t) * Mathf.Sin((t - 0.075f) * (2f * Mathf.PI) / 0.3f) + 1f; };
+	public static Delegate ElasticInOut = (t) =>{ return (t <= 0.5f) ? ElasticIn(t * 2f) / 2f : ElasticOut(t * 2f - 1f) * 0.5f + 0.5f; };
 
-	public static float QuadIn(float input)
+	//turns input from 0 to 1 into a eased saw pattern from 0 to 1 and back to 0... so when input is 0.5, the output is 1 etc.
+	public static float UpDown(float input, Delegate easeFunc)
 	{
-		return input * input;
-	}
-
-	public static float QuadInOut(float input)
-	{
-		if (input < 0.5f) return 2.0f * input * input;
-		input = (input-0.5f) * 2.0f;
-		return 0.5f - 0.5f * input * (input - 2.0f);
-	}
-
-	public static float ExpoOut(float input)
-	{
-		return -Mathf.Pow( 2.0f, -10.0f * input) + 1.0f;
-	}
-
-	public static float ExpoIn(float input)
-	{
-		return Mathf.Pow(2.0f,10.0f * (input - 1.0f));
+		if(input < 0.5f) return easeFunc(input*2f);
+		return easeFunc(2f-input*2f); 
 	}
 
-	public static float ExpoInOut(float input)
-	{
-		if (input < 0.5f) return Mathf.Pow(2.0f,10.0f * (input*2.0f - 1.0f)) * 0.5f;
-		else return 0.5f + (-Mathf.Pow( 2.0f, -20.0f * (input-0.5f)) + 1.0f) * 0.5f;
-	}
-	
-	public static float BackOut(float input) {return BackOut(input,1.7f);}
-	public static float BackOut(float input, float backAmount)
-	{
-		input = input - 1.0f;
-		return (input * input * ((backAmount + 1) * input + backAmount) + 1);
-	}
-
-	public static float BackIn(float input) {return BackIn(input,1.7f);}
-	public static float BackIn(float input, float backAmount)
-	{
-		return  input * input * ((backAmount + 1.0f) * input - backAmount);
-	}
-
-	public static float BackInOut(float input) {return BackInOut(input,1.7f);}
-	public static float BackInOut(float input, float backAmount)
-	{
-		if (input < 0.5f) return BackIn(input*2.0f,backAmount)*0.5f;
-		else return 0.5f + BackOut((input-0.5f)*2.0f,backAmount)*0.5f;
-	}
-
-	public static float SinInOut(float input)
-	{
-		return -0.5f * (Mathf.Cos(Mathf.PI*input) - 1.0f);
-	}
 }
 
 
+//converts the simple equations in RXEase into the standard t b c d format
+//where t = current time, b = starting value, c = final value, d = duration
+//(I don't really have a great use case for this, but it was a fun class to make :D)
+public static class RXEaseStandard
+{
+	public static Delegate Linear = 		Standardize(RXEase.Linear);
+	public static Delegate QuadIn = 		Standardize(RXEase.QuadIn);
+	public static Delegate QuadOut = 		Standardize(RXEase.QuadOut);
+	public static Delegate QuadInOut = 		Standardize(RXEase.QuadInOut);
+	public static Delegate CubeIn = 		Standardize(RXEase.CubeIn);
+	public static Delegate CubeOut = 		Standardize(RXEase.CubeOut);
+	public static Delegate CubeInOut = 		Standardize(RXEase.CubeInOut);
+	public static Delegate BackIn = 		Standardize(RXEase.BackIn);
+	public static Delegate BackOut = 		Standardize(RXEase.BackOut);
+	public static Delegate BackInOut = 		Standardize(RXEase.BackInOut);
+	public static Delegate ExpoIn = 		Standardize(RXEase.ExpoIn);
+	public static Delegate ExpoOut = 		Standardize(RXEase.ExpoOut);
+	public static Delegate ExpoInOut = 		Standardize(RXEase.ExpoInOut);
+	public static Delegate SineIn = 		Standardize(RXEase.SineIn);
+	public static Delegate SineOut = 		Standardize(RXEase.SineOut);
+	public static Delegate SineInOut = 		Standardize(RXEase.SineInOut);
+	public static Delegate ElasticIn = 		Standardize(RXEase.ElasticIn);
+	public static Delegate ElasticOut = 	Standardize(RXEase.ElasticOut);
+	public static Delegate ElasticInOut = 	Standardize(RXEase.ElasticInOut);
+	
+	public delegate float Delegate(float currentTime,float startingValue,float finalValue,float duration);
+
+	public static Delegate Standardize(RXEase.Delegate simpleFunc)
+	{
+		return (t,b,c,d) =>
+		{
+			return c * simpleFunc(t) / d + b;
+		};
+	}
+}
+
+//a handy class for keeping tweened values encapsulated
+public class RXTweenable
+{
+	private float _amount;
+
+	public Action SignalChange;
+
+	public RXTweenable(float amount)
+	{
+		_amount = amount;
+	}
+
+	public RXTweenable(float amount, Action SignalChange)
+	{
+		this.SignalChange = SignalChange;
+	}
+
+	public float amount
+	{
+		get {return _amount;}
+		set 
+		{
+			if(_amount != value)
+			{
+				_amount = value; 
+				if(SignalChange != null) SignalChange();
+			}
+		}
+	}
+
+	public void To(float targetAmount, float duration)
+	{
+		this.To(targetAmount,duration, new TweenConfig());
+	}
+
+	public void To(float targetAmount, float duration, TweenConfig tc)
+	{
+		Go.killAllTweensWithTarget(this);
+		tc.floatProp("amount", targetAmount);
+		Go.to(this,duration,tc);
+	}
+
+
+}
