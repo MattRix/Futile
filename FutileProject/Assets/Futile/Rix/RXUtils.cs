@@ -88,7 +88,17 @@ public static class RXUtils
 		string[] parts = input.Split(new char[] {','});	
 		return new Vector2(float.Parse(parts[0]), float.Parse(parts[1]));
 	}
-	
+
+	//a bit of a hacky (and very slow) way to do it, but it makes it readable enough for debugging purposes
+	public static string PrettyifyJson(string output)
+	{
+		output = output.Replace("{","\n{\n");
+		output = output.Replace("}","\n}");
+		output = output.Replace("[","\n[\n");
+		output = output.Replace("]","\n]");
+		output = output.Replace(",",",\n");
+		return output;
+	}
 }
 
 public static class RXArrayUtil
