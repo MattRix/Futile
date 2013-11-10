@@ -13,7 +13,9 @@ public class FShader
 	public static FShader AdditiveColor;
 	public static FShader Solid;
 	public static FShader SolidColored;
-	
+
+	public static FShader Basic_PixelSnap;
+
 	private static int _nextShaderIndex = 0;
 	private static List<FShader> _shaders = new List<FShader>();
 	
@@ -45,6 +47,8 @@ public class FShader
 		AdditiveColor = CreateShader("AdditiveColor", Shader.Find("Futile/AdditiveColor"));	
 		Solid = CreateShader("Solid", Shader.Find("Futile/Solid"));	
 		SolidColored = CreateShader("SolidColored", Shader.Find("Futile/SolidColored"));	
+
+		Basic_PixelSnap = CreateShader("Basic_PixelSnap", Shader.Find("Futile/Basic_PixelSnap"));	
 		
 		defaultShader = Basic;
 	}

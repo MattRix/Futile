@@ -11,9 +11,9 @@ Shader "Futile/Basic" //Unlit Transparent Vertex Colored
 	{
 		Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
 		ZWrite Off
-		//Alphatest Greater 0
+		ZTest Always
 		Blend SrcAlpha OneMinusSrcAlpha 
-		Fog { Color(0,0,0,0) }
+		Fog { Mode Off }
 		Lighting Off
 		Cull Off //we can turn backface culling off because we know nothing will be facing backwards
 
@@ -36,7 +36,3 @@ Shader "Futile/Basic" //Unlit Transparent Vertex Colored
 		} 
 	}
 }
-
-
-
-//Blend SrcAlpha OneMinusSrcAlpha 
