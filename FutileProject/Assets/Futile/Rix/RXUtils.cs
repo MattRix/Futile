@@ -99,6 +99,23 @@ public static class RXUtils
 		output = output.Replace(",",",\n");
 		return output;
 	}
+
+	public static bool AreListsEqual<T>(List<T> listA, List<T> listB)
+	{
+		if(listA.Count != listB.Count)
+		{
+			return false;
+		}
+
+		int count = listA.Count;
+
+		for(int c = 0; c<count; c++)
+		{
+			if(!listA[c].Equals(listB[c])) return false;
+		}
+
+		return true;
+	}
 }
 
 public static class RXArrayUtil
@@ -113,6 +130,7 @@ public static class RXArrayUtil
 		return result;
 	}
 }
+
 public class RXColorHSL
 {
 	public float h = 0.0f;
@@ -283,17 +301,20 @@ public class RXMath
 	public const float PI = Mathf.PI;
 	public const float INVERSE_PI = 1.0f/Mathf.PI;
 	public const float INVERSE_DOUBLE_PI = 1.0f/(Mathf.PI*2.0f);
-	
+
+	//Wrap is basically a version of % that works with negative numbers
+
 	public static int Wrap(int input, int range)
 	{
-		return (input + (range*1000000)) % range;	
+		int result = input % range;
+		return (input < 0) ? result + range : result;
 	}
 	
 	public static float Wrap(float input, float range)
 	{
-		return (input + (range*1000000)) % range;	
+		float result = input % range;
+		return (input < 0) ? result + range : result;
 	}
-	
 	
 	public static float GetDegreeDelta(float startAngle, float endAngle) //chooses the shortest angular distance
 	{
@@ -326,6 +347,22 @@ public class RXMath
 		if(first < 0.5f) return first*2.0f;
 		else return 1.0f - ((first - 0.5f)*2.0f); 
 	}
+
+	//turns input from 0 to 1 into a saw pattern from 0 to 1 and back to 0... so when input is 0.5, the output is 1 etc.
+	public static float Saw(float input)
+	{
+		input = Wrap(input,1.0f);
+		if(input < 0.5f) return input*2f;
+		return 2f-input*2f;
+	}
+
+	//turn input from 0 to 1 into a circular sin pattern
+	public static float Circ(float input)
+	{
+		input = Wrap(input,1.0f);
+		return Mathf.Sin(input * Mathf.PI);
+	}
+
 	public static Vector2 GetOffsetFromAngle(float angle, float distance)
 	{
 		float radians = angle * RXMath.DTOR;
@@ -386,20 +423,20 @@ public static class RXRandom
 	}
 
 	//random item from all passed arguments/params - RXRandom.Select(one, two, three);
-	public static object Select(params object[] objects)
+	public static object GetRandomItem(params object[] objects)
 	{
 		return objects[_randomSource.Next() % objects.Length];
 	}
 
 	//random item from an array
-	public static T AnyItem<T>(T[] items)
+	public static T GetRandomItem<T>(T[] items)
 	{
 		if(items.Length == 0) return default(T); //null
 		return items[_randomSource.Next() % items.Length];
 	}
 
 	//random item from a list
-	public static T AnyItem<T>(List<T> items)
+	public static T GetRandomItem<T>(List<T> items)
 	{
 		if(items.Count == 0) return default(T); //null
 		return items[_randomSource.Next() % items.Count];
