@@ -91,6 +91,18 @@ public static class RXUtils
 	
 }
 
+public static class RXArrayUtil
+{
+	public static T[] CreateArrayFilledWithItem<T> (T item, int count)
+	{
+		T[] result = new T[count];
+		for(int c = 0; c<count; c++)
+		{
+			result[c] = item;
+		}
+		return result;
+	}
+}
 public class RXColorHSL
 {
 	public float h = 0.0f;
