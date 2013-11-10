@@ -7,6 +7,8 @@ using System.Collections.Generic;
 
 public class FLabel : FFacetElementNode
 {
+	public Action SignalTextChange;
+
 	public static float defaultAnchorX = 0.5f;
 	public static float defaultAnchorY = 0.5f;
 	
@@ -237,6 +239,7 @@ public class FLabel : FFacetElementNode
 				_text = value; 
 				_doesTextNeedUpdate = true;
 				CreateTextQuads(); //lazily creating the quads was causing too many issues, so just create them when .text is set
+				if(SignalTextChange != null) SignalTextChange();
 			}
 		}
 	}
