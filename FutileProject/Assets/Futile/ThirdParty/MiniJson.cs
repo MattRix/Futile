@@ -69,7 +69,7 @@ using System.Text;
 /// This class encodes and decodes JSON strings.
 /// Spec. details, see http://www.json.org/
 ///
-/// JSON uses Arrays and Objects. These correspond here to the datatypes IList and IDictionary.
+/// JSON uses Arrays and Objects. These correspond here to the datatypes List<object> and Dictionary<string,object>.
 /// All numbers are parsed to doubles.
 /// </summary>
 public static class Json {
@@ -77,7 +77,7 @@ public static class Json {
 	/// Parses the string json into a value
 	/// </summary>
 	/// <param name="json">A JSON string.</param>
-	/// <returns>An List&lt;object&gt;, a Dictionary&lt;string, object&gt;, a double, an integer,a string, null, true, or false</returns>
+	/// <returns>An List<object>, a Dictionary<string,object>, a double, an integer,a string, null, true, or false</returns>
 	public static object Deserialize(string json) {
 	    // save the string for debug information
 	    if (json == null) {
@@ -123,8 +123,8 @@ public static class Json {
 	        json = null;
 	    }
 
-	    Dictionary<string, object> ParseObject() {
-	        Dictionary<string, object> table = new Dictionary<string, object>();
+	    Dictionary<string,object> ParseObject() {
+	        Dictionary<string,object> table = new Dictionary<string,object>();
 
 	        // ditch opening brace
 	        json.Read();
@@ -393,9 +393,9 @@ public static class Json {
 	}
 
 	/// <summary>
-	/// Converts a IDictionary / IList object or a simple type (string, int, etc.) into a JSON string
+	/// Converts a Dictionary<string,object> / List<object> object or a simple type (string, int, etc.) into a JSON string
 	/// </summary>
-	/// <param name="json">A Dictionary&lt;string, object&gt; / List&lt;object&gt;</param>
+	/// <param name="json">A Dictionary<string,object>&lt;string, object&gt; / List<object>&lt;object&gt;</param>
 	/// <returns>A JSON encoded string, or null if object 'json' is not serializable</returns>
 	public static string Serialize(object obj) {
 	    return Serializer.Serialize(obj);
@@ -417,8 +417,8 @@ public static class Json {
 	    }
 
 	    void SerializeValue(object value) {
-	        IList asList;
-	        IDictionary asDict;
+	        List<object> asList;
+	        Dictionary<string,object> asDict;
 	        string asStr;
 
 	        if (value == null) {
@@ -430,10 +430,10 @@ public static class Json {
 	        else if (value is bool) {
 	            builder.Append(value.ToString().ToLower());
 	        }
-	        else if ((asList = value as IList) != null) {
+	        else if ((asList = value as List<object>) != null) {
 	            SerializeArray(asList);
 	        }
-	        else if ((asDict = value as IDictionary) != null) {
+	        else if ((asDict = value as Dictionary<string,object>) != null) {
 	            SerializeObject(asDict);
 	        }
 	        else if (value is char) {
@@ -444,7 +444,7 @@ public static class Json {
 	        }
 	    }
 
-	    void SerializeObject(IDictionary obj) {
+	    void SerializeObject(Dictionary<string,object> obj) {
 	        bool first = true;
 
 	        builder.Append('{');
@@ -457,7 +457,7 @@ public static class Json {
 	            SerializeString(e.ToString());
 	            builder.Append(':');
 
-	            SerializeValue(obj[e]);
+				SerializeValue(obj[e.ToString()]);
 
 	            first = false;
 	        }
@@ -465,7 +465,7 @@ public static class Json {
 	        builder.Append('}');
 	    }
 
-	    void SerializeArray(IList anArray) {
+	    void SerializeArray(List<object> anArray) {
 	        builder.Append('[');
 
 	        bool first = true;
