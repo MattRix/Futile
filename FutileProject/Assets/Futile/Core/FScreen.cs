@@ -36,6 +36,9 @@ public class FScreen
 	
 	private float _screenLongLength;
 	private float _screenShortLength;
+
+	//if true, the fscreen (pixel) width is unity Screen width, if false fscreen width is Screen height
+	private bool _fscreenWidthIsScreenWidth;
 	
 	private bool _didJustResize;
 	private float _oldWidth;
@@ -127,6 +130,7 @@ public class FScreen
 			pixelHeight = _screenShortLength;
 		}
 		
+		_fscreenWidthIsScreenWidth=(pixelWidth==Screen.width);
 		
 		//get the resolution level - the one we're closest to WITHOUT going over, price is right rules :)
 		_resLevel = null;
@@ -252,7 +256,7 @@ public class FScreen
 			Screen.orientation = newOrientation;
 			_currentOrientation = newOrientation;
 			
-			UpdateScreenDimensions();
+			UpdateScreenDimensions(true);
 			
 			Debug.Log ("Orientation switched to " + _currentOrientation + " screen is now: " + pixelWidth+"x"+pixelHeight+"px");
 			
@@ -263,20 +267,34 @@ public class FScreen
 		}
 	}
 	
-	private void UpdateScreenDimensions()
+	private void UpdateScreenDimensions(bool orientationChange=false)
 	{
-		_screenLongLength = Math.Max (Screen.width, Screen.height);
-		_screenShortLength = Math.Min (Screen.width, Screen.height);
-		
-		if(_currentOrientation == ScreenOrientation.Portrait || _currentOrientation == ScreenOrientation.PortraitUpsideDown)
-		{
-			pixelWidth = _screenShortLength;
-			pixelHeight = _screenLongLength;
-		}
-		else //landscape
-		{
-			pixelWidth = _screenLongLength;
-			pixelHeight = _screenShortLength;
+		if (orientationChange) {
+			_screenLongLength = Math.Max (Screen.width, Screen.height);
+			_screenShortLength = Math.Min (Screen.width, Screen.height);
+			
+			if(_currentOrientation == ScreenOrientation.Portrait || _currentOrientation == ScreenOrientation.PortraitUpsideDown)
+			{
+				pixelWidth = _screenShortLength;
+				pixelHeight = _screenLongLength;
+			}
+			else //landscape
+			{
+				pixelWidth = _screenLongLength;
+				pixelHeight = _screenShortLength;
+			}
+			_fscreenWidthIsScreenWidth=(pixelWidth==Screen.width);
+		} else {
+			if (_fscreenWidthIsScreenWidth) {
+				pixelWidth=Screen.width;
+				pixelHeight=Screen.height;
+			} else {
+				pixelWidth=Screen.height;
+				pixelHeight=Screen.width;
+			}
+			
+			//Check for an orientation change? Not sure it's appropriate to do so
+			//...
 		}
 		
 		width = pixelWidth*Futile.displayScaleInverse;
