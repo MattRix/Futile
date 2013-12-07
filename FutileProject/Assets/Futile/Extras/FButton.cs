@@ -34,6 +34,8 @@ public class FButton : FContainer, FSingleTouchableInterface
 	protected bool _isEnabled = true;
 	protected bool _supportsOver = false;
 	protected bool _isTouchDown = false;
+
+	public bool isTouchOver = false;
 	
 	public FButton (string upElementName, string downElementName, string overElementName, string clickSoundName)
 	{
@@ -181,10 +183,10 @@ public class FButton : FContainer, FSingleTouchableInterface
 		
 		if(!_shouldUseCustomHitRect)
 		{
-			_hitRect = _sprite.textureRect;
+			_hitRect = _sprite.textureRect.CloneAndScale(_sprite.scaleX,_sprite.scaleY);
 		}
 		
-		Vector2 touchPos = _sprite.GetLocalTouchPosition(touch);
+		Vector2 touchPos = GetLocalTouchPosition(touch);
 		
 		if(_hitRect.Contains(touchPos))
 		{
@@ -200,6 +202,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 				
 				if(SignalPress != null) SignalPress(this);
 				
+				isTouchOver = true;
 				_isTouchDown = true;
 			}
 			
@@ -211,7 +214,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 	
 	virtual public void HandleSingleTouchMoved(FTouch touch)
 	{
-        Vector2 touchPos = _sprite.GetLocalTouchPosition(touch);
+        Vector2 touchPos = GetLocalTouchPosition(touch);
 		
 		//expand the hitrect so that it has more error room around the edges
 		//this is what Apple does on iOS and it makes for better usability
@@ -224,6 +227,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 			{
 				_sprite.color = _downColor;
 			}
+			isTouchOver = true;
 			_isTouchDown = true;
 		}
 		else
@@ -233,6 +237,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 			{
 				_sprite.color = _upColor;
 			}
+			isTouchOver = false;
 			_isTouchDown = false;
 		}
 	}
@@ -240,6 +245,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 	virtual public void HandleSingleTouchEnded(FTouch touch)
 	{
 		_isTouchDown = false;
+		isTouchOver = false;
 		
 		_sprite.element = _upElement;
 		if (_shouldUseCustomColors)
@@ -247,7 +253,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 			_sprite.color = _upColor;
 		}
 		
-        Vector2 touchPos = _sprite.GetLocalTouchPosition(touch);
+        Vector2 touchPos = GetLocalTouchPosition(touch);
 		
 		//expand the hitrect so that it has more error room around the edges
 		//this is what Apple does on iOS and it makes for better usability
@@ -275,6 +281,7 @@ public class FButton : FContainer, FSingleTouchableInterface
 	virtual public void HandleSingleTouchCanceled(FTouch touch)
 	{
 		_isTouchDown = false;
+		isTouchOver = false;
 		
 		_sprite.element = _upElement;
 		if (_shouldUseCustomColors)
