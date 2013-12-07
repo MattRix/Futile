@@ -302,18 +302,18 @@ public class RXMath
 	public const float INVERSE_PI = 1.0f/Mathf.PI;
 	public const float INVERSE_DOUBLE_PI = 1.0f/(Mathf.PI*2.0f);
 
-	//Wrap is basically a version of % that works with negative numbers
-
-	public static int Wrap(int input, int range)
+	//Mod is basically a version of mod (%) that works with negative numbers
+	public static int Mod(int input, int range)
 	{
 		int result = input % range;
-		return (input < 0) ? result + range : result;
+		return (result < 0) ? result + range : result;
 	}
-	
-	public static float Wrap(float input, float range) 
+
+	//Mod is basically a version of mod (%) that works with negative numbers
+	public static float Mod(float input, float range) 
 	{
 		float result = input % range;
-		return (input < 0) ? result + range : result;
+		return (result < 0) ? result + range : result;
 	}
 	
 	public static float GetDegreeDelta(float startAngle, float endAngle) //chooses the shortest angular distance
@@ -351,7 +351,7 @@ public class RXMath
 	//turns input from 0 to 1 into a saw pattern from 0 to 1 and back to 0... so when input is 0.5, the output is 1 etc.
 	public static float Saw(float input)
 	{
-		input = Wrap(input,1.0f);
+		input = Mod(input,1.0f);
 		if(input < 0.5f) return input*2f;
 		return 2f-input*2f; 
 	}
@@ -359,7 +359,7 @@ public class RXMath
 	//turn input from 0 to 1 into a circular sin pattern
 	public static float Circ(float input)
 	{
-		input = Wrap(input,1.0f);
+		input = Mod(input,1.0f);
 		return Mathf.Sin(input * Mathf.PI);
 	}
 
@@ -416,7 +416,8 @@ public static class RXRandom
 	{
 		return low + (high-low)*(float)_randomSource.NextDouble();
 	}
-	
+
+	//note, this will never return the high value (so if you enter Range(0,2) you'll only get 0 and 1)
 	public static int Range(int low, int high)
 	{
 		int delta = high - low;
@@ -427,6 +428,11 @@ public static class RXRandom
 	public static bool Bool()
 	{
 		return _randomSource.NextDouble() < 0.5;	
+	}
+
+	public static bool Bool(float chanceOfTrue)
+	{
+		return _randomSource.NextDouble() < chanceOfTrue;	
 	}
 
 	//random item from all passed arguments/params - RXRandom.Select(one, two, three);
@@ -442,11 +448,23 @@ public static class RXRandom
 		return items[_randomSource.Next() % items.Length];
 	}
 
+	//replaces one item at random with a new one 
+	public static void ReplaceRandomItem<T>(T[] items, T item)
+	{
+		items[_randomSource.Next() % items.Length] = item;
+	}
+
 	//random item from a list
 	public static T GetRandomItem<T>(List<T> items)
 	{
 		if(items.Count == 0) return default(T); //null
 		return items[_randomSource.Next() % items.Count];
+	}
+
+	//replaces one item at random with a new one 
+	public static void ReplaceRandomItem<T>(List<T> items, T item)
+	{
+		items[_randomSource.Next() % items.Count] = item;
 	}
 	
 	//this isn't really perfectly randomized, but good enough for most purposes
@@ -470,11 +488,23 @@ public static class RXRandom
 		list.Sort(RandomComparison);
 	}
 
-	private static int RandomComparison<T>(T a, T b) 
+	public static int RandomComparison<T>(T a, T b) 
 	{
 		if(_randomSource.Next() % 2 == 0) return -1;
 
 		return 1;
+	}
+
+	public const string randomChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+	public static string GetRandomString(int numChars)
+	{
+		string result = "";
+		for(int n = 0; n<numChars; n++)
+		{
+			result += randomChars[(_randomSource.Next() % randomChars.Length)];
+		}
+		return result;
 	}
 
 }
@@ -618,6 +648,40 @@ public class RXTweenable
 		tc.floatProp("amount", targetAmount);
 		Go.to(this,duration,tc);
 	}
+}
 
+//the GoKit tweenchain was causing errors so I decided to make a simpler one
+public class RXTweenChain
+{
+	public List<Tween> tweensToDo = new List<Tween>();
 
+	public RXTweenChain()
+	{
+	}
+
+	public RXTweenChain Add(object target, float duration, TweenConfig config)
+	{
+		config.onComplete(HandleTweenComplete);
+		Tween tween = new Tween(target,duration,config,null);
+		tweensToDo.Add(tween);
+		return this;
+	}
+
+	void HandleTweenComplete(AbstractTween tween)
+	{
+		StartNextTween();
+	}
+
+	public void Play()
+	{
+		StartNextTween();
+	}
+
+	public void StartNextTween()
+	{
+		if(tweensToDo.Count == 0) return;
+		Tween nextTween = tweensToDo.Shift();
+		Go.addTween(nextTween);
+		nextTween.play();
+	}
 }
