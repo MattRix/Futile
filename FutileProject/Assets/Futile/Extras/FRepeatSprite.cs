@@ -31,7 +31,7 @@ public class FRepeatSprite : FSprite
 		
 		if(!_element.atlas.isSingleImage)
 		{
-			throw new FutileException("ScrollingSprite must be used with a single image, not an atlas! Use Futile.atlasManager.LoadImage()");
+			throw new FutileException("FRepeatSprite must be used with a single image, not an atlas! Use Futile.atlasManager.LoadImage()");
 		}	
 		
 		_isAlphaDirty = true;
