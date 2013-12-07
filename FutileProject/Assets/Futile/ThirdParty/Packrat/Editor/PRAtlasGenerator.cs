@@ -615,6 +615,11 @@ public class PRAtlasGenerator
 
 		File.WriteAllBytes(link.atlasFilePath + pngSuffix,atlasTexture.EncodeToPNG());
 
+		if(PRViewAtlasWindow.instance != null && PRViewAtlasWindow.instance.link == link)
+		{
+			PRViewAtlasWindow.instance.UpdateAtlas();
+		}
+
 		//in theory this should make it unreadable, 
 		//but it doesn't matter because we're about to delete it anyway
 		//atlasTexture.Apply(false,true); 

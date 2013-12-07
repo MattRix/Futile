@@ -306,6 +306,14 @@ public class PRWindow : EditorWindow
 			GUILayout.Space(15.0f);
 
 			GUILayout.BeginHorizontal();
+
+			GUI.backgroundColor = new Color(1.0f,1.0f,0.9f);
+			if(GUILayout.Button("View Atlas"))
+			{
+				PRViewAtlasWindow.Show(link);
+			}
+			GUI.backgroundColor = Color.white;
+
 			GUILayout.FlexibleSpace();
 			GUI.backgroundColor = new Color(0.8f,0.8f,1.0f);
 			if(GUILayout.Button("Duplicate Atlas"))
@@ -449,6 +457,7 @@ public class PRWindow : EditorWindow
 
 				if(_activeGenerator == null) //if it's null, we just built the last atlas we had to generate!
 				{
+					Debug.Log("Packrat: Refresh Asset Database");
 					AssetDatabase.Refresh();
 				}
 
@@ -481,6 +490,135 @@ public class PRWindow : EditorWindow
 	}
 }
 
+public class PRViewAtlasWindow : EditorWindow
+{
+	public static PRViewAtlasWindow instance = null;
+
+	private PRAtlasLink _link;
+	private string _imagePath;
+	private Texture2D _texture;
+
+	private FileSystemWatcher _watcher;
+
+	private bool _shouldShowActualSize = false;
+	private bool _isSmooth = true;
+
+	public static void Show(PRAtlasLink link)
+	{
+		string linkName = Path.GetFileNameWithoutExtension(link.atlasFilePath);
+		// Get existing open window or if none, make a new one:
+		PRViewAtlasWindow window = (PRViewAtlasWindow)EditorWindow.GetWindow(typeof (PRViewAtlasWindow));
+		window.position = new Rect(Screen.width/2,Screen.height/2,512,512);
+		window.title = "Viewing " + Path.GetFileNameWithoutExtension(link.atlasFilePath);
+		window.ShowUtility(); 
+		//window.maximized = true;
+		window.Setup(link); 
+	}
+
+	public void Setup(PRAtlasLink link) 
+	{
+		if(_watcher != null)
+		{
+			_watcher.EnableRaisingEvents = false;
+			_watcher.Dispose();
+			_watcher = null;
+		}
+
+		_link = link;
+		_imagePath = link.atlasFilePath;
+
+		if(link.shouldUseBytes)
+		{
+			_imagePath += "_png.bytes";
+		}
+		else 
+		{
+			_imagePath += ".png";
+		}
+
+		LoadTexture();
+
+		Debug.Log("we have " + _imagePath); 
+
+		_watcher = new FileSystemWatcher(Path.GetDirectoryName(_imagePath));
+		_watcher.Changed += (object sender, FileSystemEventArgs e) => {Debug.Log("FILE CHANGED");};
+	}
+
+	void LoadTexture()
+	{
+		_texture = new Texture2D(0,0,TextureFormat.ARGB32,false,false);
+		_texture.wrapMode = TextureWrapMode.Clamp; //so we don't get pixels from the other edge when scaling
+		if(_isSmooth)
+		{
+			_texture.filterMode = FilterMode.Bilinear;
+		}
+		else 
+		{
+			_texture.filterMode = FilterMode.Point;
+		}
+		_texture.LoadImage(File.ReadAllBytes(_imagePath)); 
+		
+	}
+
+	public void UpdateAtlas()
+	{
+		LoadTexture();
+		Repaint();
+	}
+
+	public void OnEnable()
+	{
+		instance = this;
+	}
+
+	public void OnDisable()
+	{
+		instance = null;
+	}
+
+	public void OnGUI()
+	{
+		if(_texture == null) return;
+
+		GUILayout.BeginHorizontal();
+		{
+			if(GUILayout.Button("RELOAD"))
+			{
+				LoadTexture();
+			}
+
+			if(GUILayout.Button(_isSmooth ? "SHARP" : "SMOOTH"))
+			{
+				_isSmooth = !_isSmooth;
+				if(_isSmooth)
+				{
+					_texture.filterMode = FilterMode.Bilinear;
+				}
+				else 
+				{
+					_texture.filterMode = FilterMode.Point;
+				}
+			}
+
+			if(GUILayout.Button(_shouldShowActualSize ? "SCALED TO FIT" : "ACTUAL SIZE"))
+			{
+				_shouldShowActualSize = !_shouldShowActualSize;
+			}
+		}
+		GUILayout.EndHorizontal();
+
+
+		float w = _shouldShowActualSize ? _texture.width : position.width;
+		float h = _shouldShowActualSize ? _texture.height : position.height-32.0f;
+
+		GUI.DrawTexture(new Rect(0,32,w,h),_texture,ScaleMode.ScaleToFit);
+	}
+
+	public PRAtlasLink link
+	{
+		get {return _link;}
+	}
+}
 
 //
 //public class PRAssetProcessor : AssetPostprocessor 
