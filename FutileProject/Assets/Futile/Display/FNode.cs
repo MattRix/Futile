@@ -55,7 +55,7 @@ public class FNode
 		#endif 
 	}
 	
-	protected void AddEnabler(FNodeEnabler enabler)
+	public void AddEnabler(FNodeEnabler enabler)
 	{
 		if(_enablers == null) _enablers = new List<FNodeEnabler>();
 		
@@ -67,7 +67,7 @@ public class FNode
 		}
 	}
 	
-	protected void RemoveEnabler(FNodeEnabler enabler)
+	public void RemoveEnabler(FNodeEnabler enabler)
 	{
 		if(_enablers == null) return;
 		
@@ -79,7 +79,7 @@ public class FNode
 		_enablers.Remove(enabler);
 	}
 	
-	protected void RemoveEnablerOfType(Type enablerType)
+	public void RemoveEnablerOfType(Type enablerType)
 	{
 		if(_enablers == null) return;
 		
@@ -117,6 +117,17 @@ public class FNode
 	public void RemoveListenForOrientationChange()
 	{	
 		RemoveEnablerOfType(typeof(FNodeEnablerForOrientationChange));
+	}
+
+	public void ListenForPreUpdate(Futile.FutileUpdateDelegate handleUpdateCallback)
+	{
+		RemoveEnablerOfType(typeof(FNodeEnablerForPreUpdate));
+		AddEnabler(new FNodeEnablerForPreUpdate(handleUpdateCallback));
+	}
+	
+	public void RemoveListenForPreUpdate()
+	{	
+		RemoveEnablerOfType(typeof(FNodeEnablerForPreUpdate));
 	}
 	
 	public void ListenForUpdate(Futile.FutileUpdateDelegate handleUpdateCallback)
