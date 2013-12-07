@@ -33,7 +33,7 @@ public class FKerningInfo
 	public float amount;
 }
 
-public struct FLetterQuad
+public class FLetterQuad
 {
 	public FCharInfo charInfo;
 	public Rect rect;
@@ -120,7 +120,7 @@ public class FTextParams
 	}
 }
 
-public struct FLetterQuadLine
+public class FLetterQuadLine
 {
 	public Rect bounds;
 	public int letterCount;
@@ -163,8 +163,9 @@ public class FFont
 		_element = element;
 		_configPath = configPath;
 		_textParams = textParams;
-		_offsetX = offsetX * Futile.displayScale / Futile.resourceScale;
-		_offsetY = offsetY * Futile.displayScale / Futile.resourceScale;
+
+		_offsetX = offsetX; 
+		_offsetY = offsetY;
 		
 		LoadAndParseConfigFile();
 	}
@@ -213,8 +214,6 @@ public class FFont
 		float resourceScaleInverse = Futile.resourceScaleInverse;
 		
 		Vector2 textureSize = _element.atlas.textureSize;
-
-		Debug.Log("texture width " + textureSize.x);
 
 		bool wasKerningFound = false;
 		
