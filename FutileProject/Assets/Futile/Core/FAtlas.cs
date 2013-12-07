@@ -47,6 +47,12 @@ public class FAtlasElement
 		
 		return element;
 	}
+
+	public void UseTrimmedSizeAsBounds()//this will alter the element so that it uses the trimmed area as its bounds
+	{
+		sourceSize.x = sourceRect.width; 
+		sourceSize.y = sourceRect.height;
+	}
 }
 
 public class FAtlas
@@ -67,6 +73,8 @@ public class FAtlas
 	private bool _isSingleImage;
 	
 	private bool _isTextureAnAsset = false;
+
+	private FAtlasElement _fullElement; //an element that represents the entire atlas
 	
 	//TODO: allow users to pass a dictionary of pre-built atlas data if they want
 	public FAtlas (string name, Texture texture, int index) //single image
@@ -262,6 +270,8 @@ public class FAtlas
 		
 		_elements.Add (element);
 		_elementsByName.Add (element.name, element);
+
+		_fullElement = element;
 	}
 
 	public void UpdateElement (FAtlasElement element, float leftX, float bottomY, float pixelWidth, float pixelHeight)
@@ -386,6 +396,11 @@ public class FAtlas
 	public bool isSingleImage
 	{
 		get {return _isSingleImage;}	
+	}
+
+	public FAtlasElement fullElement
+	{
+		get {return _fullElement;}	
 	}
 }
 
