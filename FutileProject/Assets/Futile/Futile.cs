@@ -49,7 +49,8 @@ public class Futile : MonoBehaviour
 	static private bool _isDepthChangeNeeded = false;
 	
 	public delegate void FutileUpdateDelegate();
-	
+
+	public event FutileUpdateDelegate SignalPreUpdate;
 	public event FutileUpdateDelegate SignalUpdate;
 	public event FutileUpdateDelegate SignalAfterUpdate;
 	public event FutileUpdateDelegate SignalFixedUpdate;
@@ -294,7 +295,7 @@ public class Futile : MonoBehaviour
 
             callback.timeRemaining -= Time.deltaTime;
 
-            if(callback.timeRemaining < 0)
+            if(callback.timeRemaining <= 0)
             {
                 callback.func();
                 _delayedCallbacks.RemoveAt(d);
@@ -306,11 +307,13 @@ public class Futile : MonoBehaviour
 	
 	private void Update()
 	{
-        ProcessDelayedCallbacks();
-
 		screen.Update();
 		
 		touchManager.Update();
+
+		if(SignalPreUpdate != null) SignalPreUpdate();
+
+		ProcessDelayedCallbacks();
 
 		if(SignalUpdate != null) SignalUpdate();
 
@@ -377,6 +380,11 @@ public class Futile : MonoBehaviour
 	new public Camera camera
 	{
 		get {return _camera;}	
+	}
+
+	public FutileParams futileParams
+	{
+		get {return _futileParams;}
 	}
 	
 	//
