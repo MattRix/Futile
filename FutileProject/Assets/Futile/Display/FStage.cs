@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 
-public struct FStageTransform
+public class FStageTransform
 {
 	public Vector3 position;
 	public Quaternion rotation;
