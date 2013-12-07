@@ -18,6 +18,27 @@ public class FNodeEnabler
 	}
 }
 
+public class FNodeEnablerForPreUpdate : FNodeEnabler
+{
+	public Futile.FutileUpdateDelegate handleUpdateCallback;
+	
+	public FNodeEnablerForPreUpdate(Futile.FutileUpdateDelegate handleUpdateCallback)
+	{
+		this.handleUpdateCallback = handleUpdateCallback;	
+	}
+	
+	override public void Connect()
+	{
+		Futile.instance.SignalPreUpdate += handleUpdateCallback;
+	}
+	
+	override public void Disconnect()
+	{
+		Futile.instance.SignalPreUpdate -= handleUpdateCallback;
+	}
+}
+
+
 public class FNodeEnablerForUpdate : FNodeEnabler
 {
 	public Futile.FutileUpdateDelegate handleUpdateCallback;
