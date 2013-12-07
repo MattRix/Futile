@@ -14,6 +14,8 @@ public class FSliceSprite : FSprite
 	private int _sliceCount;
 	
 	private Vector2[] _uvVertices;
+
+	private bool _shouldRemoveCenterSlice = false;
 	
 	public FSliceSprite (string elementName, float width, float height, float insetTop, float insetRight, float insetBottom, float insetLeft) : this(Futile.atlasManager.GetElementWithName(elementName), width, height, insetTop, insetRight, insetBottom, insetLeft)
 	{
@@ -116,15 +118,26 @@ public class FSliceSprite : FSprite
 		{
 			if(s == 0) //center slice
 			{
-				_localVertices[sliceVertIndex].Set   (localXMin + ileft,localYMax - itop);
-				_localVertices[sliceVertIndex+1].Set (localXMax - iright,localYMax - itop);
-				_localVertices[sliceVertIndex+2].Set (localXMax - iright,localYMin + ibottom);
-				_localVertices[sliceVertIndex+3].Set (localXMin + ileft,localYMin + ibottom);
-				
-				_uvVertices[sliceVertIndex].Set   (uvXMin + uvleft,uvYMax - uvtop);
-				_uvVertices[sliceVertIndex+1].Set (uvXMax - uvright,uvYMax - uvtop);
-				_uvVertices[sliceVertIndex+2].Set (uvXMax - uvright,uvYMin + uvbottom);
-				_uvVertices[sliceVertIndex+3].Set (uvXMin + uvleft,uvYMin + uvbottom);
+				if(_shouldRemoveCenterSlice) //give it a size of zero so it doesn't get rendered
+				{
+					_localVertices[sliceVertIndex].Set   (0,0);
+					_localVertices[sliceVertIndex+1].Set (0,0);
+					_localVertices[sliceVertIndex+2].Set (0,0);
+					_localVertices[sliceVertIndex+3].Set (0,0);
+				}
+				else 
+				{
+					_localVertices[sliceVertIndex].Set   (localXMin + ileft,localYMax - itop);
+					_localVertices[sliceVertIndex+1].Set (localXMax - iright,localYMax - itop);
+					_localVertices[sliceVertIndex+2].Set (localXMax - iright,localYMin + ibottom);
+					_localVertices[sliceVertIndex+3].Set (localXMin + ileft,localYMin + ibottom);
+					
+					_uvVertices[sliceVertIndex].Set   (uvXMin + uvleft,uvYMax - uvtop);
+					_uvVertices[sliceVertIndex+1].Set (uvXMax - uvright,uvYMax - uvtop);
+					_uvVertices[sliceVertIndex+2].Set (uvXMax - uvright,uvYMin + uvbottom);
+					_uvVertices[sliceVertIndex+3].Set (uvXMin + uvleft,uvYMin + uvbottom);
+				}
+
 				
 				sliceVertIndex += 4;
 			}
@@ -303,6 +316,12 @@ public class FSliceSprite : FSprite
 	{
 		get { return _height; }
 		set { _height = value; _areLocalVerticesDirty = true; } 
+	}
+
+	public bool shouldRemoveCenterSlice
+	{
+		get { return _shouldRemoveCenterSlice; }
+		set { if(_shouldRemoveCenterSlice != value) {_shouldRemoveCenterSlice = value; _areLocalVerticesDirty = true;};} 
 	}
 }
 
