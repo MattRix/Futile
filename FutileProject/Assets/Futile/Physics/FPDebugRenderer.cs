@@ -17,7 +17,7 @@ public class FPDebugRenderer : MonoBehaviour
 	}
 	
 	private FContainer _container;
-	private FContainer _drawHolder;
+	private FContainer _drawContainer;
 	
 	private List<FNode> _nodes = new List<FNode>(1);
 	
@@ -29,7 +29,7 @@ public class FPDebugRenderer : MonoBehaviour
 	{
 		_container = container;	
 		
-		_container.AddChild(_drawHolder = new FContainer());
+		_container.AddChild(_drawContainer = new FContainer());
 		
 		_color = RXUtils.GetColorFromHex(color);
 		
@@ -62,7 +62,7 @@ public class FPDebugRenderer : MonoBehaviour
 			
 			if(newNode != null)
 			{
-				_drawHolder.AddChild(newNode);	
+				_drawContainer.AddChild(newNode);	
 				_nodes.Add(newNode);
 			}
 		}
@@ -74,7 +74,7 @@ public class FPDebugRenderer : MonoBehaviour
 			FPDebugPolygonColliderView debugView = new FPDebugPolygonColliderView("Debug/Triangle", mesh2D);
 			debugView.color = _color;
 			
-			_drawHolder.AddChild(debugView);	
+			_drawContainer.AddChild(debugView);	
 			_nodes.Add(debugView);
 		}
 		
@@ -84,10 +84,10 @@ public class FPDebugRenderer : MonoBehaviour
 	
 	public void Update() 
 	{
-		_drawHolder.x = gameObject.transform.position.x*FPhysics.METERS_TO_POINTS;
-		_drawHolder.y = gameObject.transform.position.y*FPhysics.METERS_TO_POINTS;
+		_drawContainer.x = gameObject.transform.position.x*FPhysics.METERS_TO_POINTS;
+		_drawContainer.y = gameObject.transform.position.y*FPhysics.METERS_TO_POINTS;
 	
-		_drawHolder.rotation = -gameObject.transform.rotation.eulerAngles.z;
+		_drawContainer.rotation = -gameObject.transform.rotation.eulerAngles.z;
 		
 		if(shouldUpdateColliders) UpdateColliders();
 	}
@@ -126,7 +126,7 @@ public class FPDebugRenderer : MonoBehaviour
 	
 	public void OnDestroy()
 	{
-		_drawHolder.RemoveFromContainer();
+		_drawContainer.RemoveFromContainer();
 	}
 
 }
