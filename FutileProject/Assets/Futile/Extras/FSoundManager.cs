@@ -197,6 +197,11 @@ public class FSoundManager
 		UnloadMusic();
 	}
 
+	static public GameObject gameObject
+	{
+		get {return _gameObject;}
+	}
+
 	static public AudioSource soundSource
 	{
 		get {return _soundSource;}
