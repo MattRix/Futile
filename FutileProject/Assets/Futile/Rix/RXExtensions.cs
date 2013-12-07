@@ -89,6 +89,15 @@ public static class RXRectExtensions
 		rect.height *= scaleY;
 		return rect;
 	}
+
+	public static Rect CloneAndScale(this Rect rect, float scaleX, float scaleY)
+	{
+		rect.x = rect.x*scaleX;
+		rect.y = rect.y*scaleY;
+		rect.width *= scaleX;
+		rect.height *= scaleY;
+		return rect;
+	}
 	
 	//general idea from here: http://stackoverflow.com/questions/1343346/calculate-a-vector-from-the-center-of-a-square-to-edge-based-on-radius
 	//(but greatly cleaned up and simplified)
@@ -150,7 +159,13 @@ public static class RXGoKitExtensions
 	{
 		return config.floatProp(propName,propValue,false); 
 	}
-	
+
+	//this makes it so we don't have to specify false for isRelative every.single.time.
+	public static TweenConfig colorProp(this TweenConfig config, string propName, Color propValue)
+	{
+		return config.colorProp(propName,propValue,false); 
+	}
+
 	public static TweenConfig removeWhenComplete(this TweenConfig config)
 	{
 		config.onComplete((tween) => {((tween as Tween).target as FNode).RemoveFromContainer();});	
@@ -169,6 +184,82 @@ public static class RXGoKitExtensions
 		config.onComplete((tween) => {onCompleteAction();});	
 		return config;
 	}
+
+	public static TweenConfig alpha(this TweenConfig config, float alpha)
+	{
+		config.tweenProperties.Add(new FloatTweenProperty("alpha",alpha,false));
+		return config;
+	}
+
+	public static TweenConfig x(this TweenConfig config, float x)
+	{
+		config.tweenProperties.Add(new FloatTweenProperty("x",x,false));
+		return config;
+	}
+
+	public static TweenConfig y(this TweenConfig config, float y)
+	{
+		config.tweenProperties.Add(new FloatTweenProperty("y",y,false));
+		return config;
+	}
+
+	public static TweenConfig pos(this TweenConfig config, float x,float y)
+	{
+		config.tweenProperties.Add(new FloatTweenProperty("x",x,false));
+		config.tweenProperties.Add(new FloatTweenProperty("y",y,false));
+		return config;
+	}
+
+	public static TweenConfig pos(this TweenConfig config, Vector2 pos)
+	{
+		config.tweenProperties.Add(new FloatTweenProperty("x",pos.x,false));
+		config.tweenProperties.Add(new FloatTweenProperty("y",pos.y,false));
+		return config;
+	}
+
+	public static TweenConfig scaleXY(this TweenConfig config, float scaleX,float scaleY)
+	{
+		config.tweenProperties.Add(new FloatTweenProperty("scaleX",scaleX,false));
+		config.tweenProperties.Add(new FloatTweenProperty("scaleY",scaleY,false));
+		return config;
+	}
+	
+	public static TweenConfig scaleXY(this TweenConfig config, float scale)
+	{
+		config.tweenProperties.Add(new FloatTweenProperty("scale",scale,false));
+		return config;
+	}
+
+	public static TweenConfig backOut(this TweenConfig config)
+	{
+		config.easeType = EaseType.BackOut;
+		return config;
+	}
+
+	public static TweenConfig backIn(this TweenConfig config)
+	{
+		config.easeType = EaseType.BackIn;
+		return config;
+	}
+
+	public static TweenConfig expoOut(this TweenConfig config)
+	{
+		config.easeType = EaseType.ExpoOut;
+		return config;
+	}
+
+	public static TweenConfig expoIn(this TweenConfig config)
+	{
+		config.easeType = EaseType.ExpoIn;
+		return config;
+	}
+
+	public static TweenConfig expoInOut(this TweenConfig config)
+	{
+		config.easeType = EaseType.ExpoInOut;
+		return config;
+	}
+
 }
 
 public static class RXArrayExtensions
@@ -262,30 +353,51 @@ public static class RXListExtensions
 		Debug.Log(builder.ToString());
 	}
 
-	public static T Unshift<T>(this List<T> list)
+	//adds item to the start of the list
+	public static void Unshift<T>(this List<T> list, T item)
 	{
-		T thing = list[0];
-		list.RemoveAt(0);
-		return thing;
+		list.Insert(0,item);
 	}
-	
+
+	//removes first item from a list and returns it 
+	public static T Shift<T>(this List<T> list)
+	{
+		T item = list[0];
+		list.RemoveAt(0);
+		return item;
+	}
+
+	//adds item to the end of the list (note: I recommend using .Add(), this is just here for completeness)
+	public static void Push<T>(this List<T> list, T item)
+	{
+		list.Add(item);
+	}
+
+	//removes last item from a list and returns it
 	public static T Pop<T>(this List<T> list)
 	{
-		T thing = list[list.Count-1];
+		T item = list[list.Count-1];
 		list.RemoveAt(list.Count-1);
-		return thing;
+		return item;
 	}
-	
-	public static T GetLastObject<T>(this List<T> list)
+
+	public static T GetFirstItem<T>(this List<T> list)
+	{
+		return list[0];
+	}
+
+	public static T GetLastItem<T>(this List<T> list)
 	{
 		return list[list.Count-1];
 	}
 	
+	
 	//insertion sort is stable, in other words, equal items will stay in the same order (unlike List.Sort, which uses QuickSort)
 	//this could be replaced with a MergeSort, which should be more efficient in a lot of cases
 	//basic implementation from http://www.csharp411.com/c-stable-sort/
-	public static void InsertionSort<T>(this List<T> list, Comparison<T> comparison)
+	public static bool InsertionSort<T>(this List<T> list, Comparison<T> comparison)
 	{
+		bool didChange = false;
 	    int count = list.Count;
 		
 	    for (int j = 1; j < count; j++)
@@ -297,10 +409,13 @@ public static class RXListExtensions
 	        for (; i >= 0 && comparison( list[i], item ) > 0; i--)
 	        {
 	            list[i + 1] = list[i];
+				didChange = true;
 	        }
 			
 	        list[i + 1] = item;
     	}
+
+		return didChange;
 	}
 }
 
