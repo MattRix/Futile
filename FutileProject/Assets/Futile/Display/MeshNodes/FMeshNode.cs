@@ -18,8 +18,6 @@ public class FMeshNode : FFacetElementNode
 	protected float _uvOffsetX;
 	protected float _uvOffsetY;
 
-	protected bool _shouldUseWholeAtlas = false;
-
 	protected FMeshNode() : base() //for overriding
 	{
 	}
@@ -88,20 +86,10 @@ public class FMeshNode : FFacetElementNode
 	{
 		_isMeshDirty = true;
 
-		if(_shouldUseWholeAtlas)
-		{
-			_uvScaleX = 1.0f;
-			_uvScaleY = 1.0f;
-			_uvOffsetX = 0.0f;
-			_uvOffsetY = 0.0f;
-		}
-		else 
-		{
-			_uvScaleX = _element.uvRect.width;
-			_uvScaleY = _element.uvRect.height;
-			_uvOffsetX = _element.uvRect.xMin;
-			_uvOffsetY = _element.uvRect.yMin;
-		}
+		_uvScaleX = _element.uvRect.width;
+		_uvScaleY = _element.uvRect.height;
+		_uvOffsetX = _element.uvRect.xMin;
+		_uvOffsetY = _element.uvRect.yMin;
 	}
 	
 	override public void Redraw(bool shouldForceDirty, bool shouldUpdateDepth)
@@ -263,22 +251,6 @@ public class FMeshNode : FFacetElementNode
 				_previousMeshDataVersion = _meshData.version;
 				_numberOfFacetsNeeded = _meshData.facets.Count;
 				_isMeshDirty = true;
-			}
-		}
-	}
-
-	public bool shouldUseWholeAtlas
-	{
-		get
-		{
-			return _shouldUseWholeAtlas;
-		}
-		set 
-		{
-			if(_shouldUseWholeAtlas != value)
-			{
-				_shouldUseWholeAtlas = value;
-				HandleElementChanged();
 			}
 		}
 	}

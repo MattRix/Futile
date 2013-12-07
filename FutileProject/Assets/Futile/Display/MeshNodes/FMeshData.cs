@@ -31,7 +31,6 @@ public class FMeshData
 		{
 			facetType = facets[0].facetType;
 		}
-
 	}
 
 	public FMeshData(params FMeshFacet[] inFacets)
@@ -60,6 +59,33 @@ public class FMeshData
 		facets.Add(facet);
 
 		return facet;
+	}
+
+	public void SetFacetCount(int numFacetsNeeded)
+	{
+		int facetCount = facets.Count;
+		
+		if(facetCount > numFacetsNeeded) //remove extra quads
+		{
+			facets.RemoveRange(0,facetCount-numFacetsNeeded);
+		}
+
+		if(facetType == FFacetType.Quad)
+		{
+			while(facetCount < numFacetsNeeded) //add quads if needed
+			{
+				AddFacet(new FMeshQuad());
+				facetCount++;
+			}
+		}
+		else 
+		{
+			while(facetCount < numFacetsNeeded) //add tris if needed
+			{
+				AddFacet(new FMeshTriangle());
+				facetCount++;
+			}
+		}
 	}
 
 	public FMeshTriangle AddTriangle()
@@ -256,6 +282,16 @@ public class FMeshQuad : FMeshFacet
 		return this; //for chaining
 	}
 
+	public FMeshQuad SetPosExtents(float leftX, float rightX, float bottomY, float topY)
+	{
+		vertices[0].SetPos(leftX,topY);
+		vertices[1].SetPos(rightX,topY);
+		vertices[2].SetPos(rightX,bottomY);
+		vertices[3].SetPos(leftX,bottomY);
+		
+		return this; //for chaining
+	}
+
 	public FMeshQuad SetPosRect(Rect rect)
 	{
 		float leftX = rect.xMin;
@@ -296,7 +332,17 @@ public class FMeshQuad : FMeshFacet
 		return this; //for chaining
 	}
 
-	public FMeshQuad SetUVRectFull() //creates a uv rect that takes up the whole element texture
+	public FMeshQuad SetUVExtents(float leftX, float rightX, float bottomY, float topY)
+	{
+		vertices[0].SetUV(leftX,topY);
+		vertices[1].SetUV(rightX,topY);
+		vertices[2].SetUV(rightX,bottomY);
+		vertices[3].SetUV(leftX,bottomY);
+		
+		return this; //for chaining
+	}
+
+	public FMeshQuad SetUVRectFull() //creates a uv rect that represents the whole element
 	{
 		vertices[0].SetUV(0.0f,1.0f);
 		vertices[1].SetUV(1.0f,1.0f);
@@ -306,7 +352,7 @@ public class FMeshQuad : FMeshFacet
 		return this; //for chaining
 	}
 
-	public FMeshQuad SetUVRectFromElement(FAtlasElement element) //creates a uv rect that takes up the whole element texture
+	public FMeshQuad SetUVRectFromElement(FAtlasElement element) //creates a uv rect that represents the element within the atlas
 	{
 		float leftX = element.uvRect.xMin;
 		float rightX = element.uvRect.xMax;
@@ -380,7 +426,7 @@ public class FMeshVertex
 		this.x = x;
 		this.y = y;
 		this.u = u;
-		this.v = u;
+		this.v = v;
 	}
 
 	public void SetPos(float x, float y)
@@ -392,7 +438,7 @@ public class FMeshVertex
 	public void SetUV(float u, float v)
 	{
 		this.u = u;
-		this.v = u;
+		this.v = v;
 	}
 
 	//making the getters and setters below a little bit clumsy so people prefer the direct values instead
