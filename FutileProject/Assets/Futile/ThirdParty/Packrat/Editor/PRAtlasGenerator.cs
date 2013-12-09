@@ -18,11 +18,32 @@ public class PRAtlasGenerator
 	public string progressMessage = "";
 	public string pngSuffix;
 
+	public int atlasScaleIndex = -1;
+
 	public PRAtlasGenerator(PRAtlasLink link)
 	{
 		this.link = link;
 
+		string atlasName = Path.GetFileNameWithoutExtension(link.atlasFilePath);
+
+		atlasScaleIndex = GetScaleIndexFromName(atlasName);
+
 		generateEnumerator = Generate();
+	}
+
+	public int GetScaleIndexFromName(string fileName)
+	{
+		int scaleIndex = -1;
+		int stringIndex = fileName.IndexOf("_Scale");
+		
+		if(stringIndex != -1)
+		{
+			if(!int.TryParse(fileName.Substring(stringIndex+6), out scaleIndex))
+			{
+				scaleIndex = -1;
+			}
+		}
+		return scaleIndex;
 	}
 
 	public bool Advance()
@@ -84,6 +105,8 @@ public class PRAtlasGenerator
 		
 		for(int s = 0; s<filePaths.Length; s++)
 		{
+			bool shouldAddElement = true;
+
 			string filePath = filePaths[s];
 
 			string fileName = filePath.Remove(0,link.sourceFolderPath.Length+1);
@@ -121,6 +144,23 @@ public class PRAtlasGenerator
 				}
 			}
 
+			if(atlasScaleIndex != -1)
+			{
+				int elementScaleIndex = GetScaleIndexFromName(element.name);
+
+				if(elementScaleIndex != -1) //the element has a scale index
+				{
+					if(elementScaleIndex == atlasScaleIndex) //don't scale an element if it has the same suffix
+					{
+						element.shouldScale = false;
+					}
+					else 
+					{
+						shouldAddElement = false; //this element is for a different scale so don't add it
+					}
+				}
+			}
+
 			element.padding = link.padding;
 			element.extrude = link.extrude;
 
@@ -129,10 +169,23 @@ public class PRAtlasGenerator
 			element.sourceFullWidth = texture.width;
 			element.sourceFullHeight = texture.height;
 
-			element.scaledFullWidth = Mathf.CeilToInt((float)element.sourceFullWidth * link.scale);
-			element.scaledFullHeight = Mathf.CeilToInt((float)element.sourceFullHeight * link.scale);
+			if(element.shouldScale)
+			{
+				element.scaledFullWidth = Mathf.CeilToInt((float)element.sourceFullWidth * link.scale);
+				element.scaledFullHeight = Mathf.CeilToInt((float)element.sourceFullHeight * link.scale);
+			}
+			else 
+			{
+				element.scaledFullWidth = element.sourceFullWidth;
+				element.scaledFullHeight = element.sourceFullHeight;
+			}
 
-			if(element.texture != null)
+			if(element.texture == null)
+			{
+				shouldAddElement = false;
+			}
+
+			if(shouldAddElement)
 			{
 				elements.Add(element);
 			}
@@ -258,10 +311,20 @@ public class PRAtlasGenerator
 				element.sourceTrimHeight = element.sourceFullHeight;
 			} 
 
-			element.scaledTrimX = Mathf.FloorToInt((float)element.sourceTrimX * link.scale);
-			element.scaledTrimY =  Mathf.FloorToInt((float)element.sourceTrimY * link.scale);
-			element.scaledTrimWidth = Mathf.CeilToInt((float)element.sourceTrimWidth * link.scale);
-			element.scaledTrimHeight = Mathf.CeilToInt((float)element.sourceTrimHeight * link.scale);
+			if(element.shouldScale)
+			{
+				element.scaledTrimX = Mathf.FloorToInt((float)element.sourceTrimX * link.scale);
+				element.scaledTrimY =  Mathf.FloorToInt((float)element.sourceTrimY * link.scale);
+				element.scaledTrimWidth = Mathf.CeilToInt((float)element.sourceTrimWidth * link.scale);
+				element.scaledTrimHeight = Mathf.CeilToInt((float)element.sourceTrimHeight * link.scale);
+			}
+			else 
+			{
+				element.scaledTrimX = element.sourceTrimX;
+				element.scaledTrimY =  element.sourceTrimY;
+				element.scaledTrimWidth = element.sourceTrimWidth;
+				element.scaledTrimHeight = element.sourceTrimHeight;
+			}
 
 			//padding is only on 2 sides (top and right)
 			//extrude is on all 4 sides

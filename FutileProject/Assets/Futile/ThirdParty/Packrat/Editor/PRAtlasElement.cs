@@ -15,8 +15,10 @@ public class PRAtlasElement
 	public string filePath;
 	public Texture2D texture;
 	public PRRect packedRect;
+
 	public bool shouldTrim = false;
 	public bool shouldRotate = false;
+	public bool shouldScale = true;
 	
 	public int padding;
 	public int extrude;
