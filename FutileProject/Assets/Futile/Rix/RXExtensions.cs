@@ -191,6 +191,12 @@ public static class RXGoKitExtensions
 		return config;
 	}
 
+	public static TweenConfig rotation(this TweenConfig config, float rotation)
+	{
+		config.tweenProperties.Add(new FloatTweenProperty("rotation",rotation,false));
+		return config;
+	}
+
 	public static TweenConfig x(this TweenConfig config, float x)
 	{
 		config.tweenProperties.Add(new FloatTweenProperty("x",x,false));
