@@ -4,7 +4,8 @@ using System.Collections.Generic;
 
 public class FSoundManager
 {
-	static public String resourcePrefix = "Audio/";
+	public const string PREFS_KEY = "FSoundManager_IsAudioMuted";
+	static public string resourcePrefix = "Audio/";
 	
 	static private GameObject _gameObject;
 	static private AudioSource _soundSource;
@@ -19,14 +20,16 @@ public class FSoundManager
 	
 	static public void Init()
 	{
+		if(_gameObject != null) return; //no multiple inits
+
 		_gameObject = new GameObject("FSoundManager");
 		_musicSource = _gameObject.AddComponent<AudioSource>();
 		_soundSource = _gameObject.AddComponent<AudioSource>();
 		_gameObject.AddComponent<AudioListener>(); //we don't need a reference to it, we just need it to exist
 		
-		if(PlayerPrefs.HasKey("FSoundManager_IsAudioMuted"))
+		if(PlayerPrefs.HasKey(PREFS_KEY))
 		{
-			FSoundManager.isMuted = (PlayerPrefs.GetInt("FSoundManager_IsAudioMuted") == 1);
+			FSoundManager.isMuted = (PlayerPrefs.GetInt(PREFS_KEY) == 1);
 		}
 	}
 	
@@ -236,8 +239,8 @@ public class FSoundManager
 		set 
 		{ 
 			_isMuted = value;
-			AudioListener.pause = value; 
-			PlayerPrefs.SetInt("FSoundManager_IsAudioMuted", value ? 1 : 0);
+
+			PlayerPrefs.SetInt(PREFS_KEY, value ? 1 : 0);
 			
 			if(_isMuted)
 			{
@@ -248,7 +251,7 @@ public class FSoundManager
 				AudioListener.volume = _volume; 
 			}
 		}
-		get { return AudioListener.pause; }
+		get  {return _isMuted;}
 	}
 }
 
