@@ -441,6 +441,10 @@ public static class RXRandom
 		return objects[_randomSource.Next() % objects.Length];
 	}
 
+	public static Color Color(float alpha)
+	{
+		return new Color(RXRandom.Float(),RXRandom.Float(),RXRandom.Float(),alpha);
+	}
 	//random item from an array
 	public static T GetRandomItem<T>(T[] items)
 	{
@@ -539,30 +543,30 @@ public class RXCircle
 //note that they only take a t variable (which should be between 0 and 1) and return a value between 0 and 1
 public static class RXEase
 {
-	public delegate float Delegate(float t);
+	public delegate float Dele(float t);
 
-	public static Delegate Linear = (t) => 		{ return t; };
-	public static Delegate QuadIn = (t) => 		{ return t * t; };
-	public static Delegate QuadOut = (t) => 	{ return 1f - QuadIn(1f - t); };
-	public static Delegate QuadInOut = (t) => 	{ return (t <= 0.5f) ? QuadIn(t * 2f) * 0.5f : QuadOut(t * 2f - 1f) * 0.5f + 0.5f; };
-	public static Delegate CubeIn = (t) => 		{ return t * t * t; };
-	public static Delegate CubeOut = (t) => 	{ return 1f - CubeIn(1f - t); };
-	public static Delegate CubeInOut = (t) => 	{ return (t <= 0.5f) ? CubeIn(t * 2f) * 0.5f : CubeOut(t * 2f - 1f) * 0.5f + 0.5f; };
-	public static Delegate BackIn = (t) => 		{ return t * t * (2.70158f * t - 1.70158f); };
-	public static Delegate BackOut = (t) => 	{ return 1f - BackIn(1f - t); };
-	public static Delegate BackInOut = (t) => 	{ return (t <= 0.5f) ? BackIn(t * 2f) * 0.5f : BackOut(t * 2f - 1f) * 0.5f + 0.5f; };
-	public static Delegate ExpoIn = (t) => 		{ return Mathf.Pow(2f, 10f * (t-1.0f)); };
-	public static Delegate ExpoOut = (t) => 	{ return 1f - Mathf.Pow(2f, -10f * t); };
-	public static Delegate ExpoInOut = (t) => 	{ return t < .5f ? ExpoIn(t * 2f) * 0.5f : ExpoOut(t * 2f - 1f) * 0.5f + 0.5f; };
-	public static Delegate SineIn = (t) => 		{ return -Mathf.Cos(Mathf.PI * 0.5f * t) + 1f; };
-	public static Delegate SineOut = (t) => 	{ return Mathf.Sin(Mathf.PI * 0.5f * t); };
-	public static Delegate SineInOut = (t) => 	{ return -Mathf.Cos(Mathf.PI * t) * 0.5f + .5f; };
-	public static Delegate ElasticIn = (t) => 	{ return 1f - ElasticOut(1f - t); };
-	public static Delegate ElasticOut = (t) => 	{ return Mathf.Pow(2f, -10f * t) * Mathf.Sin((t - 0.075f) * (2f * Mathf.PI) / 0.3f) + 1f; };
-	public static Delegate ElasticInOut = (t) =>{ return (t <= 0.5f) ? ElasticIn(t * 2f) / 2f : ElasticOut(t * 2f - 1f) * 0.5f + 0.5f; };
+	public static Dele Linear = (t) => 		{ return t; };
+	public static Dele QuadIn = (t) => 		{ return t * t; };
+	public static Dele QuadOut = (t) => 	{ return 1f - QuadIn(1f - t); };
+	public static Dele QuadInOut = (t) => 	{ return (t <= 0.5f) ? QuadIn(t * 2f) * 0.5f : QuadOut(t * 2f - 1f) * 0.5f + 0.5f; };
+	public static Dele CubeIn = (t) => 		{ return t * t * t; };
+	public static Dele CubeOut = (t) => 	{ return 1f - CubeIn(1f - t); };
+	public static Dele CubeInOut = (t) => 	{ return (t <= 0.5f) ? CubeIn(t * 2f) * 0.5f : CubeOut(t * 2f - 1f) * 0.5f + 0.5f; };
+	public static Dele BackIn = (t) => 		{ return t * t * (2.70158f * t - 1.70158f); };
+	public static Dele BackOut = (t) => 	{ return 1f - BackIn(1f - t); };
+	public static Dele BackInOut = (t) => 	{ return (t <= 0.5f) ? BackIn(t * 2f) * 0.5f : BackOut(t * 2f - 1f) * 0.5f + 0.5f; };
+	public static Dele ExpoIn = (t) => 		{ return Mathf.Pow(2f, 10f * (t-1.0f)); };
+	public static Dele ExpoOut = (t) => 	{ return 1f - Mathf.Pow(2f, -10f * t); };
+	public static Dele ExpoInOut = (t) => 	{ return t < .5f ? ExpoIn(t * 2f) * 0.5f : ExpoOut(t * 2f - 1f) * 0.5f + 0.5f; };
+	public static Dele SineIn = (t) => 		{ return -Mathf.Cos(Mathf.PI * 0.5f * t) + 1f; };
+	public static Dele SineOut = (t) => 	{ return Mathf.Sin(Mathf.PI * 0.5f * t); };
+	public static Dele SineInOut = (t) => 	{ return -Mathf.Cos(Mathf.PI * t) * 0.5f + .5f; };
+	public static Dele ElasticIn = (t) => 	{ return 1f - ElasticOut(1f - t); };
+	public static Dele ElasticOut = (t) => 	{ return Mathf.Pow(2f, -10f * t) * Mathf.Sin((t - 0.075f) * (2f * Mathf.PI) / 0.3f) + 1f; };
+	public static Dele ElasticInOut = (t) =>{ return (t <= 0.5f) ? ElasticIn(t * 2f) / 2f : ElasticOut(t * 2f - 1f) * 0.5f + 0.5f; };
 
 	//turns input from 0 to 1 into a eased saw pattern from 0 to 1 and back to 0... so when input is 0.5, the output is 1 etc.
-	public static float UpDown(float input, Delegate easeFunc)
+	public static float UpDown(float input, Dele easeFunc)
 	{
 		if(input < 0.5f) return easeFunc(input*2f);
 		return easeFunc(2f-input*2f); 
@@ -576,29 +580,29 @@ public static class RXEase
 //(I don't really have a great use case for this, but it was a fun class to make :D)
 public static class RXEaseStandard
 {
-	public static Delegate Linear = 		Standardize(RXEase.Linear);
-	public static Delegate QuadIn = 		Standardize(RXEase.QuadIn);
-	public static Delegate QuadOut = 		Standardize(RXEase.QuadOut);
-	public static Delegate QuadInOut = 		Standardize(RXEase.QuadInOut);
-	public static Delegate CubeIn = 		Standardize(RXEase.CubeIn);
-	public static Delegate CubeOut = 		Standardize(RXEase.CubeOut);
-	public static Delegate CubeInOut = 		Standardize(RXEase.CubeInOut);
-	public static Delegate BackIn = 		Standardize(RXEase.BackIn);
-	public static Delegate BackOut = 		Standardize(RXEase.BackOut);
-	public static Delegate BackInOut = 		Standardize(RXEase.BackInOut);
-	public static Delegate ExpoIn = 		Standardize(RXEase.ExpoIn);
-	public static Delegate ExpoOut = 		Standardize(RXEase.ExpoOut);
-	public static Delegate ExpoInOut = 		Standardize(RXEase.ExpoInOut);
-	public static Delegate SineIn = 		Standardize(RXEase.SineIn);
-	public static Delegate SineOut = 		Standardize(RXEase.SineOut);
-	public static Delegate SineInOut = 		Standardize(RXEase.SineInOut);
-	public static Delegate ElasticIn = 		Standardize(RXEase.ElasticIn);
-	public static Delegate ElasticOut = 	Standardize(RXEase.ElasticOut);
-	public static Delegate ElasticInOut = 	Standardize(RXEase.ElasticInOut);
+	public static Dele Linear = 		Standardize(RXEase.Linear);
+	public static Dele QuadIn = 		Standardize(RXEase.QuadIn);
+	public static Dele QuadOut = 		Standardize(RXEase.QuadOut);
+	public static Dele QuadInOut = 		Standardize(RXEase.QuadInOut);
+	public static Dele CubeIn = 		Standardize(RXEase.CubeIn);
+	public static Dele CubeOut = 		Standardize(RXEase.CubeOut);
+	public static Dele CubeInOut = 		Standardize(RXEase.CubeInOut);
+	public static Dele BackIn = 		Standardize(RXEase.BackIn);
+	public static Dele BackOut = 		Standardize(RXEase.BackOut);
+	public static Dele BackInOut = 		Standardize(RXEase.BackInOut);
+	public static Dele ExpoIn = 		Standardize(RXEase.ExpoIn);
+	public static Dele ExpoOut = 		Standardize(RXEase.ExpoOut);
+	public static Dele ExpoInOut = 		Standardize(RXEase.ExpoInOut);
+	public static Dele SineIn = 		Standardize(RXEase.SineIn);
+	public static Dele SineOut = 		Standardize(RXEase.SineOut);
+	public static Dele SineInOut = 		Standardize(RXEase.SineInOut);
+	public static Dele ElasticIn = 		Standardize(RXEase.ElasticIn);
+	public static Dele ElasticOut = 	Standardize(RXEase.ElasticOut);
+	public static Dele ElasticInOut = 	Standardize(RXEase.ElasticInOut);
 	
-	public delegate float Delegate(float currentTime,float startingValue,float finalValue,float duration);
+	public delegate float Dele(float currentTime,float startingValue,float finalValue,float duration);
 
-	public static Delegate Standardize(RXEase.Delegate simpleFunc)
+	public static Dele Standardize(RXEase.Dele simpleFunc)
 	{
 		return (t,b,c,d) =>
 		{
