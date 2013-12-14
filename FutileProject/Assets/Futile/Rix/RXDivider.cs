@@ -124,17 +124,20 @@ public class RXDividerDrawer : PropertyDrawer
 	{
 		Dictionary<string, PropertyDrawer> dictionaryOfDrawers =
 		typeof(PropertyDrawer).GetField("s_PropertyDrawers", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic).GetValue(null) as Dictionary<string, PropertyDrawer>;
-		
-		foreach (var entry in dictionaryOfDrawers)
-		{
-			if (entry.Value == this)
-			{
-				dictionaryOfDrawers[entry.Key] = null;
-				EditorGUI.PropertyField(rect, property, label, true);
-				dictionaryOfDrawers[entry.Key] = this;
-				return;
-			}
 
+		if(dictionaryOfDrawers != null)
+		{
+			foreach (var entry in dictionaryOfDrawers)
+			{
+				if (entry.Value == this)
+				{
+					dictionaryOfDrawers[entry.Key] = null;
+					EditorGUI.PropertyField(rect, property, label, true);
+					dictionaryOfDrawers[entry.Key] = this;
+					return;
+				}
+
+			}
 		}
 
 		EditorGUI.PropertyField(rect, property, label, true);
