@@ -81,12 +81,14 @@ public class FParticleSystem : FFacetNode
 		float lifetime = particleDefinition.lifetime;
 		
 		particle.timeRemaining = lifetime;
+		particle.delayRemaining = particleDefinition.delay;
 	
 		particle.x = particleDefinition.x;
 		particle.y = particleDefinition.y;
 		particle.speedX = particleDefinition.speedX;
 		particle.speedY = particleDefinition.speedY;
-		
+
+		particle.startScale = particleDefinition.startScale;
 		particle.scale = particleDefinition.startScale;
 
 		float lifetimeInverse = 1.0f / lifetime; //we'll use this a few times, so invert it because multiplication is faster
@@ -194,6 +196,21 @@ public class FParticleSystem : FFacetNode
 			}
 			else //do the update!
 			{
+				if(particle.delayRemaining > 0)
+				{
+					particle.delayRemaining -= deltaTime;
+
+					if(particle.delayRemaining <= 0)
+					{
+						particle.scale = particle.startScale;
+					}
+					else 
+					{
+						particle.scale = 0;//don't show it yet
+						continue;
+					}
+				}
+
 				particle.timeRemaining -= deltaTime;
 
 				particle.color.r += particle.redDeltaPerSecond * deltaTime;
@@ -364,6 +381,7 @@ public class FParticleDefinition
 	public FAtlasElement element;
 	
 	public float lifetime = 1.0f;
+	public float delay = 0.0f;
 	
 	public float x = 0.0f;
 	public float y = 0.0f;
@@ -399,13 +417,15 @@ public class FParticleDefinition
 public class FParticle
 {
 	public float timeRemaining;
+	public float delayRemaining;
 	
 	public float x;
 	public float y;
 	
 	public float speedX;
 	public float speedY;
-	
+
+	public float startScale;
 	public float scale;
 	public float scaleDeltaPerSecond;
 	
