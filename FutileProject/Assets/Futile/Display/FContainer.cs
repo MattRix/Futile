@@ -101,6 +101,11 @@ public class FContainer : FNode
 			if(_isOnStage) _stage.HandleFacetsChanged(); 
 		}
 	}
+
+	public void AddChildAtBack(FNode node) //a more explicit way to use AddChildAtIndex
+	{
+		AddChildAtIndex(node,0);
+	}
 	
 	public void AddChildAtIndex(FNode node, int newIndex)
 	{
