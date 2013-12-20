@@ -187,8 +187,15 @@ public class FSliceButton : FContainer, FSingleTouchableInterface
 		this.anchorX = x;
 		this.anchorY = y;
 	}
+
+	public void SetElements(string upElementName, string downElementName)
+	{
+		_upElement = Futile.atlasManager.GetElementWithName(upElementName);
+		_downElement = Futile.atlasManager.GetElementWithName(downElementName);
+		_bg.element = _upElement;
+	}
 	
-	public FSprite sprite
+	public FSliceSprite sprite
 	{
 		get { return _bg;}
 	}
@@ -232,14 +239,26 @@ public class FSliceButton : FContainer, FSingleTouchableInterface
 				}
 				else
 				{
-					RXColorHSL hsl = RXColor.HSLFromColor(_upColor);
-					hsl.s = 0.25f;
-					hsl.l = 0.6f;
-					Color greyscale = RXColor.ColorFromHSL(hsl);
-					_bg.color = greyscale;
+					_bg.color = GetDesaturatedColor();
 				}
 			}
 		}
+	}
+
+	public void SetColors(Color upColor, Color downColor)
+	{
+		_upColor = upColor;
+		_downColor = downColor;
+
+		_bg.color = _upColor;
+	}
+
+	public Color GetDesaturatedColor()
+	{
+		RXColorHSL hsl = RXColor.HSLFromColor(_upColor);
+		hsl.s = 0.25f;
+		hsl.l = 0.6f;
+		return RXColor.ColorFromHSL(hsl);
 	}
 
 	public bool isTouchable
