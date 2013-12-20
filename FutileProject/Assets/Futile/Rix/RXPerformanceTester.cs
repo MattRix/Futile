@@ -120,7 +120,7 @@ public class RXPerformanceTester
 		long timeB = 0;
 
 		//start with either test A or test B, randomly
-		bool shouldTestABeFirst = new System.Random((int)DateTime.UtcNow.Ticks).NextDouble() < 0.5;
+		bool shouldTestABeFirst = new System.Random((int)DateTime.UtcNow.Ticks).Next() % 2 == 0;
 
 		if(shouldTestABeFirst)
 		{
