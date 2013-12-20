@@ -657,7 +657,26 @@ public class FNode
 		get {return _stage;}
 		set {_stage = value;}
 	}
-	
+
+	public Vector2 GetPositionRelativeToAncestor(FContainer ancestor)
+	{
+		FNode target = this;
+
+		Vector2 position = new Vector2(0,0);
+		
+		FContainer container;
+		
+		while(true)
+		{
+			position += target.GetPosition();
+			container = target.container;
+			if(container == null) break;
+			if(container == ancestor) break;
+			target = container;
+		}
+		
+		return position;
+	}
 	
 	//use node.LocalToLocal to use a point from a different coordinate space
 	public void RotateAroundPointRelative(Vector2 localPoint, float relativeDegrees)
@@ -726,5 +745,10 @@ public class FNode
 	public Vector2 GetPosition()
 	{
 		return new Vector2(_x,_y);	
+	}
+
+	public bool isOnStage
+	{
+		get {return _isOnStage;}
 	}
 }
