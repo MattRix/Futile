@@ -107,7 +107,7 @@ public class FRenderer
 		for(int p = 0; p<previousLiveLayerCount; ++p)
 		{
 			FFacetRenderLayer previousLiveLayer = _previousLiveLayers[p];
-			if(previousLiveLayer.batchIndex == batchIndex)
+			if(previousLiveLayer.batchIndex == batchIndex && previousLiveLayer.shader == shader)
 			{
 				_previousLiveLayers.RemoveAt(p);
 				_liveLayers.Add (previousLiveLayer);
@@ -121,7 +121,7 @@ public class FRenderer
 		for(int c = 0; c<cachedLayerCount; ++c)
 		{
 			FFacetRenderLayer cachedLayer = _cachedLayers[c];
-			if(cachedLayer.batchIndex == batchIndex)
+			if(cachedLayer.batchIndex == batchIndex && cachedLayer.shader == shader)
 			{
 				_cachedLayers.RemoveAt(c);
 				cachedLayer.AddToWorld();
@@ -144,7 +144,8 @@ public class FRenderer
 	
 	public void GetFacetRenderLayer (out FFacetRenderLayer renderLayer, out int firstFacetIndex, FFacetType facetType, FAtlas atlas, FShader shader, int numberOfFacetsNeeded)
 	{
-		int batchIndex = facetType.index*10000000 + atlas.index*10000 + shader.index;
+		//int batchIndex = facetType.index*10000000 + atlas.index*10000 + shader.index;
+		int batchIndex = facetType.index*10000000 + atlas.index*10000;
 		
 		if(_topLayer == null)
 		{
@@ -153,9 +154,9 @@ public class FRenderer
 		}
 		else 
 		{
-			if(_topLayer.batchIndex != batchIndex) //we're changing layers!
+			if(_topLayer.batchIndex != batchIndex || _topLayer.shader != shader) //we're changing layers!
 			{
-				_topLayer.Close(); //close the old layer
+				_topLayer.Close(); //close the old layer 
 				
 				_topLayer = CreateFacetRenderLayer(facetType, batchIndex, atlas, shader);
 				_topLayer.Open(); //open the new layer
@@ -183,12 +184,18 @@ public class FRenderer
 		{
 			_allRenderables[a].Update(Futile.nextRenderLayerDepth++);	
 		} 
+
+		for(int a = 0; a<allRenderablesCount; a++)
+		{
+			_allRenderables[a].PostUpdate();
+		} 
 	}
 }
 
 public interface FRenderableLayerInterface
 {
 	void Update(int depth);
+	void PostUpdate();
 }
 
 

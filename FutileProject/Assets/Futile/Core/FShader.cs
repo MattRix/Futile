@@ -16,21 +16,12 @@ public class FShader
 
 	public static FShader Basic_PixelSnap;
 
-	private static int _nextShaderIndex = 0;
-	private static List<FShader> _shaders = new List<FShader>();
-	
-	public int index;
 	public string name;
 	public Shader shader;
+	public bool needsApply = false;
 	
-	private FShader()
+	public FShader (string name, Shader shader) //only to be constructed inside this class using CreateShader()
 	{
-		throw new NotSupportedException("Use FShader.CreateShader() instead");
-	}
-	
-	private FShader (string name, Shader shader, int index) //only to be constructed inside this class using CreateShader()
-	{
-		this.index = index;
 		this.name = name;
 		this.shader = shader; 
 
@@ -39,35 +30,50 @@ public class FShader
 			throw new FutileException("Couldn't find Futile shader '"+name+"'");
 		}
 	}
+
+	virtual public void Apply(Material mat)
+	{
+
+	}
 	
 	public static void Init() //called by Futile
 	{
-		Basic = CreateShader("Basic", Shader.Find("Futile/Basic"));	
-		Additive = CreateShader("Additive", Shader.Find("Futile/Additive"));	
-		AdditiveColor = CreateShader("AdditiveColor", Shader.Find("Futile/AdditiveColor"));	
-		Solid = CreateShader("Solid", Shader.Find("Futile/Solid"));	
-		SolidColored = CreateShader("SolidColored", Shader.Find("Futile/SolidColored"));	
+		Basic = new FShader("Basic", Shader.Find("Futile/Basic"));	
+		Additive = new FShader("Additive", Shader.Find("Futile/Additive"));	
+		AdditiveColor = new FShader("AdditiveColor", Shader.Find("Futile/AdditiveColor"));	
+		Solid = new FShader("Solid", Shader.Find("Futile/Solid"));	
+		SolidColored = new FShader("SolidColored", Shader.Find("Futile/SolidColored"));	
 
-		Basic_PixelSnap = CreateShader("Basic_PixelSnap", Shader.Find("Futile/Basic_PixelSnap"));	
+		Basic_PixelSnap = new FShader("Basic_PixelSnap", Shader.Find("Futile/Basic_PixelSnap"));	
 		
 		defaultShader = Basic;
 	}
+}
+
+
+public class FBlurShader : FShader
+{
+	private float _blurAmount;
 	
-	//create your own FShaders by creating them here
-	
-	public static FShader CreateShader(string shaderShortName, Shader shader)
+	public FBlurShader(float blurAmount) : base("BlurShader", Shader.Find("Futile/Blur"))
 	{
-		for(int s = 0; s<_shaders.Count; s++)
-		{
-			if(_shaders[s].name == shaderShortName) return _shaders[s]; //don't add it if we have it already	
-		}
-		
-		FShader newShader = new FShader(shaderShortName, shader, _nextShaderIndex++);
-		_shaders.Add (newShader);
-		
-		return newShader;
+		_blurAmount = blurAmount;
+		needsApply = true;
 	}
 	
+	override public void Apply(Material mat)
+	{
+		mat.SetFloat("_BlurForce",_blurAmount);
+	}
+	
+	public float blurAmount
+	{
+		get {return _blurAmount;}
+		set {if(_blurAmount != value) {_blurAmount = value; needsApply = true;}}
+	}
 }
+
+
+
 
 
