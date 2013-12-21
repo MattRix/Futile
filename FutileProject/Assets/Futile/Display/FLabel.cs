@@ -250,7 +250,7 @@ public class FLabel : FFacetElementNode
         }
     }
 	
-	public string text
+	virtual public string text
 	{
 		get {return _text;}
 		set 
