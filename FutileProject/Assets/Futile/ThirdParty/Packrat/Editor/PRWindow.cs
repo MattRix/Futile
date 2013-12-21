@@ -31,14 +31,27 @@ public class PRWindow : EditorWindow
 	private PRAtlasGenerator _activeGenerator = null;
 	private string _progressMessage = "";
 
+	private FileSystemWatcher _watcher;
+	private bool _needsLoadData;
+
 	public void OnEnable()
 	{
 		LoadData();
+
+		_watcher = new FileSystemWatcher();
+		_watcher.Path = Path.GetDirectoryName(DATA_FILE_PATH);
+		_watcher.Filter = Path.GetFileName(DATA_FILE_PATH);
+		_watcher.EnableRaisingEvents = true;
+		_watcher.Changed += (object sender, FileSystemEventArgs e) => 
+		{
+			_needsLoadData = true;
+		};
 	}
 
 	public void OnDisable()
 	{
 		SaveData();
+
 	}
 
 	private void LoadData()
@@ -74,41 +87,21 @@ public class PRWindow : EditorWindow
 			//Debug.Log ("NO DATA FOUND AT " + DATA_FILE_PATH);
 		}
 
-		//SaveData();
+		Repaint();
 	}
 	
 	public void OnGUI () 
 	{
+		if(_needsLoadData)
+		{
+			_needsLoadData = false;
+			LoadData();
+		}
+
 		int linkToMoveIndex = -1;
 		int moveDelta = 0;
 
 		_scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
-
-//		if(GUILayout.Button("TEST"))
-//		{
-//			Color outputColor;
-//
-//			outputColor = Color.red * 0.6f;
-//			outputColor += Color.blue * 0.1f;
-//			outputColor += Color.red * 0.1f;
-//			outputColor += Color.red * 0.1f;
-//			outputColor += Color.red * 0.1f;
-//
-//			Debug.Log(outputColor);
-//
-//			Texture2D image = new Texture2D(16,16,TextureFormat.ARGB32,false,false);
-//			
-//			for(int r = 0; r<image.width; r++)
-//			{
-//				for(int c = 0; c<image.height; c++)
-//				{
-//					Debug.Log(image.GetPixel(c,r)); 
-//				}
-//			}
-//			
-//			File.WriteAllBytes(Application.dataPath+"/RedTest.png",image.EncodeToPNG());
-//			Object.DestroyImmediate(image);
-//		}
 
 		if(_activeGenerator != null)
 		{
@@ -468,6 +461,7 @@ public class PRWindow : EditorWindow
 
 	private void SaveData()
 	{
+		_watcher.EnableRaisingEvents = false;
 		if(_atlasLinks.Count == 0) //delete data file if we have no atlas links
 		{
 			if(File.Exists(DATA_FILE_PATH)) File.Delete(DATA_FILE_PATH);
@@ -487,6 +481,7 @@ public class PRWindow : EditorWindow
 
 			File.WriteAllText(DATA_FILE_PATH, jsonText);
 		}
+		_watcher.EnableRaisingEvents = true;
 	}
 }
 
@@ -502,10 +497,11 @@ public class PRViewAtlasWindow : EditorWindow
 
 	private bool _shouldShowActualSize = false;
 	private bool _isSmooth = true;
+	private bool _needsAtlasUpdate = false;
 
 	public static void Show(PRAtlasLink link)
 	{
-		string linkName = Path.GetFileNameWithoutExtension(link.atlasFilePath);
+		//string linkName = Path.GetFileNameWithoutExtension(link.atlasFilePath);
 		// Get existing open window or if none, make a new one:
 		PRViewAtlasWindow window = (PRViewAtlasWindow)EditorWindow.GetWindow(typeof (PRViewAtlasWindow));
 		window.position = new Rect(Screen.width/2,Screen.height/2,512,512);
@@ -538,14 +534,18 @@ public class PRViewAtlasWindow : EditorWindow
 
 		LoadTexture();
 
-		Debug.Log("we have " + _imagePath); 
-
 		_watcher = new FileSystemWatcher(Path.GetDirectoryName(_imagePath));
-		_watcher.Changed += (object sender, FileSystemEventArgs e) => {Debug.Log("FILE CHANGED");};
+		_watcher.EnableRaisingEvents = true;
+		_watcher.Changed += (object sender, FileSystemEventArgs e) => {_needsAtlasUpdate = true;};
 	}
 
 	void LoadTexture()
 	{
+		if(_texture != null)
+		{
+			Object.DestroyImmediate(_texture,true);
+		}
+
 		_texture = new Texture2D(0,0,TextureFormat.ARGB32,false,false);
 		_texture.wrapMode = TextureWrapMode.Clamp; //so we don't get pixels from the other edge when scaling
 		if(_isSmooth)
@@ -557,7 +557,6 @@ public class PRViewAtlasWindow : EditorWindow
 			_texture.filterMode = FilterMode.Point;
 		}
 		_texture.LoadImage(File.ReadAllBytes(_imagePath)); 
-		
 	}
 
 	public void UpdateAtlas()
@@ -573,11 +572,18 @@ public class PRViewAtlasWindow : EditorWindow
 
 	public void OnDisable()
 	{
+		_needsAtlasUpdate = true;
+		Object.DestroyImmediate(_texture,true);
 		instance = null;
 	}
 
 	public void OnGUI()
 	{
+		if(_needsAtlasUpdate)
+		{
+			_needsAtlasUpdate = false;
+			LoadTexture();
+		}
 		if(_texture == null) return;
 
 		GUILayout.BeginHorizontal();

@@ -193,7 +193,7 @@ public class PRAtlasGenerator
 			{
 				if(element.texture != null)
 				{
-					UnityEngine.Object.DestroyImmediate(element.texture);
+					UnityEngine.Object.DestroyImmediate(element.texture,true);
 					element.texture = null;
 				}
 			}
