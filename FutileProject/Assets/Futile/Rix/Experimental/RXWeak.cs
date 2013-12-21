@@ -16,7 +16,6 @@ public class RXWeak
 
 	static RXWeak()
 	{
-		Debug.Log("RXWeak Init!");
 		_listeners = new List<RXWeakListener>();
 
 		//this will trigger CleanUp to be called every time the Garbage Collector is run
@@ -27,7 +26,6 @@ public class RXWeak
 	//an unused listener is one where the target has already been garbage collected
 	public static void CleanUp()
 	{
-		Debug.Log ("Cleanup!");
 		//reverse order so removals are easy
 		for(int n = _listeners.Count-1; n>=0; n--)
 		{
@@ -79,7 +77,7 @@ public class RXWeak
 				return listener.InnerCallback;
 			}
 		}
-		return null; //this shouldn't ever really happen unless someone adds more listeners than they remove
+		return null; //this shouldn't ever really happen unless someone removes more listeners than they add
 	}
 
 	private class RXWeakListener
