@@ -92,6 +92,29 @@ public class FAtlasManager
 		_atlases.Add(atlas); 
 	}
 	
+	//assuming resourceSuffix of _ipad, will attempt to load suffix _0_ipad, _1_ipad, etc until it misses
+	public void LoadAtlases(string atlasPath)
+	{
+		int index = 0;
+		while(true) {
+			
+			string filePath = atlasPath + "_" + index;
+			if(DoesContainAtlas(atlasPath)) return; //we already have it, don't load it again
+			
+			string fullFilePath = filePath + Futile.resourceSuffix;
+			
+			TextAsset text = Resources.Load (fullFilePath, typeof(TextAsset)) as TextAsset;
+			if(text == null)
+			{
+				break;
+			}else{
+				Resources.UnloadAsset(text);
+				LoadAtlas (filePath);
+			}
+			index++;			
+		}
+	}
+	
 	public void LoadAtlas(string atlasPath)
 	{
 		if(DoesContainAtlas(atlasPath)) return; //we already have it, don't load it again
