@@ -115,27 +115,27 @@ public class FAtlasManager
 		}
 	}
 	
-	public void LoadAtlas(string atlasPath)
+	public void LoadAtlas(string atlasPath, bool densityIndependent = false)
 	{
 		if(DoesContainAtlas(atlasPath)) return; //we already have it, don't load it again
-		
-		string filePath = atlasPath+Futile.resourceSuffix+"_png";
-		
+
+		string filePath = atlasPath + (densityIndependent ? "" : Futile.resourceSuffix) + "_png";
+
 		TextAsset imageBytes = Resources.Load (filePath, typeof(TextAsset)) as TextAsset;
-		
+
 		if(imageBytes != null) //do we have png bytes?
 		{
 			Texture2D texture = new Texture2D(0,0,TextureFormat.ARGB32,false);
-			
+
 			texture.LoadImage(imageBytes.bytes);
-			
+
 			Resources.UnloadAsset(imageBytes);
-			
-			LoadAtlasFromTexture(atlasPath,atlasPath+Futile.resourceSuffix, texture);
+
+			LoadAtlasFromTexture(atlasPath,atlasPath + (densityIndependent ? "" : Futile.resourceSuffix), texture);
 		}
 		else //load it as a normal Unity image asset
 		{
-			ActuallyLoadAtlasOrImage(atlasPath, atlasPath+Futile.resourceSuffix, atlasPath+Futile.resourceSuffix);
+			ActuallyLoadAtlasOrImage(atlasPath, atlasPath + (densityIndependent ? "" : Futile.resourceSuffix), atlasPath + (densityIndependent ? "" : Futile.resourceSuffix));
 		}
 	}
 	
