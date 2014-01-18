@@ -410,7 +410,7 @@ public class PRWindow : EditorWindow
 	{
 		_updateFrames++;
 		
-		if(_updateFrames % 5 == 0) //note: Update is called 100 times per second
+		if(_updateFrames % 1 == 0) //note: Update is called 100 times per second
 		{
 			GenerateAtlases();
 			AdvanceActiveGenerator();
