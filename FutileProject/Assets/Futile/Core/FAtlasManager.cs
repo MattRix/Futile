@@ -97,12 +97,18 @@ public class FAtlasManager
 		
 		_atlases.Add(atlas); 
 	}
-	
+
 	public FAtlas LoadAtlas(string atlasPath)
 	{
+		return LoadAtlas(atlasPath,true);
+	}
+	
+	public FAtlas LoadAtlas(string atlasPath, bool shouldUseResourceSuffix)
+	{
 		if(DoesContainAtlas(atlasPath)) return GetAtlasWithName(atlasPath); //we already have it, don't load it again
-		
-		string filePath = atlasPath+Futile.resourceSuffix+"_png";
+
+		string pathWithSuffix = shouldUseResourceSuffix ? atlasPath+Futile.resourceSuffix : atlasPath;
+		string filePath = pathWithSuffix+"_png";
 
 		TextAsset imageBytes = Resources.Load (filePath, typeof(TextAsset)) as TextAsset;
 		
@@ -114,19 +120,25 @@ public class FAtlasManager
 			
 			Resources.UnloadAsset(imageBytes);
 			
-			return LoadAtlasFromTexture(atlasPath,atlasPath+Futile.resourceSuffix, texture);
+			return LoadAtlasFromTexture(atlasPath,pathWithSuffix, texture);
 		}
 		else //load it as a normal Unity image asset
 		{
-			return ActuallyLoadAtlasOrImage(atlasPath, atlasPath+Futile.resourceSuffix, atlasPath+Futile.resourceSuffix);
+			return ActuallyLoadAtlasOrImage(atlasPath, pathWithSuffix, pathWithSuffix);
 		}
 	}
-	
+
 	public FAtlas LoadImage(string imagePath)
 	{
+		return LoadImage(imagePath,true);
+	}
+	
+	public FAtlas LoadImage(string imagePath, bool shouldUseResourceSuffix)
+	{
 		if(DoesContainAtlas(imagePath)) return GetAtlasWithName(imagePath); //we already have it
-		
-		string filePath = imagePath+Futile.resourceSuffix+"_png";
+
+		string pathWithSuffix = shouldUseResourceSuffix ? imagePath+Futile.resourceSuffix : imagePath;
+		string filePath = pathWithSuffix+"_png";
 		
 		TextAsset imageBytes = Resources.Load (filePath, typeof(TextAsset)) as TextAsset;
 		
@@ -142,7 +154,7 @@ public class FAtlasManager
 		}
 		else //load it as a normal Unity image asset
 		{
-			return ActuallyLoadAtlasOrImage(imagePath, imagePath+Futile.resourceSuffix,"");
+			return ActuallyLoadAtlasOrImage(imagePath, pathWithSuffix,"");
 		}
 	}
 	
@@ -182,7 +194,13 @@ public class FAtlasManager
 
 	//assuming resourceSuffix of _ipad, will attempt to load suffix _0_ipad, _1_ipad, etc until it misses
 	//this is the TexturePacker default multiple atlas format
+
 	public void LoadSequentialAtlases(string atlasPath)
+	{
+		LoadSequentialAtlases(atlasPath,true);
+	}
+
+	public void LoadSequentialAtlases(string atlasPath, bool shouldUseResourceSuffix)
 	{
 		int index = 0;
 		while(true) 
@@ -190,7 +208,7 @@ public class FAtlasManager
 			string filePath = atlasPath + "_" + index;
 			if(DoesContainAtlas(atlasPath)) return; //we already have it, don't load it again
 			
-			string fullFilePath = filePath + Futile.resourceSuffix;
+			string fullFilePath = shouldUseResourceSuffix ? filePath + Futile.resourceSuffix : filePath;
 			
 			TextAsset text = Resources.Load (fullFilePath, typeof(TextAsset)) as TextAsset;
 
