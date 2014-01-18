@@ -26,6 +26,9 @@ public class RXScroller
 	
 	private float _boundsMin;
 	private float _boundsMax;
+
+	private float _dragSpeed = 0;
+	private bool _shouldDetermineSpeed = false;
 	
 	public RXScroller(float pos, float boundsMin, float boundsMax)
 	{
@@ -47,6 +50,7 @@ public class RXScroller
 		_baseTouchPos = touchPos;
 		
 		_basePos = _pos;
+		_dragSpeed = 0;
 	}
 
 	public void EndDrag(float touchPos)
@@ -56,8 +60,8 @@ public class RXScroller
 		_isDragging = false;
 		
 		UpdateDrag(touchPos);
-		
-		_speed = _pos - _previousPos;
+
+		_shouldDetermineSpeed = true;
 	}
 
 	public void CancelDrag()
@@ -67,11 +71,20 @@ public class RXScroller
 		_isDragging = false;
 		
 		_speed = 0;
+		_dragSpeed = 0;
 	}
 	
 	//returns true if it's still moving
 	public bool Update()
 	{
+		_dragSpeed += (_pos-_previousPos - _dragSpeed) * 0.5f;
+
+		if(_shouldDetermineSpeed)
+		{
+			_shouldDetermineSpeed = false;
+			_speed = _dragSpeed;
+		}
+
 		_previousPos = _pos;
 		
 		if(_isDragging) return true;
@@ -193,5 +206,15 @@ public class RXScroller
 	public bool isDragging
 	{
 		get {return _isDragging;}
+	}
+
+	public float boundsMin
+	{
+		get {return _boundsMin;}
+	}
+
+	public float boundsMax
+	{
+		get {return _boundsMax;}
 	}
 }
