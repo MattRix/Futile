@@ -179,7 +179,34 @@ public class FAtlasManager
 			Resources.UnloadUnusedAssets();
 		}
 	}
-	
+
+	//assuming resourceSuffix of _ipad, will attempt to load suffix _0_ipad, _1_ipad, etc until it misses
+	//this is the TexturePacker default multiple atlas format
+	public void LoadSequentialAtlases(string atlasPath)
+	{
+		int index = 0;
+		while(true) 
+		{
+			string filePath = atlasPath + "_" + index;
+			if(DoesContainAtlas(atlasPath)) return; //we already have it, don't load it again
+			
+			string fullFilePath = filePath + Futile.resourceSuffix;
+			
+			TextAsset text = Resources.Load (fullFilePath, typeof(TextAsset)) as TextAsset;
+
+			if(text == null)
+			{
+				break;
+			}
+			else
+			{
+				Resources.UnloadAsset(text);
+				LoadAtlas (filePath);
+			}
+
+			index++;			
+		}
+	}
 	
 	public void UnloadAtlas(string atlasPath)
 	{
