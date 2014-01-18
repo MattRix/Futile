@@ -12,7 +12,7 @@ public class RXStockpile<T>
 		int thingCount = things.Length;
 		for(int t = 0; t<thingCount; t++)
 		{
-			stockpile.AddItem(things[t],100.0f);
+			stockpile.AddItem(things[t],1.0f);
 		}
 
 		return stockpile;
