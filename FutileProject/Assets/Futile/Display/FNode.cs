@@ -9,11 +9,14 @@ public class FNode
 	protected float _y = 0f;
 	protected float _scaleX = 1f;
 	protected float _scaleY = 1f;
-	protected float _rotation = 0f;
+	protected float _rotation = 0f;	
+	protected float _skewX = 0f;
+	protected float _skewY = 0f;
 	
 	protected float _sortZ = 0f; //sortZ is used for depth sorting but ONLY if the node container's shouldSortByZ = true;
 	
 	protected bool _isMatrixDirty = false;
+	protected bool _didSetMatrix = false;
 	
 	protected FContainer _container = null;
 	
@@ -288,7 +291,10 @@ public class FNode
 		
 		//do NOT set _isMatrixDirty to false here because it is used in the redraw loop and will be set false then
 		
-		_matrix.SetScaleThenRotate(_x,_y,_scaleX,_scaleY,_rotation * -0.01745329f); //0.01745329 is RXMath.DTOR
+		if(!_didSetMatrix)
+		{
+			_matrix.SetScaleThenRotate(_x,_y,_scaleX,_scaleY, _rotation * -0.01745329f); //0.01745329 is RXMath.DTOR
+		}
 			
 		if(_container != null)
 		{
@@ -328,7 +334,10 @@ public class FNode
 		{
 			_isMatrixDirty = false;
 			
-			_matrix.SetScaleThenRotate(_x,_y,_scaleX,_scaleY,_rotation * -0.01745329f); //0.01745329 is RXMath.DTOR
+			if(!_didSetMatrix)
+			{
+				_matrix.SetScaleThenRotate(_x,_y,_scaleX,_scaleY, _rotation * -0.01745329f); //0.01745329 is RXMath.DTOR
+			}
 			
 			if(_container != null)
 			{
@@ -437,13 +446,13 @@ public class FNode
 	public float x
 	{
 		get { return _x;}
-		set { _x = value; _isMatrixDirty = true;}
+		set { _x = value; _isMatrixDirty = true; _didSetMatrix = false;}
 	}
 	
 	public float y
 	{
 		get { return _y;}
-		set { _y = value; _isMatrixDirty = true;}
+		set { _y = value; _isMatrixDirty = true; _didSetMatrix = false;}
 	}
 	
 	virtual public float sortZ
@@ -455,25 +464,25 @@ public class FNode
 	public float scaleX
 	{
 		get { return _scaleX;}
-		set { _scaleX = value; _isMatrixDirty = true;}
+		set { _scaleX = value; _isMatrixDirty = true; _didSetMatrix = false;}
 	}
 	
 	public float scaleY
 	{
 		get { return _scaleY;}
-		set { _scaleY = value; _isMatrixDirty = true;}
+		set { _scaleY = value; _isMatrixDirty = true; _didSetMatrix = false;}
 	}
 	
 	public float scale
 	{
 		get { return scaleX;} //return scaleX because if we're using this, x and y should be the same anyway
-		set { _scaleX = value; scaleY = value; _isMatrixDirty = true;}
+		set { _scaleX = value; scaleY = value; _isMatrixDirty = true; _didSetMatrix = false;}
 	}
 	
 	public float rotation
 	{
 		get { return _rotation;}
-		set { _rotation = value; _isMatrixDirty = true;}
+		set { _rotation = value; _isMatrixDirty = true; _didSetMatrix = false;}
 	}
 	
 	public bool isMatrixDirty
@@ -581,6 +590,13 @@ public class FNode
 		set {_stage = value;}
 	}
 	
+	public void SetMatrix(FMatrix matrix)
+	{
+		_matrix.CopyValues(matrix);
+		_didSetMatrix = true;
+		_isMatrixDirty = true;
+	}
+	
 	
 	//use node.LocalToLocal to use a point from a different coordinate space
 	public void RotateAroundPointRelative(Vector2 localPoint, float relativeDegrees)
@@ -601,6 +617,7 @@ public class FNode
 		_y += secondVector.y-firstVector.y;
 		
 		_isMatrixDirty = true;
+		_didSetMatrix = false;
 	}
 	
 	//use node.LocalToLocal to use a point from a different coordinate space
@@ -625,6 +642,7 @@ public class FNode
 		_scaleY *= relativeScaleY;
 		
 		_isMatrixDirty = true;
+		_didSetMatrix = false;
 	}
 	
 	//use node.LocalToLocal to use a point from a different coordinate space
