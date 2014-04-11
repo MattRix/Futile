@@ -566,4 +566,8 @@ public static class RXStringExtensions
 	{
 		return string.Format(@this,args);
 	}
+	public static string ToUpperFirstLetter(this string @this)
+	{
+		return char.ToUpper(@this[0]) + @this.Substring(1).ToLower();
+	}
 }
