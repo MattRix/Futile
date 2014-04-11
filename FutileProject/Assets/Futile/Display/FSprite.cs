@@ -146,6 +146,12 @@ public class FSprite : FFacetElementNode
 	{
 		return _textureRect.CloneAndScaleThenOffset(_scaleX,_scaleY,_x,_y);
 	}
+
+	//Note: this does not consider rotation at all!
+	public Rect GetLocalRectRelativeToContainer()
+	{
+		return _localRect.CloneAndScaleThenOffset(_scaleX,_scaleY,_x,_y);
+	}
 	
 	virtual public Rect textureRect //the full rect as if the sprite hadn't been trimmed
 	{
