@@ -450,7 +450,7 @@ public class PRWindow : EditorWindow
 
 				if(_activeGenerator == null) //if it's null, we just built the last atlas we had to generate!
 				{
-					Debug.Log("Packrat: Refresh Asset Database");
+					Debug.Log("Packrat: Refreshing Asset Database");
 					AssetDatabase.Refresh();
 				}
 
