@@ -571,3 +571,10 @@ public static class RXStringExtensions
 		return char.ToUpper(@this[0]) + @this.Substring(1).ToLower();
 	}
 }
+public static class RXIntExtensions
+{
+	public static string PluralS(this int @this)
+	{
+		return (@this == 1 ? "" : "s");
+	}
+}
