@@ -3,17 +3,17 @@ using UnityEngine;
 
 public class FParticleSystem : FFacetNode
 {
-	private int _maxParticleCount;
-	private FParticle[] _particles;
-	private FParticle[] _availableParticles;
-	private int _availableParticleCount;
-	private int _unavailableParticleIndex;
-	private bool _isMeshDirty;
+	protected int _maxParticleCount;
+	protected FParticle[] _particles;
+	protected FParticle[] _availableParticles;
+	protected int _availableParticleCount;
+	protected int _unavailableParticleIndex;
+	protected bool _isMeshDirty;
 	
+	protected bool _hasInited = false;
+
 	public float accelX = 0.0f;
 	public float accelY = 0.0f;
-	
-	private bool _hasInited = false;
 
 	public bool shouldNewParticlesOverwriteExistingParticles = true;
 	
@@ -173,7 +173,7 @@ public class FParticleSystem : FFacetNode
 		}
 	}
 
-	private void HandleUpdate()
+	virtual protected void HandleUpdate()
 	{
 		float deltaTime = Time.deltaTime;
 
@@ -397,6 +397,7 @@ public class FParticleDefinition
 
 	public float startRotation = 0;
 	public float endRotation = 0;
+
 	
 	public FParticleDefinition(string elementName)
 	{
