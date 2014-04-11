@@ -119,6 +119,8 @@ public class FAtlasManager
 			texture.LoadImage(imageBytes.bytes);
 			
 			Resources.UnloadAsset(imageBytes);
+
+			texture.Apply(false,true);
 			
 			return LoadAtlasFromTexture(atlasPath,pathWithSuffix, texture);
 		}
@@ -149,6 +151,8 @@ public class FAtlasManager
 			texture.LoadImage(imageBytes.bytes);
 			
 			Resources.UnloadAsset(imageBytes);
+
+			texture.Apply(false,true);
 			
 			return LoadAtlasFromTexture(imagePath, texture);
 		}
