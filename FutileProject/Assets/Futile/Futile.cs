@@ -128,6 +128,29 @@ public class Futile : MonoBehaviour
 		AddStage (stage);
 	}
 
+	public Camera CreateNewCamera(string name)
+	{
+		GameObject camGO = new GameObject();
+		camGO.transform.parent = gameObject.transform;
+
+		Camera cam = camGO.AddComponent<Camera>();
+		cam.name = name;
+		cam.clearFlags = _camera.clearFlags;
+		cam.nearClipPlane = _camera.nearClipPlane;
+		cam.farClipPlane = _camera.farClipPlane;
+		cam.depth = _camera.depth;
+		cam.rect = _camera.rect;
+		cam.backgroundColor = _camera.backgroundColor;
+		
+		//we multiply this stuff by scaleInverse to make sure everything is in points, not pixels
+		cam.orthographic = _camera.orthographic;
+		cam.orthographicSize = _camera.orthographicSize;
+
+		UpdateCameraPosition(cam);
+
+		return cam;
+	}
+
     public FDelayedCallback StartDelayedCallback(Action func, float delayTime)
     {
         if (delayTime <= 0) delayTime = 0.00001f; //super small delay for 0 to avoid divide by 0 errors
@@ -367,12 +390,17 @@ public class Futile : MonoBehaviour
 	
 	public void UpdateCameraPosition()
 	{
-		_camera.orthographicSize = screen.pixelHeight/2 * displayScaleInverse;
+		UpdateCameraPosition(_camera);
+	}
+	
+	public void UpdateCameraPosition(Camera cam)
+	{
+		cam.orthographicSize = screen.pixelHeight/2 * displayScaleInverse;
 		
 		float camXOffset = ((screen.originX - 0.5f) * -screen.pixelWidth)*displayScaleInverse + screenPixelOffset;
 		float camYOffset = ((screen.originY - 0.5f) * -screen.pixelHeight)*displayScaleInverse - screenPixelOffset;
-	
-		_camera.transform.position = new Vector3(camXOffset, camYOffset, -10.0f); 	
+		
+		cam.transform.position = new Vector3(camXOffset, camYOffset, -10.0f); 	
 	}
 
 	public void ForceGarbageCollectionNextUpdate()
