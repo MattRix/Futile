@@ -25,6 +25,17 @@ public class RXRect
 		
 	}
 
+	public bool CheckIntersect(RXRect otherRect)
+	{
+		return 
+		(
+			((this.x+this.width) >= otherRect.x) && 
+			(this.x <= (otherRect.x+otherRect.width)) && 
+			((this.y+this.height) >= otherRect.y) && 
+			(this.y <= (otherRect.y+otherRect.height))
+		);
+	}
+
 	public void Log(string name)
 	{
 		Debug.Log(name + " x:"+x+" y:"+y+ " w:"+width+" h:"+height);
@@ -44,7 +55,7 @@ public class RXRect
 		rect.height = height;
 		return rect;
 	}
-
+	
 	public bool Contains(Vector2 point)
 	{
 		if(point.x < x || point.y < y || point.x > x+width || point.y > y+height)
