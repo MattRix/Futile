@@ -501,7 +501,7 @@ public static class RXRandom
 
 	public const string randomChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-	public static string GetRandomString(int numChars)
+	public static string GenerateRandomString(int numChars)
 	{
 		string result = "";
 		for(int n = 0; n<numChars; n++)
