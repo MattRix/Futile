@@ -53,6 +53,7 @@ public class Futile : MonoBehaviour
 	public event FutileUpdateDelegate SignalPreUpdate;
 	public event FutileUpdateDelegate SignalUpdate;
 	public event FutileUpdateDelegate SignalAfterUpdate;
+	public event FutileUpdateDelegate SignalAfterDraw;
 	public event FutileUpdateDelegate SignalFixedUpdate;
 	public event FutileUpdateDelegate SignalLateUpdate;
     
@@ -323,6 +324,8 @@ public class Futile : MonoBehaviour
 		{
 			_stages[s].Redraw (false,_isDepthChangeNeeded);
 		}
+
+		if(SignalAfterDraw != null) SignalAfterDraw();
 
 		_isDepthChangeNeeded = false;
 		
