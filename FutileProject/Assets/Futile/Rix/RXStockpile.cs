@@ -25,6 +25,15 @@ public class RXStockpile<T>
 		
 	}
 
+	public void ResetLiveWeights()
+	{
+		int itemCount = items.Count;
+		for(int i = 0; i<itemCount; i++)
+		{
+			items[i].liveWeight = items[i].weight;
+		}
+	}
+
 	public T GetRandomItem()
 	{
 		return GetRandomItem(false);
