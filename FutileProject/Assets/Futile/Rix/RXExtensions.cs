@@ -427,6 +427,61 @@ public static class RXListExtensions
 
 public static class RXDictionaryExtensions
 {
+	public static int GetInt(this Dictionary<string,object> dict, string key, int defaultValue)
+	{
+		object result;
+		if(dict.TryGetValue(key,out result)) return int.Parse(result.ToString());
+		return defaultValue;
+	}
+
+	public static long GetLong(this Dictionary<string,object> dict, string key, long defaultValue)
+	{
+		object result;
+		if(dict.TryGetValue(key,out result)) return long.Parse(result.ToString());
+		return defaultValue;
+	}
+
+	public static float GetFloat(this Dictionary<string,object> dict, string key, float defaultValue)
+	{
+		object result;
+		if(dict.TryGetValue(key,out result)) return float.Parse(result.ToString());
+		return defaultValue;
+	}
+
+	public static double GetDouble(this Dictionary<string,object> dict, string key, double defaultValue)
+	{
+		object result;
+		if(dict.TryGetValue(key,out result)) return double.Parse(result.ToString());
+		return defaultValue;
+	}
+
+	public static bool GetBool(this Dictionary<string,object> dict, string key, bool defaultValue)
+	{
+		object result;
+		if(dict.TryGetValue(key,out result)) return bool.Parse(result.ToString());
+		return defaultValue;
+	}
+
+	public static string GetString(this Dictionary<string,object> dict, string key, string defaultValue)
+	{
+		object result;
+		if(dict.TryGetValue(key,out result)) return result.ToString();
+		return defaultValue;
+	}
+
+	public static int GetInt(this Dictionary<string,string> dict, string key, int defaultValue)
+	{
+		string result;
+		if(dict.TryGetValue(key,out result)) return int.Parse(result.ToString());
+		return defaultValue;
+	}
+
+	public static long GetLong(this Dictionary<string,string> dict, string key, long defaultValue)
+	{
+		string result;
+		if(dict.TryGetValue(key,out result)) return long.Parse(result.ToString());
+		return defaultValue;
+	}
 	//this implementation can alternatively be written using dict.TryGetKey, but I'm not sure which approach is faster
 	public static TValue GetValueOrDefault<TKey,TValue>(this Dictionary<TKey,TValue> dict, TKey key, TValue defaultValue)
 	{
@@ -465,12 +520,27 @@ public static class RXDictionaryExtensions
 			thingToSet = float.Parse(dict[key] as string);
 		}
 	}
+	public static void SetDoubleIfExists<TKey,TValue>(this Dictionary<TKey,TValue> dict, TKey key, ref double thingToSet)
+	{
+		if(dict.ContainsKey(key))
+		{
+			thingToSet = double.Parse(dict[key].ToString());
+		}
+	}
 	
 	public static void SetIntIfExists<TKey,TValue>(this Dictionary<TKey,TValue> dict, TKey key, ref int thingToSet)
 	{
 		if(dict.ContainsKey(key))
 		{
-			thingToSet = int.Parse(dict[key] as string);
+			thingToSet = int.Parse(dict[key].ToString());
+		}
+	}
+
+	public static void SetLongIfExists<TKey,TValue>(this Dictionary<TKey,TValue> dict, TKey key, ref long thingToSet)
+	{
+		if(dict.ContainsKey(key))
+		{
+			thingToSet = long.Parse(dict[key].ToString());
 		}
 	}
 	
@@ -478,7 +548,9 @@ public static class RXDictionaryExtensions
 	{
 		if(dict.ContainsKey(key))
 		{
-			thingToSet = bool.Parse(dict[key] as string);
+			thingToSet = bool.Parse(dict[key].ToString());
+		}
+	}
 		}
 	}
 }
