@@ -652,6 +652,12 @@ public class RXTweenable
 		tc.floatProp("amount", targetAmount);
 		Go.to(this,duration,tc);
 	}
+	public static RXTweenable DelayAction(float delay, Action action)
+	{
+		RXTweenable rt = new RXTweenable(0.0f);
+		rt.To(1.0f,delay,new TweenConfig().onComplete((t)=>{action();}));
+		return rt;
+	}
 }
 
 //the GoKit tweenchain was causing errors so I decided to make a simpler one
