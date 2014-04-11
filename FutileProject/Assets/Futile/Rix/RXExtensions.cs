@@ -551,6 +551,11 @@ public static class RXDictionaryExtensions
 			thingToSet = bool.Parse(dict[key].ToString());
 		}
 	}
+	public static void LogDetailed<TKey,TValue>(this Dictionary<TKey,TValue> dict, string name)
+	{
+		foreach(var kv in dict)
+		{
+			Debug.Log(name+"["+kv.Key.ToString()+"] = " + kv.Value.ToString());
 		}
 	}
 }
