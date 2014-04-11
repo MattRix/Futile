@@ -379,14 +379,45 @@ public class RXMath
 
 public static class RXRandom
 {
+	private static Stack<System.Random> _randomSources = new Stack<System.Random>();
 	private static System.Random _randomSource = new System.Random();
-	
+
+	public static void PushSeed()
+	{
+		_randomSources.Push(_randomSource);//add the old one to the stack
+		_randomSource = new System.Random();
+	}
+
+	public static void PushSeed(int seed)
+	{
+		_randomSources.Push(_randomSource);
+		_randomSource = new System.Random(seed);
+	}
+
+	public static void PopSeed()
+	{
+		if(_randomSources.Count > 0) 
+		{
+			//remove the last randomSource nad make it the new _randomSource
+			_randomSource = _randomSources.Pop();
+		}
+	}
+
+	public static void ResetSeed()
+	{
+		while(_randomSources.Count > 0) 
+		{
+			//remove the last randomSource nad make it the new _randomSource
+			_randomSource = _randomSources.Pop();
+		}
+	}
+
 	public static float Float()
 	{
 		return (float)_randomSource.NextDouble();
 	}
 	
-	public static float Float(int seed)
+	public static float SeedFloat(int seed)
 	{
 		return (float)new System.Random(seed).NextDouble();
 	}
@@ -405,6 +436,11 @@ public static class RXRandom
 	{
 		return _randomSource.Next();
 	}
+
+	public static int SeedInt(int seed)
+	{
+		return new System.Random(seed).Next();
+	}
 	
 	public static int Int(int max)
 	{
@@ -417,12 +453,25 @@ public static class RXRandom
 		return low + (high-low)*(float)_randomSource.NextDouble();
 	}
 
+	public static float SeedRange(int seed, float low, float high)
+	{
+		return low + (high-low)*(float)new System.Random(seed).NextDouble();
+	}
+
 	//note, this will never return the high value (so if you enter Range(0,2) you'll only get 0 and 1)
 	public static int Range(int low, int high)
 	{
 		int delta = high - low;
 		if(delta == 0) return low;
 		return low + _randomSource.Next() % delta; 
+	}
+
+	//note, this will never return the high value (so if you enter Range(0,2) you'll only get 0 and 1)
+	public static int SeedRange(int seed, int low, int high)
+	{
+		int delta = high - low;
+		if(delta == 0) return low;
+		return low + new System.Random(seed).Next() % delta; 
 	}
 	
 	public static bool Bool()
