@@ -482,7 +482,8 @@ public static class RXDictionaryExtensions
 		if(dict.TryGetValue(key,out result)) return long.Parse(result.ToString());
 		return defaultValue;
 	}
-	//this implementation can alternatively be written using dict.TryGetKey, but I'm not sure which approach is faster
+
+	//this implementation can alternatively be written using dict.TryGetValue, but I'm not sure which approach is faster
 	public static TValue GetValueOrDefault<TKey,TValue>(this Dictionary<TKey,TValue> dict, TKey key, TValue defaultValue)
 	{
 		if(dict.ContainsKey(key))
@@ -509,7 +510,7 @@ public static class RXDictionaryExtensions
 	{
 		if(dict.ContainsKey(key))
 		{
-			thingToSet = dict[key] as string;
+			thingToSet = dict[key].ToString();
 		}
 	}
 	
@@ -517,9 +518,10 @@ public static class RXDictionaryExtensions
 	{
 		if(dict.ContainsKey(key))
 		{
-			thingToSet = float.Parse(dict[key] as string);
+			thingToSet = float.Parse(dict[key].ToString());
 		}
 	}
+
 	public static void SetDoubleIfExists<TKey,TValue>(this Dictionary<TKey,TValue> dict, TKey key, ref double thingToSet)
 	{
 		if(dict.ContainsKey(key))
@@ -551,6 +553,7 @@ public static class RXDictionaryExtensions
 			thingToSet = bool.Parse(dict[key].ToString());
 		}
 	}
+
 	public static void LogDetailed<TKey,TValue>(this Dictionary<TKey,TValue> dict, string name)
 	{
 		foreach(var kv in dict)
@@ -566,11 +569,13 @@ public static class RXStringExtensions
 	{
 		return string.Format(@this,args);
 	}
+
 	public static string ToUpperFirstLetter(this string @this)
 	{
 		return char.ToUpper(@this[0]) + @this.Substring(1).ToLower();
 	}
 }
+
 public static class RXIntExtensions
 {
 	public static string PluralS(this int @this)
@@ -578,3 +583,4 @@ public static class RXIntExtensions
 		return (@this == 1 ? "" : "s");
 	}
 }
+
