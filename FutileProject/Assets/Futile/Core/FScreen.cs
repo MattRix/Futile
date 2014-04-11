@@ -136,6 +136,17 @@ public class FScreen
 			throw new FutileException("You must add at least one FResolutionLevel!");	
 		}
 
+		float checkLength;
+
+		if(_futileParams.resolutionLevelPickDimension == FResolutionLevelPickDimension.Longest)
+		{
+			checkLength = _screenLongLength;
+		}
+		else 
+		{
+			checkLength = _screenShortLength;
+		}
+
 		_resLevel = null;
 
 		if(_futileParams.resolutionLevelPickMode == FResolutionLevelPickMode.Upwards) //finds the smallest resolution level that is bigger than the screen
@@ -143,7 +154,7 @@ public class FScreen
 			for(int r = 0; r<_futileParams.resLevels.Count; r++) //iterating from smallest to largest
 			{
 				FResolutionLevel checkResLevel = _futileParams.resLevels[r];
-				if(checkResLevel.maxLength >= _screenLongLength) //we've found our resLevel
+				if(checkResLevel.maxLength >= checkLength) //we've found our resLevel
 				{
 					_resLevel = checkResLevel;
 					break;
@@ -155,7 +166,7 @@ public class FScreen
 			for(int r = _futileParams.resLevels.Count-1; r >= 0; r--)//note reverse iteration (from largest to smallest)
 			{
 				FResolutionLevel checkResLevel = _futileParams.resLevels[r];
-				if(checkResLevel.maxLength <= _screenLongLength) //we've found our resLevel
+				if(checkResLevel.maxLength <= checkLength) //we've found our resLevel
 				{
 					_resLevel = checkResLevel;
 					break;
@@ -168,7 +179,7 @@ public class FScreen
 			for(int r = 0; r<_futileParams.resLevels.Count; r++)
 			{
 				FResolutionLevel resLevel = _futileParams.resLevels[r];
-				float dist = Mathf.Abs(resLevel.maxLength - _screenLongLength);
+				float dist = Mathf.Abs(resLevel.maxLength - checkLength);
 
 				if(dist < winningDist)
 				{
@@ -193,7 +204,7 @@ public class FScreen
 		
 		if(_futileParams.shouldLerpToNearestResolutionLevel)
 		{
-			displayScaleModifier = _screenLongLength/_resLevel.maxLength;
+			displayScaleModifier = checkLength/_resLevel.maxLength;
 		}
 		 
 		Futile.displayScale = _resLevel.displayScale * displayScaleModifier;
