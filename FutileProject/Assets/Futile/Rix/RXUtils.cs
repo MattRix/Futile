@@ -375,6 +375,10 @@ public class RXMath
 	{
 		return Mathf.Clamp01((fullPercent-lowEnd)/(highEnd-lowEnd));
 	}
+	public static int RoundUpToNearest(float source, float roundAmount)
+	{
+		return (int)(Mathf.Ceil(source/roundAmount)*roundAmount); 
+	}
 }
 
 public static class RXRandom
