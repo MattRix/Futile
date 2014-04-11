@@ -695,3 +695,33 @@ public class RXTweenChain
 		nextTween.play();
 	}
 }
+
+public class BoxedLong
+{
+	public long value;
+	public BoxedLong(long value) {this.value = value;}
+}
+
+public class BoxedInt
+{
+	public int value;
+	public BoxedInt(int value) {this.value = value;}
+}
+
+public class BoxedFloat
+{
+	public float value;
+	public BoxedFloat(float value) {this.value = value;}
+}
+
+public class BoxedDouble
+{
+	public double value;
+	public BoxedDouble(double value) {this.value = value;}
+}
+
+public class BoxedBool
+{
+	public bool value;
+	public BoxedBool(bool value) {this.value = value;}
+}
