@@ -145,7 +145,7 @@ public class FMeshNode : FFacetElementNode
 
 			if(_meshData.facetType == FFacetType.Triangle)
 			{
-				int vertexIndex0 = _firstFacetIndex*4;
+				int vertexIndex0 = _firstFacetIndex*3;
 				int vertexIndex1 = vertexIndex0 + 1;
 				int vertexIndex2 = vertexIndex0 + 2;
 
