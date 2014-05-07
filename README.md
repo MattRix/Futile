@@ -1,4 +1,4 @@
-#Futile (0.91.1 Beta)
+#Futile (0.92.0 Beta)
 
 Futile is a code-centric 2D framework for Unity. 
 
