@@ -66,7 +66,7 @@ half4 frag (v2f i) : COLOR
     //half4 texcol = tex2D (_MainTex, i.uv);
     //return texcol * _Color;
     
-    half4 texcol = half4(0.0);
+    half4 texcol = half4(0.0,0.0,0.0,0.0);
     float remaining=1.0f;
     float coef=1.0;
     for (int j = 0; j < 3; j++) {
