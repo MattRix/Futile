@@ -245,7 +245,7 @@ public class FFont
 				//this is the ratio of the config vs the size of the actual texture element
 				_configRatio = _element.sourcePixelSize.x / (float)_configWidth;
 
-				_lineHeight = ((float)int.Parse(words[1].Split('=')[1])) * _configRatio * resourceScaleInverse;	
+				_lineHeight = (float.Parse(words[1].Split('=')[1])) * _configRatio * resourceScaleInverse;	
 				//_lineBase = int.Parse(words[2].Split('=')[1]) * _configRatio;	
 			}
 			else if(words[0] == "chars") //chars count=92
@@ -275,12 +275,11 @@ public class FFont
 					
 					if(partName == "\r") continue; //something weird happened with linebreaks, meh!
 					
-					int partIntValue = int.Parse(parts[1]);
-					float partFloatValue = (float) partIntValue;
+					float partFloatValue = float.Parse(parts[1]);
 						
 					if(partName == "id")
 					{
-						charInfo.charID = partIntValue;
+						charInfo.charID = Mathf.RoundToInt(partFloatValue);
 					}
 					else if(partName == "x")
 					{
@@ -312,7 +311,7 @@ public class FFont
 					}
 					else if(partName == "page")
 					{
-						charInfo.page = partIntValue;
+						charInfo.page = Mathf.RoundToInt(partFloatValue);
 					}
 				}
 
@@ -339,6 +338,9 @@ public class FFont
 				charInfo.xadvance *= resourceScaleInverse;
 
 				_charInfosByID[(uint)charInfo.charID] = charInfo;
+
+//				if(c >= _charInfos.Length) Debug.Log("uh wut " + charInfo.charID + " um " + _configPath);
+
 				_charInfos[c] = charInfo;
 				
 				c++;
@@ -363,19 +365,19 @@ public class FFont
 					if(parts.Length >= 2)
 					{
 						string partName = parts[0];
-						int partValue = int.Parse(parts[1]);
+						float partValue = float.Parse(parts[1]);
 						
 						if(partName == "first")
 						{
-							kerningInfo.first = partValue;
+							kerningInfo.first = Mathf.RoundToInt(partValue);
 						}
 						else if(partName == "second")
 						{
-							kerningInfo.second = partValue;
+							kerningInfo.second = Mathf.RoundToInt(partValue);
 						}
 						else if(partName == "amount")
 						{
-							kerningInfo.amount = ((float)partValue) * _configRatio * resourceScaleInverse;
+							kerningInfo.amount = partValue * _configRatio * resourceScaleInverse;
 						}
 					}
 				}
@@ -470,7 +472,7 @@ public class FFont
 		for(int c = 0; c<lettersLength; ++c)
 		{
 			char letter = letters[c];
-			
+
 			if(letter == ASCII_NEWLINE)
 			{	
 				if(letterCount == 0)
@@ -638,5 +640,3 @@ public class FFont
 	
 	
 }
-
-
