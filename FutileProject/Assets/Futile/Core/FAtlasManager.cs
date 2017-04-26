@@ -92,27 +92,50 @@ public class FAtlasManager
 		_atlases.Add(atlas); 
 	}
 	
-	public void LoadAtlas(string atlasPath)
+	//assuming resourceSuffix of _ipad, will attempt to load suffix _0_ipad, _1_ipad, etc until it misses
+	public void LoadAtlases(string atlasPath)
+	{
+		int index = 0;
+		while(true) {
+			
+			string filePath = atlasPath + "_" + index;
+			if(DoesContainAtlas(atlasPath)) return; //we already have it, don't load it again
+			
+			string fullFilePath = filePath + Futile.resourceSuffix;
+			
+			TextAsset text = Resources.Load (fullFilePath, typeof(TextAsset)) as TextAsset;
+			if(text == null)
+			{
+				break;
+			}else{
+				Resources.UnloadAsset(text);
+				LoadAtlas (filePath);
+			}
+			index++;			
+		}
+	}
+	
+	public void LoadAtlas(string atlasPath, bool densityIndependent = false)
 	{
 		if(DoesContainAtlas(atlasPath)) return; //we already have it, don't load it again
-		
-		string filePath = atlasPath+Futile.resourceSuffix+"_png";
-		
+
+		string filePath = atlasPath + (densityIndependent ? "" : Futile.resourceSuffix) + "_png";
+
 		TextAsset imageBytes = Resources.Load (filePath, typeof(TextAsset)) as TextAsset;
-		
+
 		if(imageBytes != null) //do we have png bytes?
 		{
 			Texture2D texture = new Texture2D(0,0,TextureFormat.ARGB32,false);
-			
+
 			texture.LoadImage(imageBytes.bytes);
-			
+
 			Resources.UnloadAsset(imageBytes);
-			
-			LoadAtlasFromTexture(atlasPath,atlasPath+Futile.resourceSuffix, texture);
+
+			LoadAtlasFromTexture(atlasPath,atlasPath + (densityIndependent ? "" : Futile.resourceSuffix), texture);
 		}
 		else //load it as a normal Unity image asset
 		{
-			ActuallyLoadAtlasOrImage(atlasPath, atlasPath+Futile.resourceSuffix, atlasPath+Futile.resourceSuffix);
+			ActuallyLoadAtlasOrImage(atlasPath, atlasPath + (densityIndependent ? "" : Futile.resourceSuffix), atlasPath + (densityIndependent ? "" : Futile.resourceSuffix));
 		}
 	}
 	
