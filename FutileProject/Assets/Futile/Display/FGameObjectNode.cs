@@ -8,11 +8,17 @@ public class FGameObjectNode : FNode, FRenderableLayerInterface
 	protected bool _shouldLinkRotation;
 	protected bool _shouldLinkScale;
 	protected int _renderQueueDepth = -1;
-	
+	private Vector3 _initialGameObjectScale;
+	private float _initialGameObjectRotationZ;
+	private float _previousGameObjectRotationZ;
+
 	public bool shouldDestroyOnRemoveFromStage = true;
-	
-	public FGameObjectNode (GameObject gameObject, bool shouldLinkPosition, bool shouldLinkRotation, bool shouldLinkScale)
-	{
+
+	public FGameObjectNode(GameObject gameObject, bool shouldLinkPosition, bool shouldLinkRotation, bool shouldLinkScale) : base() {
+		_initialGameObjectRotationZ = gameObject.transform.rotation.eulerAngles.z;
+		_initialGameObjectScale = gameObject.transform.localScale;
+		_previousGameObjectRotationZ = _initialGameObjectRotationZ;
+
 		Init (gameObject,shouldLinkPosition,shouldLinkRotation, shouldLinkScale);
 	}
 	
@@ -133,18 +139,18 @@ public class FGameObjectNode : FNode, FRenderableLayerInterface
 	
 	public void UpdateGameObject()
 	{
-		if(_isOnStage) 
-		{
-			//TODO: Get these values correctly using the full matrix
-			//do it with scale too
-			
-			//need to use the FULL global matrix
-			
+		if(_isOnStage) {
 			FMatrix matrix = this.screenConcatenatedMatrix;
-			
-			if(_shouldLinkPosition) _gameObject.transform.localPosition = matrix.GetVector3FromLocalVector2(Vector2.zero,0);
-			if(_shouldLinkRotation) _gameObject.transform.eulerAngles = new Vector3(_gameObject.transform.eulerAngles.x,_gameObject.transform.eulerAngles.y,matrix.GetRotation());
-			if(_shouldLinkScale) _gameObject.transform.localScale = new Vector3(matrix.GetScaleX(), matrix.GetScaleY (), _gameObject.transform.localScale.z);
+
+			if(_shouldLinkPosition) _gameObject.transform.localPosition = matrix.GetVector3FromLocalVector2(Vector2.zero,Camera.main.farClipPlane / 2f);
+
+			if(_shouldLinkRotation) {
+				_gameObject.transform.Rotate(0, 0, _previousGameObjectRotationZ - _initialGameObjectRotationZ - rotation, Space.World);//_gameObject.transform.eulerAngles.x, _gameObject.transform.eulerAngles.y, _gameObject.transform.eulerAngles.z, Space.World);//matrix.GetRotation());
+				_previousGameObjectRotationZ = _initialGameObjectRotationZ + rotation;
+			}
+
+			// won't work right when x and y scales are separated
+			if(_shouldLinkScale) _gameObject.transform.localScale = _initialGameObjectScale * matrix.GetScaleX();
 		}
 	}
 	
