@@ -17,7 +17,7 @@ ___
 
 ## Futile works great with Unity 3.5 and 4.*
 
-## How to try the demo project:##
+## How to try the demo project: ##
 
 #### How to open the project
 
