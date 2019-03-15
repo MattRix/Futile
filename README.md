@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-#Futile (0.92.0 Beta)
-=======
-# Futile (0.91.1 Beta)
->>>>>>> master
+
+#Futile (2019 Edition)
 
 Futile is a code-centric 2D framework for Unity. 
 
@@ -19,7 +16,7 @@ ___
 
 ## Submit bugs and feature requests to http://github.com/MattRix/Futile/issues
 
-## Futile works great with Unity 3.5 and 4.*
+## Futile works great with all versions of Unity (but let me know if you have any issues!)
 
 ## How to try the demo project: ##
 
@@ -29,17 +26,6 @@ ___
 - Make sure you have Unity installed
 - Go into FutileProject/Assets and open FutileScene.unity
 
-#### How to make sure you're running it at the right resolution
-- Go to File -> Build Settings -> Click "PC and Mac Standalone" -> Click "Switch Platform" (if it's already greyed out, you're good)
-- On the Build Settings page, choose Player Settings
-- Under Resolution and Presentation, set the size to 960x640 (or 480x320, or 1024x768)
-- Go to the "Game" tab 
-- In the top left dropdown, choose your resolution (instead of "Free aspect")
-- In the top right, make sure "Maximize on Play" is enabled.
-
-Notes: 
-- If you choose a specific resolution, but the game window isn't large enough to contain that resolution, Unity will open in some random scaled resolution, and everything will be wonky, which is annoying. 
-- If you're on OSX and you own iOS Basic or Pro, you can choose iOS instead of standalone
 
 ## Third Party add-ons for Futile
 
@@ -63,7 +49,7 @@ The demo project also uses Prime31's fantastic GoKit tweening library: [github.c
 
 ## MIT License ##
 
-Source code for Futile is Copyright © 2013 Matt Rix and contributors.
+Source code for Futile is Copyright © 2019 Matt Rix and contributors.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
