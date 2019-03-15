@@ -31,7 +31,7 @@ public class FPDebugRenderer : MonoBehaviour
 		
 		_container.AddChild(_drawContainer = new FContainer());
 		
-		_color = RXUtils.GetColorFromHex(color);
+		_color = RXColor.GetColorFromHex(color);
 		
 		this.shouldUpdateColliders = shouldUpdateColliders;
 		
