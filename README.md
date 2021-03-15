@@ -8,6 +8,8 @@ This is for those of you who want to do everything in code with as little editor
 If you've used Cocos2D or Flash you should feel right at home.
 
 It's in development and completely undocumented... but it works. 
+
+(2021 note from Matt: Futile hasn't been updated a whole lot since I first released it, but it has been used (and continues to be used) in a bunch of real games)
 ___
 
 ## Go to http://struct.ca/futile for UnityPackages and instructional videos
