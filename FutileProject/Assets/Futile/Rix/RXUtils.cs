@@ -1,10 +1,13 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-
+using System.Text;
+using System.Linq;
 
 public static class RXUtils
 {
+	public static StringBuilder sb = new StringBuilder(1000); //global stringbuilder for use anywhere
+
 	public static float GetAngle(this Vector2 vector)
 	{
 		return Mathf.Atan2(-vector.y, vector.x) * RXMath.RTOD;
@@ -14,6 +17,7 @@ public static class RXUtils
 	{
 		return Mathf.Atan2(-vector.y, vector.x);
 	}
+
 	public static Rect ExpandRect(Rect rect, float paddingX, float paddingY)
 	{
 		return new Rect(rect.x - paddingX, rect.y - paddingY, rect.width + paddingX*2, rect.height+paddingY*2);	
@@ -23,8 +27,13 @@ public static class RXUtils
 	{
 		Debug.Log (name+": ("+rect.x+","+rect.y+","+rect.width+","+rect.height+")");	
 	}
-	
-	public static void LogVectors(string name, params Vector2[] args)
+
+    public static Vector2 GetVector2(float angle)
+    {
+        return new Vector2(Mathf.Cos(angle * RXMath.DTOR), Mathf.Sin(angle * RXMath.DTOR));
+    }
+
+    public static void LogVectors(string name, params Vector2[] args)
 	{
 		string result = name + ": " + args.Length + " Vector2 "+ args[0].ToString()+"";
 
@@ -67,6 +76,33 @@ public static class RXUtils
 	{
 		return "("+vector.x + "," + vector.y +")";
 	}
+
+	public static string Vector3DetailedToString(Vector3 vector)
+	{
+		return "(" + vector.x + "," + vector.y + ", " + vector.z + ")";
+	}
+
+	public static Color GetColorFromHex(uint hex)
+	{
+		uint red = hex >> 16;
+		uint greenBlue = hex - (red<<16);
+		uint green = greenBlue >> 8;
+		uint blue = greenBlue - (green << 8);
+		
+		return new Color(red/255.0f, green/255.0f, blue/255.0f);
+	}
+
+	public static Color GetColorFromHex(uint hex, float alpha)
+	{
+		var color = GetColorFromHex(hex);
+		color.a = alpha;
+		return color;
+	}
+	
+	public static Color GetColorFromHex(string hexString)
+	{
+		return GetColorFromHex(Convert.ToUInt32(hexString,16));
+	}
 	
 	public static Vector2 GetVector2FromString(string input)
 	{
@@ -101,6 +137,37 @@ public static class RXUtils
 
 		return true;
 	}
+
+	//use forward slashes for folders (ex Assets/myFile.txt)
+	public static string GetFilePathRelativeToUnityProject(string sourcePath)
+	{
+		#if UNITY_EDITOR && !UNITY_WEBPLAYER
+		return System.IO.Directory.GetCurrentDirectory() 
+			+ System.IO.Path.DirectorySeparatorChar 
+			+ sourcePath.Replace('/',System.IO.Path.DirectorySeparatorChar);
+		#else
+		return "";
+		#endif
+	}
+
+    static StringBuilder mysterySB = new StringBuilder();
+    public static string Mysteryify(string input)
+    {
+        mysterySB.Clear();
+        for(int c = 0; c<input.Length; c++)
+        {
+            //if(input[c] < '0') //hides numbers and some punctuation
+            if(input[c] < 64) //keep punctuation and numbers 
+            {
+                mysterySB.Append(input[c]);
+            }
+            else
+            {
+                mysterySB.Append('?');
+            }
+        }
+        return mysterySB.ToString();
+    }
 }
 
 public static class RXArrayUtil
@@ -113,6 +180,28 @@ public static class RXArrayUtil
 			result[c] = item;
 		}
 		return result;
+	}
+
+	public static void Add<T>(ref T[] items, T item)
+	{
+		int count = items.Length;
+		Array.Resize(ref items,count+1);
+		items[count] = item;
+	}
+
+	public static void Remove<T>(ref T[] items, T item)
+	{
+		int foundIndex = Array.IndexOf(items,item);
+
+		if(foundIndex != -1) //shift all items after the removed item
+		{
+			int newCount = items.Length-1;
+			for(int i = foundIndex; i<newCount; i++)
+			{
+				items[i] = items[i+1];
+			}
+			Array.Resize(ref items,newCount);
+		}
 	}
 }
 
@@ -132,7 +221,7 @@ public class RXColorHSL
 	public RXColorHSL() : this(0.0f, 0.0f, 0.0f) {}
 }
 
-public class RXColor
+public static class RXColor
 {
 	//TODO: IMPLEMENT THIS
 	public static Color ColorFromRGBString(string rgbString)
@@ -266,6 +355,17 @@ public class RXColor
 		return c;
 	}
 
+    //shortform
+    public static Color GetFromHex(uint hex)
+	{
+		uint red = hex >> 16;
+		uint greenBlue = hex - (red<<16);
+		uint green = greenBlue >> 8;
+		uint blue = greenBlue - (green << 8);
+		
+		return new Color(red/255.0f, green/255.0f, blue/255.0f);
+	}
+
 	public static Color GetColorFromHex(uint hex)
 	{
 		uint red = hex >> 16;
@@ -276,15 +376,27 @@ public class RXColor
 		return new Color(red/255.0f, green/255.0f, blue/255.0f);
 	}
 
-	public static Color GetColorFromHex(string hexString)
-	{
-		return GetColorFromHex(Convert.ToUInt32(hexString,16));
-	}
+    public static Color Brighten(this Color color, float brightness)
+    {
+        return new Color(Mathf.Clamp01(color.r + brightness), Mathf.Clamp01(color.g + brightness), Mathf.Clamp01(color.b + brightness), color.a);
+    }
 
+    public static Color Increment(this Color color, float incrementer)
+    {
+        return new Color(Mathf.Clamp01(color.r + incrementer), Mathf.Clamp01(color.g + incrementer), Mathf.Clamp01(color.b + incrementer), color.a);
+    }
+
+    public static Color Multiply(this Color color, float multiplier)
+    {
+        return new Color(Mathf.Clamp01(color.r * multiplier), Mathf.Clamp01(color.g * multiplier), Mathf.Clamp01(color.b * multiplier), color.a);
+    }
 }
 
 public class RXMath
 {
+	//dot = (a.x*b.x + a.y*b.y) are these vectors facing the same direction (1 = exact same, -1 = opposite direction, 0 = perpendicular)
+	//cross = (a.x*b.y - a.y*b.x) is b to the left (1) or right (-1) of A, or the same (0)
+
 	public const float RTOD = 180.0f/Mathf.PI;
 	public const float DTOR = Mathf.PI/180.0f;
 	public const float DOUBLE_PI = Mathf.PI*2.0f;
@@ -330,6 +442,11 @@ public class RXMath
 		
 		return delta;
 	}
+
+	public static float GetDegrees(Vector2 vector)
+	{
+		return Mathf.Atan2(-vector.y,vector.x) * RXMath.RTOD;
+	}
 	
 	//normalized ping pong (apparently Unity has this built in... so yeah) - Mathf.PingPong()
 	public static float PingPong(float input, float range)
@@ -360,15 +477,93 @@ public class RXMath
 		return new Vector2(Mathf.Cos(radians) * distance, -Mathf.Sin(radians) * distance);
 	}
 
+	public static Vector2 GetVector2(float angle, float distance = 1f)
+	{
+		float radians = angle * RXMath.DTOR;
+		return new Vector2(Mathf.Cos(radians) * distance, Mathf.Sin(radians) * distance);
+	}
+
 	//returns the percentage across a subrange... 
 	//so for example (0.75,0.25,1.0) would return 0.666, because 0.75f is 66% of the way between 0.25 and 1.0f
 	public static float GetSubPercent(float fullPercent, float lowEnd, float highEnd)
 	{
 		return Mathf.Clamp01((fullPercent-lowEnd)/(highEnd-lowEnd));
 	}
+
 	public static int RoundUpToNearest(float source, float roundAmount)
 	{
 		return (int)(Mathf.Ceil(source/roundAmount)*roundAmount); 
+	}
+
+	public static Vector2 GetBezier(float t, Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
+	{
+		float u = 1f - t;
+
+		return  
+		u*u*u   	* p0 +
+		3f*u*u*t 	* p1 +
+		3f*u*t*t 	* p2 +
+		t*t*t    	* p3;
+	}
+
+	public static Vector3 GetBezier(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
+	{
+		float u = 1f - t;
+		
+		return  
+		u*u*u   	* p0 +
+		3f*u*u*t 	* p1 +
+		3f*u*t*t 	* p2 +
+		t*t*t    	* p3;
+	}
+
+	public static Vector2 GetBezierTangent(float t, Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
+	{
+		float u = 1f - t;
+		
+		return
+		-3f*u*u 			* p0 + 
+		(3f*u*u - 6f*u*t) 	* p1 + 
+		(6f*u*t - 3f*t*t) 	* p2 +
+		3f*t*t 				* p3;
+	}
+
+	public static Vector3 GetBezierTangent(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
+	{
+		float u = 1f - t;
+
+		return
+		-3f*u*u 			* p0 + 
+		(3f*u*u - 6f*u*t) 	* p1 + 
+		(6f*u*t - 3f*t*t) 	* p2 +
+		3f*t*t 				* p3;
+	}
+
+	public static Vector3 GetBezierNormal(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
+	{
+		return 6*(1f - t) * (p2-2*p1 + p0) + 6*t * (p3 - 2*p2 + p1); 
+	}
+
+	//TODO: figure out how to make a version of this with configurable tension
+	public static Vector3 GetCatmullRom(float t, Vector3 previous, Vector3 start, Vector3 end, Vector3 next)
+	{
+		float tt = t * t;
+		float ttt = tt * t;
+		 
+		return 	previous * 	(-0.5f*ttt 	+ tt 		- 0.5f*t) 	+
+				start * 	(1.5f*ttt 	- 2.5f*tt 	+ 1.0f) 	+
+				end * 		(-1.5f*ttt 	+ 2.0f*tt 	+ 0.5f*t) 	+
+				next * 		(0.5f*ttt 	- 0.5f*tt);
+	}
+
+	public static float Dot(Vector2 left, Vector2 right)
+	{
+		return left.x * right.x + left.y * right.y;
+	}
+	
+	public static float Cross(Vector2 left, Vector2 right)
+	{
+		return left.x * right.y - left.y * right.x;
 	}
 }
 
@@ -448,9 +643,19 @@ public static class RXRandom
 		return low + (high-low)*(float)_randomSource.NextDouble();
 	}
 
+	public static double Range(double low, double high)
+	{
+		return low + (high-low)*_randomSource.NextDouble();
+	}
+
 	public static float SeedRange(int seed, float low, float high)
 	{
 		return low + (high-low)*(float)new System.Random(seed).NextDouble();
+	}
+
+	public static double SeedRange(int seed, double low, double high)
+	{
+		return low + (high-low)*new System.Random(seed).NextDouble();
 	}
 
 	//note, this will never return the high value (so if you enter Range(0,2) you'll only get 0 and 1)
@@ -468,10 +673,17 @@ public static class RXRandom
 		if(delta == 0) return low;
 		return low + new System.Random(seed).Next() % delta; 
 	}
+
+
 	
 	public static bool Bool()
 	{
 		return _randomSource.NextDouble() < 0.5;	
+	}
+
+    public static int Sign()
+	{
+		return _randomSource.NextDouble() < 0.5f ? -1 : 1;
 	}
 
 	public static bool Bool(float chanceOfTrue)
@@ -479,22 +691,57 @@ public static class RXRandom
 		return _randomSource.NextDouble() < chanceOfTrue;	
 	}
 
-	//random item from all passed arguments/params - RXRandom.Select(one, two, three);
+	//random item from all passed arguments/params - RXRandom.GetRandomItem(one, two, three);
 	public static object GetRandomItem(params object[] objects)
 	{
 		return objects[_randomSource.Next() % objects.Length];
 	}
 
-	public static string GetRandomString(params string[] strings)
+    public static T GetRandomItem<T>(params T[] objects)
+    {
+        return objects[_randomSource.Next() % objects.Length];
+    }
+
+    public static string GetRandomString(params string[] strings)
 	{
 		return strings[_randomSource.Next() % strings.Length];
 	}
-	public static Color Color(float alpha)
+
+	public static Color Color(float alpha = 1f)
 	{
 		return new Color(RXRandom.Float(),RXRandom.Float(),RXRandom.Float(),alpha);
 	}
-	//random item from an array
+
+    public static Color ColorHSL(float sat = 1f, float lum = 0.5f, float alpha = 1f)
+    {
+        return RXColor.ColorFromHSL(RXRandom.Float(), sat, lum,alpha);
+    }
+
+    public static void Dir(out int offC, out int offR)
+    {
+        switch (RXRandom.Int(4))
+        {
+            case 0:     offC = 1;   offR = 0;   break;
+
+            case 1:     offC = -1;  offR = 0;   break;
+
+            case 2:     offC = 0;   offR = 1;   break;
+
+            default:    offC = 0;   offR = -1;  break;
+        }
+    }
+
+    //random item from an array
+    /*
 	public static T GetRandomItem<T>(T[] items)
+	{
+		if(items.Length == 0) return default(T); //null
+		return items[_randomSource.Next() % items.Length];
+	}
+    */
+
+    //random item from an array (extension method)
+    public static T GetRandom<T>(this T[] items)
 	{
 		if(items.Length == 0) return default(T); //null
 		return items[_randomSource.Next() % items.Length];
@@ -513,14 +760,30 @@ public static class RXRandom
 		return items[_randomSource.Next() % items.Count];
 	}
 
-	//replaces one item at random with a new one 
-	public static void ReplaceRandomItem<T>(List<T> items, T item)
+	//random item from a list (extension method)
+	public static T GetRandom<T>(this List<T> items)
+	{
+		if(items.Count == 0) return default(T); //null
+		return items[_randomSource.Next() % items.Count];
+	}
+
+    public static T GetRandom<T>(this IEnumerable<T> items)
+    {
+        int count = items.Count();
+        if (count == 0) return default(T); //null
+        return items.ElementAt(_randomSource.Next() % count);
+    }
+
+    //replaces one item at random with a new one 
+    public static void ReplaceRandomItem<T>(List<T> items, T item)
 	{
 		items[_randomSource.Next() % items.Count] = item;
 	}
-	
-	//this isn't really perfectly randomized, but good enough for most purposes
-	public static Vector2 Vector2Normalized()
+
+    
+
+    //this isn't really perfectly randomized, but good enough for most purposes
+    public static Vector2 Vector2Normalized()
 	{
 		return new Vector2(RXRandom.Range(-1.0f,1.0f),RXRandom.Range(-1.0f,1.0f)).normalized;
 	}
@@ -532,13 +795,32 @@ public static class RXRandom
 
 	public static void ShuffleList<T>(List<T> list)
 	{
-		list.Sort(RandomComparison);
+		//list.Sort(RandomComparison);
+
+		// Call the list Shuffle below
+		list.Shuffle();
 	}
 
 	public static void Shuffle<T>(this List<T> list)
 	{
-		list.Sort(RandomComparison);
+		//list.Sort(RandomComparison);
+
+		// Fisher-Yates/Knuth/Durstenfeld Shuffle implementation: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+		for (int i = list.Count - 1; i >= 1; i--)
+		{
+			int j = RXRandom.Range(0, i+1);
+			var temp = list[j];
+			list[j] = list[i];
+			list[i] = temp;
+		}
 	}
+
+    public static void SafeShuffle<T>(this List<T> list) //because the regular shuffle gave me a weird error once because of inconsistent results?
+    {
+        var shuffled = list.OrderBy(x => _randomSource.Next()).ToList();
+        list.Clear();
+        list.AddRange(shuffled);
+    }
 
 	public static int RandomComparison<T>(T a, T b) 
 	{
@@ -574,11 +856,6 @@ public class RXCircle
 		this.radiusSquared = radius * radius;
 	}
 	
-	public bool CheckIntersectWithRect(Rect rect)
-	{
-		return rect.CheckIntersectWithCircle(this);
-	}
-	
 	public bool CheckIntersectWithCircle(RXCircle circle)
 	{
 		Vector2 delta = circle.center - this.center;
@@ -589,29 +866,31 @@ public class RXCircle
 
 //these equations shamelessly stolen from Chevy Ray's AutoMotion ;) (https://github.com/UnityPatterns/AutoMotion/) 
 //note that they only take a t variable (which should be between 0 and 1) and return a value between 0 and 1
+//these equations could be improved a LOT with some factoring 
+//consider using http://www.algebrahelp.com/calculators/expression/oops/ or http://www.webmath.com/anything.html to make things easier
 public static class RXEase
 {
 	public delegate float Dele(float t);
 
-	public static Dele Linear = (t) => 		{ return t; };
-	public static Dele QuadIn = (t) => 		{ return t * t; };
-	public static Dele QuadOut = (t) => 	{ return 1f - QuadIn(1f - t); };
-	public static Dele QuadInOut = (t) => 	{ return (t <= 0.5f) ? QuadIn(t * 2f) * 0.5f : QuadOut(t * 2f - 1f) * 0.5f + 0.5f; };
-	public static Dele CubeIn = (t) => 		{ return t * t * t; };
-	public static Dele CubeOut = (t) => 	{ return 1f - CubeIn(1f - t); };
-	public static Dele CubeInOut = (t) => 	{ return (t <= 0.5f) ? CubeIn(t * 2f) * 0.5f : CubeOut(t * 2f - 1f) * 0.5f + 0.5f; };
-	public static Dele BackIn = (t) => 		{ return t * t * (2.70158f * t - 1.70158f); };
-	public static Dele BackOut = (t) => 	{ return 1f - BackIn(1f - t); };
-	public static Dele BackInOut = (t) => 	{ return (t <= 0.5f) ? BackIn(t * 2f) * 0.5f : BackOut(t * 2f - 1f) * 0.5f + 0.5f; };
-	public static Dele ExpoIn = (t) => 		{ return Mathf.Pow(2f, 10f * (t-1.0f)); };
-	public static Dele ExpoOut = (t) => 	{ return 1f - Mathf.Pow(2f, -10f * t); };
-	public static Dele ExpoInOut = (t) => 	{ return t < .5f ? ExpoIn(t * 2f) * 0.5f : ExpoOut(t * 2f - 1f) * 0.5f + 0.5f; };
-	public static Dele SineIn = (t) => 		{ return -Mathf.Cos(Mathf.PI * 0.5f * t) + 1f; };
+	public static Dele Linear = (t) => 		{ return t; }; 
+	public static Dele QuadIn = (t) => 		{ return t * t; }; 
+	public static Dele QuadOut = (t) => 	{ return 2f*t - t*t;}; 
+	public static Dele QuadInOut = (t) => 	{ return (t <= 0.5f) ? (t*t*2f) : (-1.0f + 4f*t + -2f*t*t);}; 
+	public static Dele CubeIn = (t) => 		{ return t * t * t; }; 
+	public static Dele CubeOut = (t) => 	{ return 1f - CubeIn(1f - t); }; //needs optimization
+	public static Dele CubeInOut = (t) => 	{ return (t <= 0.5f) ? CubeIn(t * 2f) * 0.5f : CubeOut(t * 2f - 1f) * 0.5f + 0.5f; }; //needs optimization
+	public static Dele BackIn = (t) => 		{ return t * t * (2.70158f * t - 1.70158f); }; 
+	public static Dele BackOut = (t) => 	{ return 1f - BackIn(1f - t); }; //needs optimization
+	public static Dele BackInOut = (t) => 	{ return (t <= 0.5f) ? BackIn(t * 2f) * 0.5f : BackOut(t * 2f - 1f) * 0.5f + 0.5f; }; //needs optimization
+	public static Dele ExpoIn = (t) => 		{ return Mathf.Pow(2f, 10f * (t-1.0f)); }; //needs optimization
+	public static Dele ExpoOut = (t) => 	{ return 1f - Mathf.Pow(2f, -10f * t); }; //needs optimization
+	public static Dele ExpoInOut = (t) => 	{ return t < .5f ? ExpoIn(t * 2f) * 0.5f : ExpoOut(t * 2f - 1f) * 0.5f + 0.5f; }; //needs optimization
+	public static Dele SineIn = (t) => 		{ return -Mathf.Cos(Mathf.PI * 0.5f * t) + 1f; }; 
 	public static Dele SineOut = (t) => 	{ return Mathf.Sin(Mathf.PI * 0.5f * t); };
 	public static Dele SineInOut = (t) => 	{ return -Mathf.Cos(Mathf.PI * t) * 0.5f + .5f; };
-	public static Dele ElasticIn = (t) => 	{ return 1f - ElasticOut(1f - t); };
-	public static Dele ElasticOut = (t) => 	{ return Mathf.Pow(2f, -10f * t) * Mathf.Sin((t - 0.075f) * (2f * Mathf.PI) / 0.3f) + 1f; };
-	public static Dele ElasticInOut = (t) =>{ return (t <= 0.5f) ? ElasticIn(t * 2f) / 2f : ElasticOut(t * 2f - 1f) * 0.5f + 0.5f; };
+	public static Dele ElasticIn = (t) => 	{ return 1f - ElasticOut(1f - t); }; //needs optimization
+	public static Dele ElasticOut = (t) => 	{ return Mathf.Pow(2f, -10f * t) * Mathf.Sin((t - 0.075f) * (2f * Mathf.PI) / 0.3f) + 1f; }; //needs optimization
+	public static Dele ElasticInOut = (t) =>{ return (t <= 0.5f) ? ElasticIn(t * 2f) / 2f : ElasticOut(t * 2f - 1f) * 0.5f + 0.5f; }; //needs optimization
 
 	//turns input from 0 to 1 into a eased saw pattern from 0 to 1 and back to 0... so when input is 0.5, the output is 1 etc.
 	public static float UpDown(float input, Dele easeFunc)
@@ -691,19 +970,20 @@ public class RXTweenable
 
 	public void To(float targetAmount, float duration)
 	{
-		this.To(targetAmount,duration, new TweenConfig());
+		this.To(targetAmount, duration, new TweenConfig());
 	}
 
 	public void To(float targetAmount, float duration, TweenConfig tc)
 	{
 		Go.killAllTweensWithTarget(this);
 		tc.floatProp("amount", targetAmount);
-		Go.to(this,duration,tc);
+		Go.to(this, duration, tc);
 	}
+
 	public static RXTweenable DelayAction(float delay, Action action)
 	{
 		RXTweenable rt = new RXTweenable(0.0f);
-		rt.To(1.0f,delay,new TweenConfig().onComplete((t)=>{action();}));
+		rt.To(1.0f, delay, new TweenConfig().onComplete((t) => { action(); }));
 		return rt;
 	}
 }
@@ -720,7 +1000,7 @@ public class RXTweenChain
 	public RXTweenChain Add(object target, float duration, TweenConfig config)
 	{
 		config.onComplete(HandleTweenComplete);
-		Tween tween = new Tween(target,duration,config,null);
+		Tween tween = new Tween(target, duration, config, null);
 		tweensToDo.Add(tween);
 		return this;
 	}
@@ -737,7 +1017,7 @@ public class RXTweenChain
 
 	public void StartNextTween()
 	{
-		if(tweensToDo.Count == 0) return;
+		if (tweensToDo.Count == 0) return;
 		Tween nextTween = tweensToDo.Shift();
 		Go.addTween(nextTween);
 		nextTween.play();
@@ -747,29 +1027,60 @@ public class RXTweenChain
 public class BoxedLong
 {
 	public long value;
-	public BoxedLong(long value) {this.value = value;}
+	public BoxedLong(long value) { this.value = value; }
 }
 
 public class BoxedInt
 {
 	public int value;
-	public BoxedInt(int value) {this.value = value;}
+	public BoxedInt(int value) { this.value = value; }
 }
 
 public class BoxedFloat
 {
 	public float value;
-	public BoxedFloat(float value) {this.value = value;}
+	public BoxedFloat(float value) { this.value = value; }
 }
 
 public class BoxedDouble
 {
 	public double value;
-	public BoxedDouble(double value) {this.value = value;}
+	public BoxedDouble(double value) { this.value = value; }
 }
 
 public class BoxedBool
 {
 	public bool value;
-	public BoxedBool(bool value) {this.value = value;}
+	public BoxedBool(bool value) { this.value = value; }
+}
+
+public class RXCurveUtils
+{
+	static public void RestrictCurveTimeAndValue(AnimationCurve curve, float startValue = 0f, float endValue = 1f)
+	{
+		while(curve.keys.Length < 2) curve.AddKey(0,0);
+
+		var key = curve.keys[0];
+		key.time = 0;
+		key.value = startValue;
+		curve.MoveKey(0,key);
+
+		key = curve.keys[curve.keys.Length-1];
+		key.time = 1f;
+		key.value = endValue;
+		curve.MoveKey(curve.keys.Length-1,key);
+	}
+
+	static public void RestrictCurveTime(AnimationCurve curve)
+	{
+		while(curve.keys.Length < 2) curve.AddKey(0,0);
+
+		var key = curve.keys[0];
+		key.time = 0;
+		curve.MoveKey(0,key);
+
+		key = curve.keys[curve.keys.Length-1];
+		key.time = 1f;
+		curve.MoveKey(curve.keys.Length-1,key);
+	}
 }

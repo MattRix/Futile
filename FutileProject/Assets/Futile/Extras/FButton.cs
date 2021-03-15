@@ -96,6 +96,27 @@ public class FButton : FContainer, FSingleTouchableInterface
 		}
 	}
 
+	virtual public void SetElements(FAtlasElement upElement, FAtlasElement downElement, FAtlasElement overElement)
+	{
+		_upElement = upElement;
+		_downElement = downElement;
+		
+		if(overElement != null)
+		{
+			_overElement = overElement;
+			_supportsOver = true;
+		}
+		
+		if(_isTouchDown)
+		{
+			_sprite.element = _downElement;	
+		}
+		else 
+		{
+			_sprite.element = _upElement;
+		}
+	}
+
 	virtual public void SetColors(Color upColor, Color downColor)
 	{
 		SetColors(upColor, downColor, Color.white);

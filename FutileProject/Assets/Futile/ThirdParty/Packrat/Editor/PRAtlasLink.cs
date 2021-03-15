@@ -20,12 +20,14 @@ public class PRAtlasLink
 	public int padding = 1;
 	public int extrude = 0;
 	public int trimPadding = 1;
-	public bool shouldTrim = true;
+	public bool shouldTrim = true; 
 
 	public PRAtlasLink(string sourceFolderPath, string atlasFilePath)
 	{
 		this.sourceFolderPath = sourceFolderPath;
 		this.atlasFilePath = atlasFilePath;
+
+        Debug.Log("atlasFilePath is " + atlasFilePath);
 	}
 	
 	public PRAtlasLink(Dictionary<string,object> dict)
@@ -62,7 +64,7 @@ public class PRAtlasLink
 		stringBuilder.Append("\t\"trimPadding\":\""+trimPadding.ToString()+"\"");
 		
 		stringBuilder.Append("\n}");
-		
+
 		return stringBuilder.ToString();
 	}
 	

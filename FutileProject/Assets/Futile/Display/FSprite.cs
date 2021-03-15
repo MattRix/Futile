@@ -181,7 +181,14 @@ public class FSprite : FFacetElementNode
 			}
 		}
 	}
-	
+
+    virtual public void SetSize(float width, float height)
+    {
+        _scaleX = width/_textureRect.width;
+        _scaleY = height/_textureRect.height;
+        _isMatrixDirty = true;
+    }
+
 	virtual public float width
 	{
 		get { return _scaleX * _textureRect.width; }
@@ -231,6 +238,12 @@ public class FSprite : FFacetElementNode
 	{
 		this.anchorX = newAnchor.x;
 		this.anchorY = newAnchor.y;
+	}
+
+    public void SetAnchorPixelPerfect(Vector2 newAnchor)
+	{
+        this.anchorX = Mathf.Round(_textureRect.width * newAnchor.x) / _textureRect.width;
+        this.anchorY = Mathf.Round(_textureRect.height * newAnchor.y) / _textureRect.height;
 	}
 	
 	public Vector2 GetAnchor()

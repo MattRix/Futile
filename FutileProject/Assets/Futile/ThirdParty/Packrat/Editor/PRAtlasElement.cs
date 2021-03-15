@@ -57,7 +57,13 @@ public class PRAtlasElement
 	
 	public string GetJSONString()
 	{
-		StringBuilder stringBuilder = new StringBuilder("\""+name+"\":\n{\n");
+        string useName = name;
+
+        //if the input image is CoolPath/MyCoolImage_notrim.png - let them use it as CoolPath/MyCoolImage
+        if(useName.EndsWith("_trim")) useName = useName.Replace("_trim","");
+        if(useName.EndsWith("_notrim")) useName = useName.Replace("_notrim","");
+
+		StringBuilder stringBuilder = new StringBuilder("\""+useName+"\":\n{\n");
 		
 		//scaledTrimWidth and packedRect.width should always be the same (for height too)
 

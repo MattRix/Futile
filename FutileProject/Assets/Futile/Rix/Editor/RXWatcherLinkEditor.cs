@@ -82,6 +82,35 @@ public class RXWatcherLinkEditor : Editor
 				member.SetValue(newValue);
 			}
 		} 
+
+        EditorGUILayout.Separator();
+
+        GUILayout.Label("Transform Hierarchy", EditorStyles.boldLabel);
+
+        var node = link.GetTarget() as FNode;
+
+        while(node != null)
+        {
+            GUILayout.Label($"{node.GetType()}: x:{node.x} y:{node.y}", EditorStyles.miniLabel);
+            GUILayout.Label($"scaleX:{node.scaleX} scaleY:{node.scaleY} rotation:{node.rotation}", EditorStyles.miniLabel);
+
+            var spriteNode = node as FSprite;
+
+            if(spriteNode != null)
+            {
+                GUILayout.Label($"localRect:{spriteNode.localRect} boundsRect::{spriteNode.textureRect}", EditorStyles.miniLabel);
+                GUILayout.Label($"anchorX:{spriteNode.anchorX} anchorY:{spriteNode.anchorY}", EditorStyles.miniLabel);
+                GUILayout.Label($"pixelAnchorX:{spriteNode.anchorX*spriteNode.textureRect.width} pixelAnchorY:{spriteNode.anchorY*spriteNode.textureRect.height}", EditorStyles.miniLabel);
+            }
+
+            EditorGUILayout.Separator();
+            //display parent next
+            node = node.container;
+        }
+
+        EditorGUILayout.Separator();
+
+        
 	}
 }
 

@@ -12,10 +12,12 @@ public class FParticleSystem : FFacetNode
 	
 	protected bool _hasInited = false;
 
-	public float accelX = 0.0f;
-	public float accelY = 0.0f;
+	public float windX = 0.0f;
+	public float windY = 0.0f;
 
 	public bool shouldNewParticlesOverwriteExistingParticles = true;
+
+    public bool isPaused = false;
 	
 	public FParticleSystem (int maxParticleCount)
 	{
@@ -85,8 +87,12 @@ public class FParticleSystem : FFacetNode
 	
 		particle.x = particleDefinition.x;
 		particle.y = particleDefinition.y;
+
 		particle.speedX = particleDefinition.speedX;
 		particle.speedY = particleDefinition.speedY;
+
+        particle.accelX = particleDefinition.accelX;
+		particle.accelY = particleDefinition.accelY;
 
 		particle.startScale = particleDefinition.startScale;
 		particle.scale = particleDefinition.startScale;
@@ -175,6 +181,8 @@ public class FParticleSystem : FFacetNode
 
 	virtual protected void HandleUpdate()
 	{
+        if(isPaused) return;
+
 		float deltaTime = Time.deltaTime;
 
 		for(int p = 0; p<_maxParticleCount; p++)
@@ -220,8 +228,11 @@ public class FParticleSystem : FFacetNode
 
 				particle.scale += particle.scaleDeltaPerSecond * deltaTime;
 
-				particle.speedX += accelX * deltaTime;
-				particle.speedY += accelY * deltaTime;
+                particle.speedX *= Mathf.Pow(particle.accelX,deltaTime);
+                particle.speedY *= Mathf.Pow(particle.accelY,deltaTime);
+
+				particle.speedX += windX * deltaTime;
+				particle.speedY += windY * deltaTime;
 
 				particle.x += particle.speedX * deltaTime;
 				particle.y += particle.speedY * deltaTime;
@@ -398,6 +409,9 @@ public class FParticleDefinition
 	public float startRotation = 0;
 	public float endRotation = 0;
 
+    public float accelX = 1f;
+    public float accelY = 1f;
+
 	
 	public FParticleDefinition(string elementName)
 	{
@@ -425,6 +439,9 @@ public class FParticle
 	
 	public float speedX;
 	public float speedY;
+
+    public float accelX;
+    public float accelY;
 
 	public float startScale;
 	public float scale;

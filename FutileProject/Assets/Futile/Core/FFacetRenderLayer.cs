@@ -62,7 +62,7 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 		
 		_meshFilter = _gameObject.AddComponent<MeshFilter>();
 		_meshRenderer = _gameObject.AddComponent<MeshRenderer>();
-		_meshRenderer.castShadows = false;
+		_meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 		_meshRenderer.receiveShadows = false;
 		
 		_mesh = _meshFilter.mesh;
@@ -72,7 +72,7 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 		_material = new Material(shader.shader);
 		_material.mainTexture = atlas.texture;
 		
-		_meshRenderer.renderer.sharedMaterial = _material;
+		_meshRenderer.GetComponent<Renderer>().sharedMaterial = _material;
 		
 		#if UNITY_3_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
 			_gameObject.active = false;

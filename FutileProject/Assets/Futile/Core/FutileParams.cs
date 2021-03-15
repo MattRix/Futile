@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 public class FResolutionLevel
 {
-	public float maxLength;
-	public float displayScale;
-	public float resourceScale;
-	public string resourceSuffix;
+	public float maxLength = 1000f;
+	public float displayScale = 1f;
+	public float resourceScale = 1f;
+	public string resourceSuffix = "";
 }
 
 public class FutileParams
@@ -18,7 +18,7 @@ public class FutileParams
 	
 	public int targetFrameRate = 60;
 	
-	public ScreenOrientation singleOrientation = ScreenOrientation.Unknown;
+	public ScreenOrientation singleOrientation = ScreenOrientation.AutoRotation;
 	
 	public bool supportsLandscapeLeft;
 	public bool supportsLandscapeRight;
@@ -31,6 +31,8 @@ public class FutileParams
 	public FResolutionLevelPickMode resolutionLevelPickMode = FResolutionLevelPickMode.Upwards;
 
 	public FResolutionLevelPickDimension resolutionLevelPickDimension = FResolutionLevelPickDimension.Longest;
+
+    public Func<int,int,FResolutionLevel> resolutionLevelPicker = null; //can optionally specify this for exact control over resolutionlevel
 	
 	public FutileParams(bool supportsLandscapeLeft, bool supportsLandscapeRight, bool supportsPortrait, bool supportsPortraitUpsideDown)
 	{

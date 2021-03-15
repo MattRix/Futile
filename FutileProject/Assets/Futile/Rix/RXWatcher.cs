@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 #if UNITY_EDITOR
 
@@ -19,6 +20,7 @@ public class RXWatcher
 		_gameObject = new GameObject("RXWatcher");
 	}
 	
+    [Conditional("UNITY_EDITOR")] //stripped from non-editor builds
 	static public void Watch(object target)
 	{
 		if(target == null) return;
@@ -26,6 +28,7 @@ public class RXWatcher
 		Watch (target, false, null);
 	}
 	
+    [Conditional("UNITY_EDITOR")] //stripped from non-editor builds
 	static public void Watch(object target, bool shouldShowNonPublic)
 	{
 		if(target == null) return;
@@ -33,6 +36,7 @@ public class RXWatcher
 		Watch (target, shouldShowNonPublic, null);
 	}
 
+    [Conditional("UNITY_EDITOR")] //stripped from non-editor builds
 	static public void Watch(object target, bool shouldShowNonPublic, string targetName)
 	{
 		if(target == null) return;
@@ -265,7 +269,7 @@ public class RXWatcherLinkMember
 	{
 		if(_propertyInfo != null)
 		{
-			return _propertyInfo.GetValue(_link.GetTarget(), null);
+			return _propertyInfo.GetValue(_link.GetTarget(),null);
 		}
 		else if(_fieldInfo != null)
 		{

@@ -118,6 +118,7 @@ public class FNodeEnablerForAfterDraw : FNodeEnabler
 		Futile.instance.SignalAfterDraw -= handleUpdateCallback;
 	}
 }
+
 public class FNodeEnablerForFixedUpdate : FNodeEnabler
 {
 	public Futile.FutileUpdateDelegate handleUpdateCallback;

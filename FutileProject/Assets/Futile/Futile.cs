@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using System.Globalization;
 
 //FutileEngine by Matt Rix - 
 
@@ -9,15 +11,13 @@ public class Futile : MonoBehaviour
 {
 	static public Futile instance = null;
 	
-	
-	
 	static public FScreen screen;
 	
 	static public FAtlasManager atlasManager;
 	
 	static public FStage stage;
 	
-	static public FTouchManager touchManager;
+	static public FTouchManager touchManager; 
 
 	
 	
@@ -69,6 +69,7 @@ public class Futile : MonoBehaviour
     
     private List<FDelayedCallback> _delayedCallbacks = new List<FDelayedCallback>();
 
+    public Camera existingCamera = null;
 
 	// Use this for initialization
 	private void Awake () 
@@ -77,8 +78,14 @@ public class Futile : MonoBehaviour
 		isOpenGL = SystemInfo.graphicsDeviceVersion.Contains("OpenGL");
 		enabled = false;
 		name = "Futile";
+
+		// Force everything to be CultureInvariant. This breaks lots of parsing stuff if you don't do it.
+		Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+		Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+		CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+		CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 	}
-	
+
 	public void Init(FutileParams futileParams)
 	{	
 		enabled = true;
@@ -95,12 +102,20 @@ public class Futile : MonoBehaviour
 		//Camera setup from https://github.com/prime31/UIToolkit/blob/master/Assets/Plugins/UIToolkit/UI.cs
 		//
 		
-		_cameraHolder = new GameObject();
+        if(existingCamera != null)
+        {
+            _cameraHolder = existingCamera.gameObject;
+            _camera = existingCamera;
+        }
+        else
+        { 
+		    _cameraHolder = new GameObject();
+		    _camera = _cameraHolder.AddComponent<Camera>();
+        }
+        
 		_cameraHolder.transform.parent = gameObject.transform;
 		
-		_camera = _cameraHolder.AddComponent<Camera>();
 		_camera.tag = "MainCamera";
-		_camera.name = "Camera";
 		_camera.clearFlags = CameraClearFlags.SolidColor;
 		_camera.nearClipPlane = 0.0f;
 		_camera.farClipPlane = 500.0f;
@@ -387,7 +402,7 @@ public class Futile : MonoBehaviour
 	{
 		instance = null;	
 	}
-	
+
 	public void UpdateCameraPosition()
 	{
 		UpdateCameraPosition(_camera);

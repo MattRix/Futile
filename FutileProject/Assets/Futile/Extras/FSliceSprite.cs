@@ -17,6 +17,10 @@ public class FSliceSprite : FSprite
 
 	private bool _shouldRemoveCenterSlice = false;
 	
+    public FSliceSprite (string elementName, float width, float height, float inset) : this(Futile.atlasManager.GetElementWithName(elementName), width, height, inset, inset, inset, inset)
+	{
+	}
+
 	public FSliceSprite (string elementName, float width, float height, float insetTop, float insetRight, float insetBottom, float insetLeft) : this(Futile.atlasManager.GetElementWithName(elementName), width, height, insetTop, insetRight, insetBottom, insetLeft)
 	{
 	}
@@ -305,6 +309,13 @@ public class FSliceSprite : FSprite
 		
 		SetupSlices();
 	}
+
+    override public void SetSize(float width, float height)
+    {
+        _width = width;
+        _height = height;
+        _areLocalVerticesDirty = true;
+    }
 	
 	override public float width
 	{

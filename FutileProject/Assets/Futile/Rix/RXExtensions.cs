@@ -2,14 +2,23 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine.EventSystems;
+
+
 //
 //public static class EventExtensions
 //{
 //    
 //}
+using UnityEngine.Events;
 
 public static class RXColorExtensions
 {
+	public static Color Multiply(this Color color, float multiplier)
+	{
+		return new Color(color.r*multiplier, color.g*multiplier, color.b*multiplier, color.a);	
+	}
+
 	public static Color CloneWithNewAlpha(this Color color, float alpha)
 	{
 		return new Color(color.r, color.g, color.b, alpha);	
@@ -26,6 +35,15 @@ public static class RXColorExtensions
 		targetColor.g = color.g;
 		targetColor.b = color.b;
 		targetColor.a = color.a*alpha;
+	}
+
+	public static string ToHexString(this Color color)
+	{
+		int r = Mathf.RoundToInt(color.r * 255.0f);
+		int g = Mathf.RoundToInt(color.g * 255.0f);
+		int b = Mathf.RoundToInt(color.b * 255.0f);
+		string hexStr = r.ToString("X2") + g.ToString("X2") + b.ToString("X2");
+		return hexStr;
 	}
 }
 
@@ -157,82 +175,96 @@ public static class RXGoKitExtensions
 	//this makes it so we don't have to specify false for isRelative every.single.time.
 	public static TweenConfig floatProp(this TweenConfig config, string propName, float propValue)
 	{
-		return config.floatProp(propName,propValue,false); 
+		return config.floatProp(propName, propValue, false);
 	}
 
 	//this makes it so we don't have to specify false for isRelative every.single.time.
 	public static TweenConfig colorProp(this TweenConfig config, string propName, Color propValue)
 	{
-		return config.colorProp(propName,propValue,false); 
+		return config.colorProp(propName, propValue, false);
 	}
 
 	public static TweenConfig removeWhenComplete(this TweenConfig config)
 	{
-		config.onComplete((tween) => {((tween as Tween).target as FNode).RemoveFromContainer();});	
+		config.onComplete((tween) => { ((tween as Tween).target as FNode).RemoveFromContainer(); });
 		return config;
 	}
 
 	public static TweenConfig hideWhenComplete(this TweenConfig config)
 	{
-		config.onComplete((tween) => {((tween as Tween).target as FNode).isVisible = false;});	
+		config.onComplete((tween) => { ((tween as Tween).target as FNode).isVisible = false; });
 		return config;
 	}
 
 	//forward to an action with no arguments instead (ex you can pass myNode.RemoveFromContainer)
 	public static TweenConfig onComplete(this TweenConfig config, Action onCompleteAction)
 	{
-		config.onComplete((tween) => {onCompleteAction();});	
+		config.onComplete((tween) => { onCompleteAction(); });
 		return config;
 	}
 
 	public static TweenConfig alpha(this TweenConfig config, float alpha)
 	{
-		config.tweenProperties.Add(new FloatTweenProperty("alpha",alpha,false));
+		config.tweenProperties.Add(new FloatTweenProperty("alpha", alpha, false));
 		return config;
 	}
 
 	public static TweenConfig rotation(this TweenConfig config, float rotation)
 	{
-		config.tweenProperties.Add(new FloatTweenProperty("rotation",rotation,false));
+		config.tweenProperties.Add(new FloatTweenProperty("rotation", rotation, false));
 		return config;
 	}
 
 	public static TweenConfig x(this TweenConfig config, float x)
 	{
-		config.tweenProperties.Add(new FloatTweenProperty("x",x,false));
+		config.tweenProperties.Add(new FloatTweenProperty("x", x, false));
 		return config;
 	}
 
 	public static TweenConfig y(this TweenConfig config, float y)
 	{
-		config.tweenProperties.Add(new FloatTweenProperty("y",y,false));
+		config.tweenProperties.Add(new FloatTweenProperty("y", y, false));
 		return config;
 	}
 
-	public static TweenConfig pos(this TweenConfig config, float x,float y)
+	public static TweenConfig pos(this TweenConfig config, float x, float y)
 	{
-		config.tweenProperties.Add(new FloatTweenProperty("x",x,false));
-		config.tweenProperties.Add(new FloatTweenProperty("y",y,false));
+		config.tweenProperties.Add(new FloatTweenProperty("x", x, false));
+		config.tweenProperties.Add(new FloatTweenProperty("y", y, false));
 		return config;
 	}
 
 	public static TweenConfig pos(this TweenConfig config, Vector2 pos)
 	{
-		config.tweenProperties.Add(new FloatTweenProperty("x",pos.x,false));
-		config.tweenProperties.Add(new FloatTweenProperty("y",pos.y,false));
+		config.tweenProperties.Add(new FloatTweenProperty("x", pos.x, false));
+		config.tweenProperties.Add(new FloatTweenProperty("y", pos.y, false));
 		return config;
 	}
 
-	public static TweenConfig scaleXY(this TweenConfig config, float scaleX,float scaleY)
+	public static TweenConfig scaleXY(this TweenConfig config, float scaleX, float scaleY)
 	{
-		config.tweenProperties.Add(new FloatTweenProperty("scaleX",scaleX,false));
-		config.tweenProperties.Add(new FloatTweenProperty("scaleY",scaleY,false));
+		config.tweenProperties.Add(new FloatTweenProperty("scaleX", scaleX, false));
+		config.tweenProperties.Add(new FloatTweenProperty("scaleY", scaleY, false));
 		return config;
 	}
-	
+
+
+
 	public static TweenConfig scaleXY(this TweenConfig config, float scale)
 	{
-		config.tweenProperties.Add(new FloatTweenProperty("scale",scale,false));
+		config.tweenProperties.Add(new FloatTweenProperty("scale", scale, false));
+		return config;
+	}
+
+	public static TweenConfig scaleX(this TweenConfig config, float scaleX)
+	{
+		config.tweenProperties.Add(new FloatTweenProperty("scaleX", scaleX, false));
+		return config;
+	}
+
+	public static TweenConfig scaleY(this TweenConfig config, float scaleY)
+	{
+		config.tweenProperties.Add(new FloatTweenProperty("scaleY", scaleY, false));
 		return config;
 	}
 
@@ -329,6 +361,12 @@ public static class RXArrayExtensions
 
 		Debug.Log(builder.ToString());
 	}
+
+	public static T GetItemWrapped<T>(this T[] items, int index)
+	{
+		int length = items.Length;
+		return items[(index%length + length)%length];
+	}
 }
 
 public static class RXListExtensions
@@ -373,12 +411,6 @@ public static class RXListExtensions
 		return item;
 	}
 
-	//adds item to the end of the list (note: I recommend using .Add(), this is just here for completeness)
-	public static void Push<T>(this List<T> list, T item)
-	{
-		list.Add(item);
-	}
-
 	//removes last item from a list and returns it
 	public static T Pop<T>(this List<T> list)
 	{
@@ -389,14 +421,44 @@ public static class RXListExtensions
 
 	public static T GetFirstItem<T>(this List<T> list)
 	{
+		if(list.Count == 0) return default(T);
 		return list[0];
 	}
 
 	public static T GetLastItem<T>(this List<T> list)
 	{
+		if(list.Count == 0) return default(T);
 		return list[list.Count-1];
 	}
+
+	public static T GetItemWrapped<T>(this List<T> list, int index)
+	{
+		int count = list.Count;
+		return list[(index%count + count)%count];
+	}
 	
+    public static void Move<T>(this List<T> list, T item, int destinationIndex)
+    {
+        var startIndex = list.IndexOf(item);
+
+        if(startIndex != -1)
+        {
+            list.RemoveAt(startIndex);
+            list.Insert(destinationIndex,item);
+        }
+    }
+
+    public static List<T> DeepClone<T>(this List<T> list) where T:class,ICloneable
+    {
+        var cloneList = new List<T>(list.Count);
+
+        foreach(var item in list)
+        {
+            cloneList.Add(item.Clone() as T);
+        }
+
+        return cloneList;
+    }
 	
 	//insertion sort is stable, in other words, equal items will stay in the same order (unlike List.Sort, which uses QuickSort)
 	//this could be replaced with a MergeSort, which should be more efficient in a lot of cases
@@ -584,3 +646,58 @@ public static class RXIntExtensions
 	}
 }
 
+public static class RXVector2Extensions
+{
+	public static string ToStringDetailed(this Vector2 @this)
+	{
+		return "("+@this.x.ToString()+","+@this.y.ToString()+")";
+	}
+}
+
+public static class RXGUIExtensions
+{
+	public static void SetAllStateTextColors(this GUIStyle style, Color color)
+	{
+		style.normal.textColor = color;
+		style.active.textColor = color;
+		style.hover.textColor = color;
+		style.focused.textColor = color;
+		style.onActive.textColor = color;
+		style.onNormal.textColor = color;
+		style.onHover.textColor = color;
+		style.onFocused.textColor = color;
+	}
+}
+
+public static class RXUIExtensions
+{
+	public static void SetSize(this RectTransform rt, float width, float height)
+	{
+		rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,width);
+		rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,height);
+	}
+}
+
+public static class RXTransformExtensions
+{
+	public static void Reset(this Transform trans)
+	{
+        trans.localPosition = Vector3.zero;
+        trans.localScale = Vector3.one;
+        trans.localRotation = Quaternion.identity;
+	}
+}
+
+public static class RXEventExtensions
+{
+	public static EventTrigger.Entry AddTrigger(this EventTrigger trigger, EventTriggerType eventType, UnityAction<BaseEventData> callback)
+	{
+		var entry = new EventTrigger.Entry();
+		var triggerEvent = new EventTrigger.TriggerEvent();
+		triggerEvent.AddListener(callback);
+		entry.callback = triggerEvent;
+		entry.eventID = EventTriggerType.PointerClick;
+		trigger.triggers.Add(entry);
+		return entry;
+	}
+}

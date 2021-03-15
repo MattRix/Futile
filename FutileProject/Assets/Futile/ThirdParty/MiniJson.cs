@@ -327,6 +327,8 @@ public static class Json {
 
 	    void EatWhitespace() 
 		{
+			if (json.Peek() == -1) return;
+
 	        while (WHITE_SPACE.IndexOf(PeekChar) != -1) 
 			{
 	            json.Read();
@@ -359,6 +361,8 @@ public static class Json {
 	        get 
 			{
 	            StringBuilder word = new StringBuilder();
+
+				if (json.Peek() == -1) return "";
 
 	            while (WORD_BREAK.IndexOf(PeekChar) == -1) 
 				{
@@ -452,7 +456,7 @@ public static class Json {
 
 	    Serializer() 
 		{
-	        builder = new StringBuilder();
+	        builder = new StringBuilder(1000);
 	    }
 
 	    public static string Serialize(object obj) 

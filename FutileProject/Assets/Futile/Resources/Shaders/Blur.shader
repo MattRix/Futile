@@ -1,4 +1,6 @@
-﻿Shader "Futile/Blur"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Futile/Blur"
 {
 	Properties 
 	{
@@ -55,7 +57,7 @@ float4 _MainTex_ST;
 v2f vert (appdata_base v)
 {
     v2f o;
-    o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+    o.pos = UnityObjectToClipPos (v.vertex);
     o.uv = TRANSFORM_TEX (v.texcoord, _MainTex);
     return o;
 }
@@ -63,10 +65,12 @@ v2f vert (appdata_base v)
 half4 frag (v2f i) : COLOR
 {
 
-    //half4 texcol = tex2D (_MainTex, i.uv);
-    //return texcol * _Color;
-    
-    half4 texcol = half4(0.0,0.0,0.0,0.0);
+    half4 texcol = tex2D (_MainTex, i.uv);
+    return texcol * _Color;
+
+    //not using blur because it breaks metal
+    /*
+    half4 texcol = half4(0.0);
     float remaining=1.0f;
     float coef=1.0;
     for (int j = 0; j < 3; j++) {
@@ -80,6 +84,7 @@ half4 frag (v2f i) : COLOR
     	remaining-=4*coef;
     }
     texcol += tex2D(_MainTex, float2(i.uv.x, i.uv.y)) * remaining;
+    */
 
     return texcol;
 }

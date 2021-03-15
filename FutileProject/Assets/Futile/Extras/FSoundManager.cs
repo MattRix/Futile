@@ -4,22 +4,26 @@ using System.Collections.Generic;
 
 public class FSoundManager
 {
-	public const string PREFS_KEY = "FSoundManager_IsAudioMuted";
+	public const string SFX_PREFS_KEY = "FSoundManager_IsSFXAudioMuted";
+	public const string MUSIC_PREFS_KEY = "FSoundManager_IsMusicAudioMuted";
 	static public string resourcePrefix = "Audio/";
 	
 	static private GameObject _gameObject;
 	static private AudioSource _soundSource;
 	static private AudioSource _musicSource;
 	static private string _currentMusicPath = "";
-	static private bool _isMuted = false;
-	
+	static private bool _isSFXMuted = false;
+	static private bool _isMusicMuted = false;
+
 	static private Dictionary<string, AudioClip> _soundClips = new Dictionary<string, AudioClip>();
 	static private AudioClip _currentMusicClip = null;
 	
-	static private float _volume = 1.0f;
+	static private float _sfxVolume = 1.0f;
+	static private float _musicVolume = 1.0f;
 	
 	static public void Init()
 	{
+		Debug.Log("THIS INIT SHOULD NOT HAPPEN!");
 		if(_gameObject != null) return; //no multiple inits
 
 		_gameObject = new GameObject("FSoundManager");
@@ -27,9 +31,13 @@ public class FSoundManager
 		_soundSource = _gameObject.AddComponent<AudioSource>();
 		_gameObject.AddComponent<AudioListener>(); //we don't need a reference to it, we just need it to exist
 		
-		if(PlayerPrefs.HasKey(PREFS_KEY))
+		if(PlayerPrefs.HasKey(SFX_PREFS_KEY))
 		{
-			FSoundManager.isMuted = (PlayerPrefs.GetInt(PREFS_KEY) == 1);
+			FSoundManager.isSFXMuted = (PlayerPrefs.GetInt(SFX_PREFS_KEY) == 1);
+		}
+		if(PlayerPrefs.HasKey(MUSIC_PREFS_KEY))
+		{
+			FSoundManager.isMusicMuted = (PlayerPrefs.GetInt(MUSIC_PREFS_KEY) == 1);
 		}
 	}
 	
@@ -63,12 +71,12 @@ public class FSoundManager
 
 	static public void PlaySound (String resourceName, float volume) //it is not necessary to preload sounds in order to play them
 	{
-		if (_isMuted) return;
+		if (_isSFXMuted) return;
 
 		if (_soundSource == null) Init();
 		
 		string fullPath = resourcePrefix+resourceName;
-		
+
 		AudioClip soundClip;
 		
 		if(_soundClips.ContainsKey(fullPath))
@@ -105,12 +113,13 @@ public class FSoundManager
 
 	static public void PlayMusic (string resourceName, float volume, bool shouldRestartIfSameSongIsAlreadyPlaying)
 	{
-		if (_isMuted) return;
+		if (_isMusicMuted) return;
 
 		if (_musicSource == null) Init();
 		
 		string fullPath = resourcePrefix+resourceName;
-		
+		_musicVolume = volume;
+
 		if(_currentMusicClip != null) //we only want to have one music clip in memory at a time
 		{
 			if(_currentMusicPath == fullPath) //we're already playing this music, just restart it!
@@ -215,43 +224,82 @@ public class FSoundManager
 		get {return _musicSource;}
 	}
 	
-	static public float volume
+	static public float sfxVolume
 	{
 		set 
 		{ 
-			_volume = value;
+			_sfxVolume = value;
 			
-			if(_isMuted)
+			if(_isSFXMuted)
 			{
-				AudioListener.volume = 0.0f;
+				_soundSource.volume = 0.0f;
 			}
 			else 
 			{
-				AudioListener.volume = _volume; 
+				_soundSource.volume = _sfxVolume; 
 			}
-		
 		}
-		get { return AudioListener.volume; }
+		get { return _soundSource.volume; }
+	}
+
+	static public float musicVolume
+	{
+		set 
+		{ 
+			_musicVolume = value;
+			
+			if(_isMusicMuted)
+			{
+				_musicSource.volume = 0.0f;
+			}
+			else 
+			{
+				_musicSource.volume = _musicVolume; 
+			}
+		}
+		get { return _musicSource.volume; }
 	}
 	
-	static public bool isMuted
+	static public bool isSFXMuted
 	{
 		set 
 		{ 
-			_isMuted = value;
+			_isSFXMuted = value;
 
-			PlayerPrefs.SetInt(PREFS_KEY, value ? 1 : 0);
+			PlayerPrefs.SetInt(SFX_PREFS_KEY, value ? 1 : 0);
 			
-			if(_isMuted)
+			if(_isSFXMuted)
 			{
-				AudioListener.volume = 0.0f;
+				_soundSource.volume = 0.0f;
 			}
 			else 
 			{
-				AudioListener.volume = _volume; 
+				_soundSource.volume = _sfxVolume; 
 			}
 		}
-		get  {return _isMuted;}
+		get  {return _isSFXMuted;}
+	}
+
+	static public bool isMusicMuted
+	{
+		set 
+		{ 
+			_isMusicMuted = value;
+			
+			PlayerPrefs.SetInt(MUSIC_PREFS_KEY, value ? 1 : 0);
+			
+			if(_isMusicMuted)
+			{
+				_musicSource.volume = 0.0f;
+				_musicSource.Pause();
+			}
+			else 
+			{
+				_musicSource.volume = _musicVolume; 
+				_musicSource.Play();
+			}
+		}
+		get  {return _isMusicMuted;}
 	}
 }
 

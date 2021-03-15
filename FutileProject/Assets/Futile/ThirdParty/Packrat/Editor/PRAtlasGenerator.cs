@@ -95,7 +95,7 @@ public class PRAtlasGenerator
 		Debug.Log ("Packrat: Packed "+Path.GetFileNameWithoutExtension(link.atlasFilePath)+" into a " + atlasWidth + "x"+atlasHeight +" atlas");
 	}
 
-	private void CreateElementsFromImages ()
+	private void CreateElementsFromImages()
 	{
 		SearchOption searchOption = link.shouldAddSubfolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 

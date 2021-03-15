@@ -64,11 +64,11 @@ public static class PRUtils
 		//Add on the ..
 		for (index = lastCommonRoot + 1; index < absoluteDirectories.Length; index++)
 			if (absoluteDirectories[index].Length > 0)
-				relativePath.Append("../");
+				relativePath.Append(".."+Path.DirectorySeparatorChar);
 		
 		//Add on the folders
 		for (index = lastCommonRoot + 1; index < relativeDirectories.Length - 1; index++)
-			relativePath.Append(relativeDirectories[index] + "/");
+			relativePath.Append(relativeDirectories[index] + Path.DirectorySeparatorChar);
 		relativePath.Append(relativeDirectories[relativeDirectories.Length - 1]);
 		
 		return relativePath.ToString();

@@ -442,7 +442,8 @@ public class FNode
 		_container = null;	
 	}
 	
-	public void RemoveFromContainer()
+    //also implemented publicly in a FNodeExtensions extension method instead so it can be called on a null object
+	protected void RemoveFromContainer()
 	{
 		if(_container != null) _container.RemoveChild (this);
 	}
@@ -732,14 +733,16 @@ public class FNode
 	//for convenience
 	public void SetPosition(float newX, float newY)
 	{
-		this.x = newX;
-		this.y = newY;
+        _x = newX;
+        _y = newY;
+        _isMatrixDirty = true;
 	}
 	
 	public void SetPosition(Vector2 newPosition)
 	{
-		this.x = newPosition.x;
-		this.y = newPosition.y;
+        _x = newPosition.x;
+        _y = newPosition.y;
+        _isMatrixDirty = true;
 	}
 	
 	public Vector2 GetPosition()
@@ -751,4 +754,15 @@ public class FNode
 	{
 		get {return _isOnStage;}
 	}
+    
 }
+
+public static class FNodeExtensions
+{
+    static public void RemoveFromContainer(this FNode node)
+    {
+        if(node != null && node.container != null) node.container.RemoveChild(node);
+    }
+}
+
+

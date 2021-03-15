@@ -5,8 +5,10 @@
 [Ll]ibrary/
 [Tt]emp/
 [Bb]uild/
+[Ll]ogs/
 *.pidb
 *.DS_Store
+
 
 
 # From Visual Studio
@@ -16,6 +18,8 @@
 *.suo
 *.user
 *.sln.docstates
+.vs/
+
 
 # From ?
 *.unityproj

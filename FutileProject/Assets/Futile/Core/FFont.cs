@@ -98,6 +98,18 @@ public class FTextParams
 	
 	private float _lineHeightOffset = 0;
 	private float _kerningOffset = 0;
+
+    public FTextParams SetLineHeightOffset(float lineHeightOffset)
+    {
+        this.lineHeightOffset = lineHeightOffset;
+        return this;
+    }
+
+    public FTextParams SetKerningOffset(float kerningOffset)
+    {
+        this.kerningOffset = kerningOffset;
+        return this;
+    }
 	
 	public float kerningOffset
 	{
@@ -245,7 +257,7 @@ public class FFont
 				//this is the ratio of the config vs the size of the actual texture element
 				_configRatio = _element.sourcePixelSize.x / (float)_configWidth;
 
-				_lineHeight = (float.Parse(words[1].Split('=')[1])) * _configRatio * resourceScaleInverse;	
+				_lineHeight = ((float)int.Parse(words[1].Split('=')[1])) * _configRatio * resourceScaleInverse;	
 				//_lineBase = int.Parse(words[2].Split('=')[1]) * _configRatio;	
 			}
 			else if(words[0] == "chars") //chars count=92
@@ -275,11 +287,12 @@ public class FFont
 					
 					if(partName == "\r") continue; //something weird happened with linebreaks, meh!
 					
-					float partFloatValue = float.Parse(parts[1]);
+					int partIntValue = int.Parse(parts[1]);
+					float partFloatValue = (float) partIntValue;
 						
 					if(partName == "id")
 					{
-						charInfo.charID = Mathf.RoundToInt(partFloatValue);
+						charInfo.charID = partIntValue;
 					}
 					else if(partName == "x")
 					{
@@ -311,7 +324,7 @@ public class FFont
 					}
 					else if(partName == "page")
 					{
-						charInfo.page = Mathf.RoundToInt(partFloatValue);
+						charInfo.page = partIntValue;
 					}
 				}
 
@@ -365,19 +378,19 @@ public class FFont
 					if(parts.Length >= 2)
 					{
 						string partName = parts[0];
-						float partValue = float.Parse(parts[1]);
+						int partValue = int.Parse(parts[1]);
 						
 						if(partName == "first")
 						{
-							kerningInfo.first = Mathf.RoundToInt(partValue);
+							kerningInfo.first = partValue;
 						}
 						else if(partName == "second")
 						{
-							kerningInfo.second = Mathf.RoundToInt(partValue);
+							kerningInfo.second = partValue;
 						}
 						else if(partName == "amount")
 						{
-							kerningInfo.amount = partValue * _configRatio * resourceScaleInverse;
+							kerningInfo.amount = ((float)partValue) * _configRatio * resourceScaleInverse;
 						}
 					}
 				}
@@ -418,7 +431,7 @@ public class FFont
 		
 		//at some point these should probably be pooled and reused so we're not allocing new ones all the time
 		//now they're structs though, so it might not be an issue
-		FLetterQuadLine[] lines = new FLetterQuadLine[10];
+		FLetterQuadLine[] lines = new FLetterQuadLine[12];
 		
 		int lettersLength = letters.Length;
 		for(int c = 0; c<lettersLength; ++c)
@@ -640,3 +653,5 @@ public class FFont
 	
 	
 }
+
+

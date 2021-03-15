@@ -52,6 +52,37 @@ public class FLabel : FFacetElementNode
 		CreateTextQuads();
 	}
 
+	public string WrapTextToWidth(string newText, float maxWidth)
+	{
+		string newLabelText = newText;
+
+		string[] words = newText.Split(' ');
+		if (words.Length <= 1)
+		{
+			// Only one word (or zero?), so just set the label
+			text = newText;
+		}
+		else
+		{
+			newLabelText = words[0];
+			text = newLabelText;
+
+			// Add words, one at a time, to the label until it's too wide, then word wrap.
+			for (int i = 1; i < words.Length; i++)
+			{
+				string prevText = newLabelText;
+				newLabelText = prevText + " " + words[i];
+				text = newLabelText;
+				if (textRect.width > maxWidth)
+				{
+					newLabelText = prevText + "\n" + words[i];
+				}
+			}
+			text = newLabelText;
+		}
+		return newLabelText;
+	}
+
 	public void CreateTextQuads()
 	{
 		_doesTextNeedUpdate = false;
@@ -303,7 +334,7 @@ public class FLabel : FFacetElementNode
 			}
 		}
 	}
-	
+
 	virtual public Rect textRect
 	{
 		get 

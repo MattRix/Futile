@@ -29,7 +29,7 @@ public class FSliceButton : FContainer, FSingleTouchableInterface
 
 	public bool isTouchOver = false;
 	
-	public FSliceButton (float width, float height, string upElementName, string downElementName, Color upColor, Color downColor, string soundName)
+	public FSliceButton (float width, float height, string upElementName, string downElementName, Color upColor, Color downColor, string soundName, float inset = 12f)
 	{
 		_upElement = Futile.atlasManager.GetElementWithName(upElementName);
 		_downElement = Futile.atlasManager.GetElementWithName(downElementName);
@@ -38,7 +38,7 @@ public class FSliceButton : FContainer, FSingleTouchableInterface
 		
 		_soundName = soundName;
 					
-		_bg = new FSliceSprite(_upElement.name, width, height, 12, 12, 12, 12);
+		_bg = new FSliceSprite(_upElement.name, width, height, inset, inset, inset, inset);
 		_bg.anchorX = _anchorX;
 		_bg.anchorY = _anchorY;
 		_bg.color = _upColor;

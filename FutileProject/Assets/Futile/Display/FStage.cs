@@ -105,7 +105,7 @@ public class FStage : FContainer
 		{
 			shouldForceDirty = true;
 			shouldUpdateDepth = true;
-			nextNodeDepth = index*10000; //each stage will be 10000 higher in "depth" than the previous one
+			nextNodeDepth = index*100000; //each stage will be 10000 higher in "depth" than the previous one
 			_renderer.StartRender(); 
 		}
 		
@@ -226,7 +226,7 @@ public class FStage : FContainer
         }
     }
 	
-	//notice how we're returning identity matrixes
+	//notice how we're returning idbox matrixes
 	//because we don't want our children to think we've been transformed (or else they will transform)
 	override public FMatrix matrix
 	{

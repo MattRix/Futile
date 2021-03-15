@@ -47,8 +47,6 @@ public class FPPolygonalCollider : MonoBehaviour
 			collider.convex = FPUtils.CheckIfConvex(_polygonalData.sourceVertices);
 		}
 		
-		collider.smoothSphereCollisions = _polygonalData.shouldUseSmoothSphereCollisions;	
-		
 		return collider;
 	}
 	

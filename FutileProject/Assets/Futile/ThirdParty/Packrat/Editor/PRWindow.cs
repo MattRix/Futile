@@ -20,7 +20,7 @@ public class PRWindow : EditorWindow
 		// Get existing open window or if none, make a new one:
 		PRWindow window = (PRWindow)EditorWindow.GetWindow (typeof (PRWindow));
 		window.position = new Rect(100,100,300,500);
-		window.title = "Packrat";
+		window.titleContent = new GUIContent("Packrat");
 		window.Show(); 
 	}
 
@@ -223,6 +223,8 @@ public class PRWindow : EditorWindow
 				{
 					link.sourceFolderPath = PRUtils.GetTrueProjectRelativePath(sourceFolderPath);
 
+                    link.sourceFolderPath = link.sourceFolderPath.Replace('\\','/');
+
 					_hasDataChanged = true;
 				}
 			}
@@ -238,9 +240,11 @@ public class PRWindow : EditorWindow
 				if(atlasFilePath.Length != 0)
 				{ 
 					atlasFilePath = PRUtils.GetTrueProjectRelativePath(atlasFilePath);
-					
-					link.atlasFilePath = Path.GetDirectoryName(atlasFilePath) + "/" + Path.GetFileNameWithoutExtension(atlasFilePath);
-					
+
+					link.atlasFilePath = Path.GetDirectoryName(atlasFilePath) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(atlasFilePath);
+
+                    link.atlasFilePath = link.atlasFilePath.Replace('\\','/'); //use forward slashes so stuff doesn't get escaped
+
 					_hasDataChanged = true;
 				}
 			}
@@ -351,6 +355,8 @@ public class PRWindow : EditorWindow
 
 				sourceFolderPath = PRUtils.GetTrueProjectRelativePath(sourceFolderPath);
 
+                sourceFolderPath = sourceFolderPath.Replace('\\','/');
+
 				string atlasFilePath = EditorUtility.SaveFilePanel("Choose result atlas location (in /Resources)",sourceFolderName+".txt",sourceFolderName,"txt");
 
 				if(atlasFilePath.Length != 0)
@@ -358,7 +364,9 @@ public class PRWindow : EditorWindow
 					atlasFilePath = PRUtils.GetTrueProjectRelativePath(atlasFilePath);
 
 					//remove the extension
-					atlasFilePath = Path.GetDirectoryName(atlasFilePath) + "/" + Path.GetFileNameWithoutExtension(atlasFilePath);
+					atlasFilePath = Path.GetDirectoryName(atlasFilePath) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(atlasFilePath);
+
+                    atlasFilePath = atlasFilePath.Replace('\\','/');
 					
 					_atlasLinks.Add(new PRAtlasLink(sourceFolderPath, atlasFilePath));
 					_hasDataChanged = true;
@@ -406,15 +414,36 @@ public class PRWindow : EditorWindow
 
 	private int _updateFrames = 0;
 
+    private System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+
 	public void Update()
 	{
 		_updateFrames++;
 		
-		if(_updateFrames % 1 == 0) //note: Update is called 100 times per second
-		{
-			GenerateAtlases();
-			AdvanceActiveGenerator();
-		} 
+		//if(_updateFrames % 1 == 0) //note: Update is called 100 times per second
+		//{
+		//  GenerateAtlases();
+		//  AdvanceActiveGenerator();
+		//} 
+
+        watch.Reset();
+        watch.Start();
+
+        //for(int i = 0; i<10; i++) //generate 10 times per Update (which runs at 100fps, so this gets called 1000 times per second)
+        while(true)
+        {
+            GenerateAtlases();
+		    AdvanceActiveGenerator();
+
+            if(_activeGenerator == null || watch.ElapsedMilliseconds > 50)
+            {
+                break;
+            }
+        }
+
+        watch.Stop();
+
+        Repaint();
 	}
 
 	public void GenerateAtlases()
@@ -441,7 +470,6 @@ public class PRWindow : EditorWindow
 			if(_activeGenerator.Advance())
 			{
 				_progressMessage = _activeGenerator.progressMessage;
-				Repaint(); //this will cause the progress message to be shown in the GUI
 			}
 			else 
 			{
@@ -453,8 +481,6 @@ public class PRWindow : EditorWindow
 					Debug.Log("Packrat: Refreshing Asset Database");
 					AssetDatabase.Refresh();
 				}
-
-				Repaint();
 			}
 		}
 	}
@@ -505,7 +531,7 @@ public class PRViewAtlasWindow : EditorWindow
 		// Get existing open window or if none, make a new one:
 		PRViewAtlasWindow window = (PRViewAtlasWindow)EditorWindow.GetWindow(typeof (PRViewAtlasWindow));
 		window.position = new Rect(Screen.width/2,Screen.height/2,512,512);
-		window.title = "Viewing " + Path.GetFileNameWithoutExtension(link.atlasFilePath);
+		window.titleContent = new GUIContent("Viewing " + Path.GetFileNameWithoutExtension(link.atlasFilePath));
 		window.ShowUtility(); 
 		//window.maximized = true;
 		window.Setup(link); 

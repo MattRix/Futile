@@ -47,9 +47,9 @@ public class FGameObjectNode : FNode, FRenderableLayerInterface
 		{
 			_gameObject.transform.parent = Futile.instance.gameObject.transform;
 			
-			if(_gameObject.renderer != null && _gameObject.renderer.material != null)
+			if(_gameObject.GetComponent<Renderer>() != null && _gameObject.GetComponent<Renderer>().material != null)
 			{
-				_gameObject.renderer.material.renderQueue = _renderQueueDepth;
+				_gameObject.GetComponent<Renderer>().material.renderQueue = _renderQueueDepth;
 			}
 			
 			_gameObject.layer = _stage.layer;
@@ -140,9 +140,9 @@ public class FGameObjectNode : FNode, FRenderableLayerInterface
 	{
 		_renderQueueDepth = Futile.baseRenderQueueDepth+depth;
 		
-		if(_gameObject.renderer != null && _gameObject.renderer.material != null)
+		if(_gameObject.GetComponent<Renderer>() != null && _gameObject.GetComponent<Renderer>().material != null)
 		{
-			_gameObject.renderer.material.renderQueue = _renderQueueDepth;
+			_gameObject.GetComponent<Renderer>().material.renderQueue = _renderQueueDepth;
 		}
 	}
 

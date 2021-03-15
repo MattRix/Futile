@@ -331,13 +331,9 @@ public class FAtlas
 
 	public FAtlasElement CreateNamedElement (string elementName, float leftX, float bottomY, float pixelWidth, float pixelHeight)
 	{
-		FAtlasElement element;
+		FAtlasElement element = _elementsByName[elementName];
 
-		if(_elementsByName.ContainsKey(elementName)) 
-		{
-			element = _elementsByName[elementName];
-		}
-		else //it doesn't exist, so create it (if it does exist we just update it)
+		if(element == null) //it doesn't exist, so create it (if it does exist we just update it)
 		{
 			element = new FAtlasElement();
 			element.name = elementName;
@@ -407,3 +403,5 @@ public class FAtlas
 		get {return _fullElement;}	
 	}
 }
+
+
