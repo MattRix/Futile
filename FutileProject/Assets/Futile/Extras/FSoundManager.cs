@@ -23,7 +23,6 @@ public class FSoundManager
 	
 	static public void Init()
 	{
-		Debug.Log("THIS INIT SHOULD NOT HAPPEN!");
 		if(_gameObject != null) return; //no multiple inits
 
 		_gameObject = new GameObject("FSoundManager");
