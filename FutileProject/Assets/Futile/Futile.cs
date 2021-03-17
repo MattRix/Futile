@@ -93,9 +93,6 @@ public class Futile : MonoBehaviour
 		
 		Application.targetFrameRate = _futileParams.targetFrameRate;
 		
-		FShader.Init(); //set up the basic shaders
-		FFacetType.Init(); //set up the types of facets (Quads, Triangles, etc)
-		
 		screen = new FScreen(_futileParams);
 		
 		//

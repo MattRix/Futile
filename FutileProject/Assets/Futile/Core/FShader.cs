@@ -36,7 +36,7 @@ public class FShader
 
 	}
 	
-	public static void Init() //called by Futile
+	static FShader()
 	{
 		Basic = new FShader("Basic", Shader.Find("Futile/Basic"));	
 		Additive = new FShader("Additive", Shader.Find("Futile/Additive"));	
@@ -72,6 +72,7 @@ public class FBlurShader : FShader
 		set {if(_blurAmount != value) {_blurAmount = value; needsApply = true;}}
 	}
 }
+
 
 
 

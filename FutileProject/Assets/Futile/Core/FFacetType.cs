@@ -37,7 +37,7 @@ public class FFacetType
 		this.createRenderLayer = createRenderLayer;
 	}
 	
-	public static void Init() //called by Futile
+	static FFacetType() 
 	{
 		Quad = CreateFacetType("Quad", 10, 10, 60, CreateQuadLayer);	
 		Triangle = CreateFacetType("Triangle", 16, 16, 64,CreateTriLayer);	
