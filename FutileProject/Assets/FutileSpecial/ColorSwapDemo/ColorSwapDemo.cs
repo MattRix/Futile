@@ -77,14 +77,17 @@ public class ColorSwapDemo : MonoBehaviour
 			sprite.color = FancyColorSwapShader.GetColor(index,0,0);
 			AddChild(sprite);
 
+			//button = new FButton("Box");
+			//button.alpha = 0;
+
 			EnableSingleTouch();
 		}
 
 		public bool HandleSingleTouchBegan(FTouch touch)
 		{
-			if(sprite.localRect.Contains(sprite.ScreenToLocal(touch.position)))
+			if(sprite.localRect.Contains(sprite.GlobalToLocal(touch.position)))
 			{
-				Debug.Log($"touching {boxX},{boxY} with index:{index}");
+				Debug.Log($"clicking {boxX},{boxY} with index:{index}");
 				return true;
 			}
 

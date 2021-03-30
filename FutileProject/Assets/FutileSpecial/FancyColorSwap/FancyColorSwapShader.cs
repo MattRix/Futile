@@ -8,7 +8,7 @@ public class FancyColorSwapShader : FShader
 
 	static FancyColorSwapShader()
 	{
-		Shader.SetGlobalTexture("_PaletteTex",Resources.Load<Texture2D>("simple_palette_wide"));
+		Shader.SetGlobalTexture("_PaletteTex",Resources.Load<Texture2D>("simple_palette_wide_psd"));
 	}
 
 	public FancyColorSwapShader() : base("FancyColorSwapShader", Shader.Find("Futile/FancyColorSwap"))
