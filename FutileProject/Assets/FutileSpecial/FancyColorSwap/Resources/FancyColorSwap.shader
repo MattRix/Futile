@@ -66,7 +66,9 @@ half4 frag (v2f IN) : COLOR
 {
 	half4 col = tex2D (_MainTex,IN.uv);
 
-	half3 result = col.r*IN.colorR.rgb + col.g*IN.colorG.rgb + col.b*IN.colorB.rgb;
+	//half3 result = col.r*IN.colorR.rgb + col.g*IN.colorG.rgb + col.b*IN.colorB.rgb;
+
+	half3 result = col.r*IN.colorR.rgb;
 
 	col.rgb = result * col.a; //multiplied alpha
 	col.a *= IN.colorR.a; //use alpha from the red color (which was set from the original color)

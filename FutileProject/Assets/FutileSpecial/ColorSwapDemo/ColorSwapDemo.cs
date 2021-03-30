@@ -14,26 +14,16 @@ public class ColorSwapDemo : MonoBehaviour
 
 		bool isIPad = SystemInfo.deviceModel.Contains("iPad");
 
-		bool shouldSupportPortraitUpsideDown = isIPad; //only support portrait upside-down on iPad
+		FutileParams fparams = new FutileParams(true, false, false, false);
 
-		FutileParams fparams = new FutileParams(true, true, true, shouldSupportPortraitUpsideDown);
-
-		fparams.AddResolutionLevel(480.0f, 1.0f, 1.0f, "_Scale1"); //iPhone
-		fparams.AddResolutionLevel(960.0f, 2.0f, 2.0f, "_Scale2"); //iPhone retina
-		fparams.AddResolutionLevel(1024.0f, 2.0f, 2.0f, "_Scale2"); //iPad
-		fparams.AddResolutionLevel(1280.0f, 2.0f, 2.0f, "_Scale2"); //Nexus 7
-		fparams.AddResolutionLevel(2048.0f, 4.0f, 4.0f, "_Scale4"); //iPad Retina
+		fparams.AddResolutionLevel(1000.0f, 1.0f, 1.0f, ""); 
 
 		fparams.origin = new Vector2(0.5f, 0.5f);
 
 		Futile.instance.Init(fparams);
 
-		Futile.atlasManager.LoadAtlas("Atlases/BananaLargeAtlas");
-		Futile.atlasManager.LoadAtlas("Atlases/BananaGameAtlas");
-
-		Futile.atlasManager.LoadFont("Franchise", "FranchiseFont" + Futile.resourceSuffix, "Atlases/FranchiseFont" + Futile.resourceSuffix, 0.0f, -4.0f);
-
 		Futile.atlasManager.LoadImage("Box", false);
+		Futile.atlasManager.LoadImage("simple_palette_wide_psd", false);
 
 		StartDemo();
 	}
@@ -42,18 +32,27 @@ public class ColorSwapDemo : MonoBehaviour
 	{
 		Futile.stage.AddChild(demoContainer = new FContainer());
 
+		int cols = 256;
+		float boxWidth = 3f;
+		float width = cols*boxWidth;
+
 		for(int i = 0; i<256; i++)
 		{
-			int x = i % 16;
-			int y = i / 16;
+			int x = i % cols;
+			int y = i / cols;
 
 			var box = new DemoBox(x,y,i);
 
-			box.x = x*8;
-			box.y = y*8;
+			box.x = (-width/2f)+x*boxWidth + boxWidth/2f;
+			box.y = y*4;
 
 			demoContainer.AddChild(box);
 		}
+
+		var palSprite = new FSprite("simple_palette_wide_psd");
+		palSprite.SetSize(width,32f);
+		palSprite.SetPosition(0,-32f);
+		demoContainer.AddChild(palSprite);
 	}
 
 	public class DemoBox : FContainer, FSingleTouchableInterface
@@ -72,7 +71,7 @@ public class ColorSwapDemo : MonoBehaviour
 
 			sprite = new FSprite("Box");
 			sprite.shader = FancyColorSwapShader.TheShader;
-			sprite.SetSize(8f,8f);
+			sprite.SetSize(3f,32f);
 
 			sprite.color = FancyColorSwapShader.GetColor(index,0,0);
 			AddChild(sprite);
