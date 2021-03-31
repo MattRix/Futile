@@ -16,6 +16,8 @@ public class ColorSwapDemo : MonoBehaviour
 
 		FutileParams fparams = new FutileParams(true, false, false, false);
 
+		fparams.backgroundColor = Color.black;
+
 		fparams.AddResolutionLevel(1000.0f, 1.0f, 1.0f, ""); 
 
 		fparams.origin = new Vector2(0.5f, 0.5f);
@@ -24,6 +26,7 @@ public class ColorSwapDemo : MonoBehaviour
 
 		Futile.atlasManager.LoadImage("Box", false);
 		Futile.atlasManager.LoadImage("simple_palette_wide_psd", false);
+		Futile.atlasManager.LoadImage("floor3_m", false);
 
 		StartDemo();
 	}
@@ -32,19 +35,33 @@ public class ColorSwapDemo : MonoBehaviour
 	{
 		Futile.stage.AddChild(demoContainer = new FContainer());
 
-		int cols = 256;
+		var exampleSprite = new FSprite("floor3_m");
+		exampleSprite.SetPosition(0,-64f);
+		exampleSprite.shader = FancyColorSwapShader.TheShader;
+		demoContainer.AddChild(exampleSprite);
+
 		float boxWidth = 3f;
-		float width = cols*boxWidth;
+		float width = 256*boxWidth;
+		int redIndex = 0;
+		int greenIndex = 0;
+		int blueIndex = 0;
 
 		for(int i = 0; i<256; i++)
 		{
-			int x = i % cols;
-			int y = i / cols;
+			var box = new DemoBox(i);
 
-			var box = new DemoBox(x,y,i);
+			box.x = (-width/2f)+i*boxWidth + boxWidth/2f;
 
-			box.x = (-width/2f)+x*boxWidth + boxWidth/2f;
-			box.y = y*4;
+			box.onClick = ()=>
+			{
+				if(Input.GetKey(KeyCode.LeftShift)) greenIndex = box.index;
+				else if(Input.GetKey(KeyCode.LeftControl)) blueIndex = box.index;
+				else redIndex = box.index;
+				
+				exampleSprite.color = FancyColorSwapShader.GetColor(redIndex,greenIndex,blueIndex);
+
+				Debug.Log($"Setting {redIndex},{greenIndex},{blueIndex} color is: {exampleSprite.color.r},{exampleSprite.color.g},{exampleSprite.color.b}");
+			};
 
 			demoContainer.AddChild(box);
 		}
@@ -57,23 +74,21 @@ public class ColorSwapDemo : MonoBehaviour
 
 	public class DemoBox : FContainer, FSingleTouchableInterface
 	{
-		public int boxX;
-		public int boxY;
 		public int index; 
 
 		public FSprite sprite;
 
-		public DemoBox(int boxX, int boxY, int index)
+		public Action onClick;
+
+		public DemoBox(int index)
 		{
-			this.boxX = boxX;
-			this.boxY = boxY;
 			this.index = index;
 
 			sprite = new FSprite("Box");
 			sprite.shader = FancyColorSwapShader.TheShader;
 			sprite.SetSize(3f,32f);
 
-			sprite.color = FancyColorSwapShader.GetColor(index,0,0);
+			sprite.color = FancyColorSwapShader.GetColor(index,index,index);
 			AddChild(sprite);
 
 			//button = new FButton("Box");
@@ -86,7 +101,8 @@ public class ColorSwapDemo : MonoBehaviour
 		{
 			if(sprite.localRect.Contains(sprite.GlobalToLocal(touch.position)))
 			{
-				Debug.Log($"clicking {boxX},{boxY} with index:{index}");
+				Debug.Log($"clicking index: {index}");
+				onClick?.Invoke();
 				return true;
 			}
 

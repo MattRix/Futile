@@ -53,6 +53,10 @@ v2f vert (appdata_full IN)
 
 	float4 color = IN.color;
 
+	//color.r = 1;
+
+	//float twoFiveFive = 0.99609375;// 255.0/256.0; //0.99609375
+
 	OUT.colorR = tex2Dlod(_PaletteTex,half4(color.r,0,0,0));
 	OUT.colorG = tex2Dlod(_PaletteTex,half4(color.g,0,0,0));
 	OUT.colorB = tex2Dlod(_PaletteTex,half4(color.b,0,0,0));
@@ -66,9 +70,24 @@ half4 frag (v2f IN) : COLOR
 {
 	half4 col = tex2D (_MainTex,IN.uv);
 
+	
+	float redmult = (col.r > 0 && col.g == 0 && col.b == 0);
+	float greenmult = (col.g > 0 && col.r == 0 && col.b == 0);
+	float bluemult = (col.b > 0 && col.r == 0 && col.g == 0);
+
+	float plainmult = 1.0-(redmult+greenmult+bluemult);
+
+	half3 result = 
+		plainmult * col + 
+		redmult * col.r * IN.colorR.rgb + 
+		greenmult * col.g * IN.colorG.rgb + 
+		bluemult * col.b * IN.colorB.rgb;
+
 	//half3 result = col.r*IN.colorR.rgb + col.g*IN.colorG.rgb + col.b*IN.colorB.rgb;
 
-	half3 result = col.r*IN.colorR.rgb;
+	//half3 result = col.r*IN.colorR.rgb;
+
+	//half3 result = IN.colorR.rgb;
 
 	col.rgb = result * col.a; //multiplied alpha
 	col.a *= IN.colorR.a; //use alpha from the red color (which was set from the original color)

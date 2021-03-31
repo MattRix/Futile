@@ -17,6 +17,6 @@ public class FancyColorSwapShader : FShader
 
 	static public Color GetColor(int palR, int palG, int palB)
 	{
-		return new Color((float)palR/255f,(float)palG/255f,(float)palB/255f);
+		return new Color((float)palR/256f,(float)palG/256f,(float)palB/256f);
 	}
 } 
