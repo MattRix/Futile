@@ -36,7 +36,7 @@ public class ColorSwapDemo : MonoBehaviour
 		Futile.stage.AddChild(demoContainer = new FContainer());
 
 		var exampleSprite = new FSprite("floor3_m");
-		exampleSprite.SetPosition(0,-64f);
+		exampleSprite.SetPosition(0,-100f);
 		exampleSprite.shader = FancyColorSwapShader.TheShader;
 		demoContainer.AddChild(exampleSprite);
 
@@ -68,7 +68,7 @@ public class ColorSwapDemo : MonoBehaviour
 
 		var palSprite = new FSprite("simple_palette_wide_psd");
 		palSprite.SetSize(width,32f);
-		palSprite.SetPosition(0,-32f);
+		palSprite.SetPosition(0,-32f-16f);
 		demoContainer.AddChild(palSprite);
 	}
 

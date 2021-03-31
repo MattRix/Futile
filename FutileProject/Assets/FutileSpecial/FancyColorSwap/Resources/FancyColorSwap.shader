@@ -71,26 +71,26 @@ half4 frag (v2f IN) : COLOR
 	half4 col = tex2D (_MainTex,IN.uv);
 
 	
-	float redmult = (col.r > 0 && col.g == 0 && col.b == 0);
-	float greenmult = (col.g > 0 && col.r == 0 && col.b == 0);
-	float bluemult = (col.b > 0 && col.r == 0 && col.g == 0);
+	float redmult =		((col.r > 0) * (col.g == 0) * (col.b == 0));
+	float greenmult =	((col.g > 0) * (col.r == 0) * (col.b == 0));
+	float bluemult =	((col.b > 0) * (col.r == 0) * (col.g == 0));
 
 	float plainmult = 1.0-(redmult+greenmult+bluemult);
 
 	half3 result = 
-		plainmult * col + 
-		redmult * col.r * IN.colorR.rgb + 
-		greenmult * col.g * IN.colorG.rgb + 
-		bluemult * col.b * IN.colorB.rgb;
-
-	//half3 result = col.r*IN.colorR.rgb + col.g*IN.colorG.rgb + col.b*IN.colorB.rgb;
-
-	//half3 result = col.r*IN.colorR.rgb;
-
-	//half3 result = IN.colorR.rgb;
+		plainmult	* col + 
+		redmult		* col.r * IN.colorR.rgb + 
+		greenmult	* col.g * IN.colorG.rgb + 
+		bluemult	* col.b * IN.colorB.rgb;
 
 	col.rgb = result * col.a; //multiplied alpha
 	col.a *= IN.colorR.a; //use alpha from the red color (which was set from the original color)
+
+
+
+	//half3 result = col.r*IN.colorR.rgb + col.g*IN.colorG.rgb + col.b*IN.colorB.rgb;
+	//half3 result = col.r*IN.colorR.rgb;
+	//half3 result = IN.colorR.rgb;
 
 	return col; 
 }
