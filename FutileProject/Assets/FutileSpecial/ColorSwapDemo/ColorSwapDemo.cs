@@ -27,6 +27,7 @@ public class ColorSwapDemo : MonoBehaviour
 		Futile.atlasManager.LoadImage("Box", false);
 		Futile.atlasManager.LoadImage("simple_palette_wide_psd", false);
 		Futile.atlasManager.LoadImage("floor3_m", false);
+		Futile.atlasManager.LoadImage("house_0_roof", false);
 
 		StartDemo();
 	}
@@ -35,10 +36,15 @@ public class ColorSwapDemo : MonoBehaviour
 	{
 		Futile.stage.AddChild(demoContainer = new FContainer());
 
-		var exampleSprite = new FSprite("floor3_m");
-		exampleSprite.SetPosition(0,-100f);
-		exampleSprite.shader = FancyColorSwapShader.TheShader;
-		demoContainer.AddChild(exampleSprite);
+		var exampleFloorSprite = new FSprite("floor3_m");
+		exampleFloorSprite.SetPosition(-100f,-100f);
+		exampleFloorSprite.shader = FancyColorSwapShader.TheShader;
+		demoContainer.AddChild(exampleFloorSprite);
+
+		var exampleRoofSprite = new FSprite("house_0_roof");
+		exampleRoofSprite.SetPosition(100f,-100f);
+		exampleRoofSprite.shader = FancyColorSwapShader.TheShader;
+		demoContainer.AddChild(exampleRoofSprite);
 
 		float boxWidth = 3f;
 		float width = 256*boxWidth;
@@ -58,9 +64,10 @@ public class ColorSwapDemo : MonoBehaviour
 				else if(Input.GetKey(KeyCode.LeftControl)) blueIndex = box.index;
 				else redIndex = box.index;
 				
-				exampleSprite.color = FancyColorSwapShader.GetColor(redIndex,greenIndex,blueIndex);
+				exampleFloorSprite.color = FancyColorSwapShader.GetColor(redIndex,greenIndex,blueIndex);
+				exampleRoofSprite.color = FancyColorSwapShader.GetColor(redIndex,greenIndex,blueIndex);
 
-				Debug.Log($"Setting {redIndex},{greenIndex},{blueIndex} color is: {exampleSprite.color.r},{exampleSprite.color.g},{exampleSprite.color.b}");
+				Debug.Log($"Setting {redIndex},{greenIndex},{blueIndex} color is: {exampleFloorSprite.color.r},{exampleFloorSprite.color.g},{exampleFloorSprite.color.b}");
 			};
 
 			demoContainer.AddChild(box);
